@@ -169,6 +169,13 @@ float dPonto(vec3 ro, vec3 rd, vec3 q){
   return length((ro + rd*tr) - q);
 }
 
+/* Profundidade do ponto ao longo do raio. Sem isto, uma luz aditiva desenhada
+   depois da superfície aparece ATRAVÉS dela — faróis e balizas vazando pela
+   lataria do veículo. */
+float tPonto(vec3 ro, vec3 rd, vec3 q){
+  return max(dot(q - ro, rd), 0.0);
+}
+
 /* Intersecção raio-esfera analítica. Retorna a distância ou -1. */
 float iEsfera(vec3 ro, vec3 rd, vec3 c, float r){
   vec3 oc = ro - c;
@@ -187,9 +194,30 @@ float iEsfera(vec3 ro, vec3 rd, vec3 c, float r){
    O céu ATRAVESSA a bolha: o raio é refratado e reamostra o fundo. A
    dispersão cromática (IOR distinto por canal) é o que faz o vidro parecer
    vidro e não plástico. */
-vec3 vidro(vec3 ro, vec3 rd, vec3 centro, float raio, vec3 corA, vec3 corB){
-  float t = iEsfera(ro, rd, centro, raio);
-  if (t < 0.0) return vec3(-1.0);
+/* Cobertura da esfera com anti-serrilhado.
+   A intersecção raio-esfera é binária: ou acerta ou não. Usada direto, ela
+   desenha a silhueta em degraus — e num vidro liquid glass a borda é
+   justamente o que se olha. Aqui a borda vira COBERTURA: a distância
+   perpendicular do centro ao raio é comparada com o raio dentro de uma
+   janela de ~1 pixel projetado na profundidade da esfera.
+
+   FOCAL_AA é a distância focal usada pelas cenas (1,5 a 1,6). A diferença
+   entre elas muda a largura da janela em ~3% — invisível — então uma
+   constante evita carregar o parâmetro por cinco assinaturas. */
+const float FOCAL_AA = 1.55;
+
+vec4 vidro(vec3 ro, vec3 rd, vec3 centro, float raio, vec3 corA, vec3 corB){
+  vec3 oc = centro - ro;
+  float L = max(length(oc), 1e-3);
+  float w = L / (u_res.y * FOCAL_AA);          // meio pixel, em unidades de mundo
+  float cob = smoothstep(w, -w, length(cross(oc, rd)) - raio);
+  if (cob <= 0.0) return vec4(0.0);
+
+  // A esfera é testada um fio maior para que a faixa de anti-serrilhado
+  // TENHA superfície onde nascer: sem isso a metade externa da borda não
+  // acerta nada e o degrau volta, só que meio pixel adiante.
+  float t = iEsfera(ro, rd, centro, raio + w);
+  if (t < 0.0) return vec4(0.0);
 
   vec3 pos = ro + rd*t;
   vec3 n   = normalize(pos - centro);
@@ -215,7 +243,7 @@ vec3 vidro(vec3 ro, vec3 rd, vec3 centro, float raio, vec3 corA, vec3 corB){
   cor += refl * fres * 0.55;                       // céu refletido na casca
   cor += mix(corB, corA, clamp(n.y*0.5+0.5, 0.0, 1.0)) * fres * 0.60;  // aro: azul embaixo -> violeta em cima
   cor += vec3(1.0) * spec * 1.60;                  // especular
-  return cor;
+  return vec4(cor, cob);
 }
 `;
 
@@ -248,15 +276,15 @@ void main(){
     vec3 c = vec3(cos(ang)*dist, alt*dist*0.42, sin(ang)*dist - 0.2);
     float r = R*(0.15 + mod(fi,3.0)*0.035)*(1.0 - fusao*0.9);
     if (r < 0.004) continue;
-    vec3 v = vidro(ro, rd, c, r, VIOLETA, AZUL);
-    if (v.x >= 0.0) col = v;
+    vec4 v = vidro(ro, rd, c, r, VIOLETA, AZUL);
+    col = mix(col, v.rgb, v.a);
   }
 
   // A bolha principal, nascida da fusão
   float rp = R*fusao*(1.0 + sin(u_t*2.0)*0.02*smoothstep(0.82,1.0,u_p));
   if (rp > 0.004){
-    vec3 v = vidro(ro, rd, vec3(0.0,0.0,0.0), rp, VIOLETA, AZUL);
-    if (v.x >= 0.0) col = v;
+    vec4 v = vidro(ro, rd, vec3(0.0,0.0,0.0), rp, VIOLETA, AZUL);
+    col = mix(col, v.rgb, v.a);
     // halo volumétrico ao redor
     float d = length(cross(rd, -ro))/length(rd);
     col += mix(VIOLETA, AZUL, 0.5) * smoothstep(rp*2.0, rp, d) * 0.045 * fusao;
@@ -330,94 +358,187 @@ void main(){
 }`,
 
   /* ---- abertura.rotacerta — "horizonte com veículos em silhueta azul e
-     zoom out". A câmera afasta de verdade no eixo Z; o plano de chão tem
-     perspectiva real e os veículos são caixas SDF com volume. */
+     zoom out" (§18) + assinatura "GPS espacial" (§65.1).
+
+     REFEITA. A primeira versão tinha DUAS ideias soltas que não se juntavam:
+     uma grade retrô no chão e pontos âmbar flutuando no céu, sem relação. O
+     resultado lia como cenário genérico de synthwave, não como o RotaCerta.
+
+     Agora há UMA ideia só, a da §65.1: uma ROTA no espaço. A rota é a
+     protagonista — uma fita de luz teal que serpenteia do primeiro plano até
+     o horizonte, com waypoints âmbar POUSADOS sobre ela (não soltos no céu) e
+     os veículos correndo POR ELA. A câmera afasta e a rota inteira se revela
+     como a constelação que a §65.1 descreve. A grade sumiu. */
   'abertura.rotacerta': `
+/* A rota: uma curva suave em função da profundidade. Tudo na cena — fita,
+   waypoints e veículos — é posicionado por ela, e é isso que faz a cena ter
+   um assunto só. */
+float rotaX(float z){
+  return sin(z*0.30)*1.5 + sin(z*0.11 + 1.3)*0.85;
+}
+float rotaDX(float z){          // tangente, para orientar os veículos
+  return cos(z*0.30)*0.45 + cos(z*0.11 + 1.3)*0.0935;
+}
+
 float sdCaixa(vec3 p, vec3 b){
   vec3 q = abs(p) - b;
   return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)), 0.0);
 }
+/* União suave: funde corpo e cabine numa silhueta ÚNICA. Com min() puro os
+   dois viram caixas empilhadas — que foi o que fez o veículo ler como cubo. */
+float smin(float a, float b, float k){
+  float h = clamp(0.5 + 0.5*(b-a)/k, 0.0, 1.0);
+  return mix(b, a, h) - k*h*(1.0-h);
+}
 
-float mapa(vec3 p, out float mat){
-  float d = p.y + 1.0;            // plano de chão
-  mat = 0.0;
-  // três veículos em silhueta, avançando
+/* Posição do veículo i no instante t — usada pelo SDF e pelo farol. */
+vec3 posVeiculo(int i, float t){
+  float fi = float(i);
+  float z = mod(-t*2.2 - fi*5.5, 22.0) - 20.0;
+  return vec3(rotaX(z), -0.80, z);
+}
+
+/* Só os veículos vão para o raymarch; o chão é resolvido analiticamente. */
+float mapaVeiculos(vec3 p, float t){
+  float d = 1e9;
   for (int i = 0; i < 3; i++){
-    float fi = float(i);
-    float x = mod(fi*5.0 + u_t*1.6, 16.0) - 8.0;
-    vec3 q = p - vec3(x, -0.70, -2.0 - fi*2.4);
-    float corpo = sdCaixa(q, vec3(0.95, 0.22, 0.32));
-    float cab   = sdCaixa(q - vec3(0.50, 0.26, 0.0), vec3(0.34, 0.20, 0.28));
-    float v = min(corpo, cab);
-    if (v < d){ d = v; mat = 1.0; }
+    vec3 c = posVeiculo(i, t);
+    vec3 q = p - c;
+    // gira o veículo para acompanhar a tangente da rota
+    float a = atan(rotaDX(c.z));
+    float ca = cos(a), sa = sin(a);
+    q.xz = mat2(ca, -sa, sa, ca) * q.xz;
+    // Baixo e comprido, com a cabine recuada e fundida ao corpo
+    float corpo = sdCaixa(q, vec3(0.235, 0.105, 0.78));
+    float cab   = sdCaixa(q - vec3(0.0, 0.135, -0.20), vec3(0.205, 0.115, 0.30));
+    d = min(d, smin(corpo, cab, 0.16));
   }
   return d;
 }
 
 void main(){
   vec2 uv = (gl_FragCoord.xy - 0.5*u_res) / u_res.y;
-  // ZOOM OUT real: a câmera recua e sobe
-  float zoom = smoothstep(0.12, 0.92, u_p);
-  vec3 ro = vec3(0.0, mix(-0.35, 1.30, zoom), mix(1.6, 7.4, zoom));
-  vec3 alvo = vec3(0.0, -0.30, -3.0);
+
+  // ZOOM OUT: a câmera sobe e recua, revelando a rota inteira
+  float zoom = smoothstep(0.10, 0.94, u_p);
+  vec3 ro = vec3(0.0, mix(-0.40, 3.20, zoom), mix(1.2, 8.0, zoom));
+  vec3 alvo = vec3(0.0, mix(-0.70, -1.05, zoom), mix(-4.0, -9.0, zoom));
   vec3 f = normalize(alvo - ro);
   vec3 r = normalize(cross(vec3(0.0,1.0,0.0), f));
   vec3 u = cross(f, r);
-  vec3 rd = normalize(uv.x*r + uv.y*u + 1.5*f);
+  vec3 rd = normalize(uv.x*r + uv.y*u + 1.55*f);
 
   vec3 col = fundo(rd);
 
-  // Brilho do horizonte
-  float hor = exp(-abs(rd.y + 0.06)*14.0);
-  col += mix(AZUL, vec3(0.26,0.69,1.0), 0.35) * hor * 0.28;  // linear
+  // Brilho do horizonte — fino, para não competir com a rota
+  col += mix(AZUL, AUR_TEAL, 0.4) * exp(-abs(rd.y + 0.02)*22.0) * 0.10;
 
-  // Raymarch do chão e dos veículos
-  float t = 0.0, mat = 0.0;
-  bool bateu = false;
-  for (int i = 0; i < 70; i++){
-    vec3 p = ro + rd*t;
-    float m;
-    float d = mapa(p, m);
-    if (d < 0.004){ mat = m; bateu = true; break; }
-    t += d*0.85;
-    if (t > 40.0) break;
-  }
+  // ---- Chão: plano analítico em y = -1
+  float tCh = (rd.y < -0.001) ? (-1.0 - ro.y)/rd.y : -1.0;
 
-  if (bateu){
-    vec3 p = ro + rd*t;
-    if (mat > 0.5){
-      // Veículo: silhueta azul, com um fio de luz na aresta superior
-      // Silhueta azul, mais clara no alto (§18: "veículos em silhueta azul")
-      float alto = smoothstep(-1.05, -0.42, p.y);
-      col = mix(vec3(0.003,0.010,0.045), vec3(0.014,0.080,0.30), alto);
-      // Fio âmbar SÓ na aresta superior. A versão anterior usava uma banda de
-      // 0.10 e, como a face de cima é plana em y, ela acendia inteira — virava
-      // uma tarja laranja atravessando o veículo.
-      col += AMBAR*0.55*smoothstep(0.018, 0.0, abs(p.y + 0.44));
-    } else {
-      // Chão: grade em perspectiva, esmaecendo com a distância
-      vec2 g = abs(fract(p.xz*0.5) - 0.5);
-      float linha = smoothstep(0.035, 0.0, min(g.x, g.y));
-      float fade = exp(-t*0.075);
-      col = mix(col, mix(col, AUR_TEAL, 0.55), linha*fade*0.5);
+  // ---- Veículos: raymarch curto
+  float tV = -1.0;
+  {
+    float d = 0.0;
+    for (int i = 0; i < 56; i++){
+      vec3 p = ro + rd*d;
+      float m = mapaVeiculos(p, u_t);
+      if (m < 0.004){ tV = d; break; }
+      d += m*0.9;
+      if (d > 30.0) break;
     }
   }
 
-  // Rota luminosa: teal + âmbar (§65.1), ligando waypoints em constelação
-  float rota = smoothstep(0.50, 0.95, u_p);
+  bool verChao = tCh > 0.0 && (tV < 0.0 || tCh < tV);
+  bool verVeic = tV > 0.0 && (tCh < 0.0 || tV < tCh);
+
+  if (verChao){
+    vec3 p = ro + rd*tCh;
+    float dist = length(p - ro);
+    float fade = exp(-dist*0.055);
+
+    // A FITA DA ROTA — a protagonista da cena
+    float dr = abs(p.x - rotaX(p.z));
+    float nucleo = smoothstep(0.10, 0.0, dr);        // miolo aceso
+    float corpo  = smoothstep(0.34, 0.06, dr);       // largura da fita
+    float halo   = smoothstep(1.30, 0.10, dr);       // luz derramada no chão
+
+    col = mix(col, vec3(0.0), 0.35*fade);            // o chão escurece o fundo
+    col += AUR_TEAL * halo  * 0.055 * fade;
+    col += AUR_TEAL * corpo * 0.55  * fade;
+    col += mix(AUR_TEAL, vec3(1.0), 0.42) * nucleo * 0.62 * fade;
+
+    // Marcas de progressão ao longo da fita, como um trilho de navegação
+    float marca = smoothstep(0.06, 0.0, abs(fract(p.z*0.55 + u_t*0.35) - 0.5) - 0.42);
+    col += AUR_TEAL * marca * corpo * 0.5 * fade;
+  }
+
+  if (verVeic){
+    vec3 p = ro + rd*tV;
+    // Normal do SDF por diferenças finitas. Sem ela o veículo é uma mancha
+    // azul chapada: são as faces com iluminações diferentes que fazem a
+    // silhueta ler como um volume.
+    vec2 e = vec2(0.0022, 0.0);
+    vec3 n = normalize(vec3(
+      mapaVeiculos(p + e.xyy, u_t) - mapaVeiculos(p - e.xyy, u_t),
+      mapaVeiculos(p + e.yxy, u_t) - mapaVeiculos(p - e.yxy, u_t),
+      mapaVeiculos(p + e.yyx, u_t) - mapaVeiculos(p - e.yyx, u_t)));
+
+    vec3 luz = normalize(vec3(-0.35, 0.85, 0.30));
+    float dif = max(dot(n, luz), 0.0);
+    float ceu = 0.5 + 0.5*n.y;                      // luz ambiente do céu
+    float borda = pow(1.0 - max(dot(n, -rd), 0.0), 3.0);
+
+    // Silhueta AZUL (§18), agora com volume
+    col  = vec3(0.003, 0.011, 0.050);               // sombra
+    col += vec3(0.026, 0.125, 0.44) * dif;          // face iluminada
+    col += vec3(0.008, 0.040, 0.16) * ceu;          // rebote do céu
+    col += AUR_TEAL * 0.22 * borda;                 // a rota reflete na lataria
+  }
+
+  // Superfície mais próxima já resolvida: nada de luz é somado atrás dela.
+  float tSup = 1e9;
+  if (verChao) tSup = tCh;
+  if (verVeic) tSup = tV;
+
+  // Farol âmbar na frente de cada veículo, e o rastro de navegação atrás
+  // (§65.1: "leve rastro de navegação").
+  for (int i = 0; i < 3; i++){
+    vec3 c = posVeiculo(i, u_t);
+    vec3 frente = c + vec3(0.0, 0.02, -0.82);
+    if (tPonto(ro, rd, frente) < tSup){
+      float d = dPonto(ro, rd, frente);
+      col += AMBAR * smoothstep(0.040, 0.0, d) * 1.4;
+      col += AMBAR * smoothstep(0.28, 0.0, d) * 0.07;
+    }
+    // rastro: um segmento curto atrás do veículo, sobre a rota
+    vec3 tras = vec3(rotaX(c.z + 1.9), c.y - 0.02, c.z + 1.9);
+    vec3 base = vec3(c.x, c.y - 0.02, c.z + 0.55);
+    if (tPonto(ro, rd, base) < tSup){
+      float dr2 = dSegmento(ro, rd, base, tras);
+      col += AUR_TEAL * smoothstep(0.045, 0.0, dr2) * 0.28;
+    }
+  }
+
+  // ---- Waypoints POUSADOS na rota, com feixe vertical
+  float rota = smoothstep(0.34, 0.92, u_p);
   for (int i = 0; i < 5; i++){
     float fi = float(i);
-    if (fi > rota*5.0) break;
-    vec3 w = vec3(-3.4 + fi*1.7, 1.15 + sin(fi*1.9)*0.42, -4.5 - fi*0.35);
+    float fw = clamp(rota*5.0 - fi*0.8, 0.0, 1.0);
+    if (fw <= 0.0) break;
+    float z = -2.2 - fi*3.1;
+    vec3 w = vec3(rotaX(z), -0.86, z);
+
+    if (tPonto(ro, rd, w) >= tSup) continue;   // atrás de um veículo: não vaza
+
     float d = dPonto(ro, rd, w);
-    col += AMBAR * smoothstep(0.16, 0.0, d) * 1.5;
-    col += AUR_TEAL * smoothstep(0.55, 0.0, d) * 0.16;
-    // malha de rotas teal ligando os waypoints (§65.1: "teal + âmbar")
-    if (i < 4){
-      vec3 w2 = vec3(-3.4 + (fi+1.0)*1.7, 1.15 + sin((fi+1.0)*1.9)*0.42, -4.5 - (fi+1.0)*0.35);
-      float dl = dSegmento(ro, rd, w, w2);
-      col += AUR_TEAL * smoothstep(0.012, 0.0, dl) * 0.75 * rota;
-    }
+    col += AMBAR * smoothstep(0.055, 0.0, d) * 1.8 * fw;      // baliza
+    col += AMBAR * smoothstep(0.34, 0.0, d) * 0.10 * fw;      // brilho
+
+    // Feixe curto, só o bastante para o waypoint POUSAR na rota em vez de
+    // flutuar. Alto demais e ele lê como poste, não como baliza.
+    float df = dSegmento(ro, rd, w, w + vec3(0.0, 0.30, 0.0));
+    col += AMBAR * smoothstep(0.016, 0.0, df) * 0.22 * fw;
   }
 
   gl_FragColor = vec4(pow(col, vec3(0.4545)), 1.0);
@@ -529,8 +650,8 @@ void main(){
   // A bolha única que recolhe tudo — integração, não justaposição
   float rp = 1.05*rec;
   if (rp > 0.004){
-    vec3 v = vidro(ro, rd, vec3(0.0), rp, VIOLETA, AZUL);
-    if (v.x >= 0.0) col = v;
+    vec4 v = vidro(ro, rd, vec3(0.0), rp, VIOLETA, AZUL);
+    col = mix(col, v.rgb, v.a);
     vec3 oc = ro - vec3(0.0);
     float d = length(cross(rd, normalize(oc)))*length(oc);
     col += mix(VIOLETA, AZUL, 0.5) * smoothstep(rp*2.0, rp, d) * 0.05 * rec;
@@ -572,16 +693,16 @@ void main(){
 
     // satélite-bolha na ponta
     if (fc > 0.9){
-      vec3 v = vidro(ro, rd, no, 0.13, AUR_VIOL, AUR_TEAL);
-      if (v.x >= 0.0) col = v;
+      vec4 v = vidro(ro, rd, no, 0.13, AUR_VIOL, AUR_TEAL);
+      col = mix(col, v.rgb, v.a);
     }
   }
 
   // Núcleo de luz + esfera técnica liquid-glass
   float rp = 0.62*cresce;
   if (rp > 0.004){
-    vec3 v = vidro(ro, rd, vec3(0.0), rp, AUR_VIOL, AUR_TEAL);
-    if (v.x >= 0.0) col = v;
+    vec4 v = vidro(ro, rd, vec3(0.0), rp, AUR_VIOL, AUR_TEAL);
+    col = mix(col, v.rgb, v.a);
     vec3 oc = ro;
     float d = length(cross(rd, normalize(oc)))*length(oc);
     col += mix(AUR_VIOL, AUR_TEAL, 0.5) * smoothstep(rp*2.6, rp*0.6, d) * 0.07 * cresce;

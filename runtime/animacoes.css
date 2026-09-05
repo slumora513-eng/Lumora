@@ -1,0 +1,149 @@
+/* ==========================================================================
+   Lumora — Camada de texto das animações (§18/§45/§49)
+   Liberada pelo "pode ir" do Fundador (05/09/2026), estendido às animações.
+
+   POR QUE ISTO É DOM, E NÃO PIXEL NO CANVAS
+   Decisão do Fundador em 05/09/2026: em vez de produzir os áudios, entra o
+   TEXTO da fala nas animações que têm fala. Com isso o texto deixa de ser
+   acompanhamento do som e vira o ÚNICO canal de informação — e §35 não
+   admite informação que só existe como pixel. Sendo DOM, o leitor de tela
+   anuncia (aria-live), o texto é selecionável, escala com o zoom do usuário
+   e segue os tokens em vez de ser rasterizado no canvas.
+
+   §45 continua valendo ao contrário: "sons nunca são canal único — texto
+   sempre em paralelo". Aqui não há som; sobra o texto, que é o que a regra
+   protege.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Palco — o invólucro que o runtime cria em volta do canvas.
+   A largura NÃO é decidida aqui: quem a define é `_herdarCaixa()` em
+   animacoes.js, que transfere para o palco a restrição de largura do próprio
+   canvas. Tentar medir o canvas por CSS (`inline-size: fit-content`) dá
+   zero — canvas é elemento substituído e porcentagem não tem contra o que
+   resolver no cálculo intrínseco. Ver o comentário do método.
+   -------------------------------------------------------------------------- */
+.lum-palco {
+  position: relative;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Legenda
+   As cores são FIXAS e claras de propósito: a cena é sempre Deep Space,
+   independente da paleta de acessibilidade escolhida (§70.6). Herdar
+   --lum-texto-1 faria a paleta clara "Aurora Dia" pintar texto escuro sobre
+   um canvas escuro — invisível. Aqui o fundo é a cena, não a interface.
+   -------------------------------------------------------------------------- */
+.lum-abertura {
+  --leg-1: #FFFFFF;   /* 20,50:1 sobre Deep Space — AAA */
+  --leg-2: #C8D2E8;   /* 13,51:1 — AAA */
+
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: 0 6% 6%;
+  text-align: center;
+  /* Nunca captura clique: é legenda, não controle. */
+  pointer-events: none;
+  /* Acompanha o raio do canvas para o scrim não vazar do canto. */
+  border-end-start-radius: 14px;
+  border-end-end-radius: 14px;
+  overflow: hidden;
+}
+
+/* Véu de leitura: a cena tem momentos claros (cortina de aurora acesa,
+   farol âmbar) onde texto branco puro perderia contraste. O véu é da
+   legenda, não da cena — nenhum pixel da animação é alterado. */
+.lum-abertura::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+              rgba(0, 4, 15, 0.92) 0%,
+              rgba(0, 4, 15, 0.62) 45%,
+              rgba(0, 4, 15, 0) 100%);
+  opacity: 0;
+  transition: opacity var(--lum-dur-curta, 320ms) var(--lum-ease, ease);
+}
+/* Só aparece quando há texto. Sem suporte a :has() o véu não entra e o
+   text-shadow abaixo continua garantindo a leitura. */
+.lum-abertura:has(.lum-abertura--on)::before { opacity: 1; }
+
+.lum-abertura-nome,
+.lum-abertura-fala {
+  /* Posicionados de propósito: o véu é ::before absoluto, e descendente
+     posicionado pinta DEPOIS de bloco em fluxo normal — texto em fluxo
+     ficaria por baixo do próprio véu. Posicionando os dois, valem a ordem
+     da árvore: véu, depois texto. (`z-index:-1` no véu não resolve: joga
+     ele para trás do canvas, que é irmão em fluxo, e o véu some.) */
+  position: relative;
+  margin: 0;
+  font-family: var(--lum-fonte);
+  /* Segunda garantia de contraste, independente do :has(). */
+  text-shadow: 0 1px 12px rgba(0, 4, 15, 0.95), 0 0 3px rgba(0, 4, 15, 0.8);
+  opacity: 0;
+  transform: translateY(0.5em);
+  transition: opacity var(--lum-dur-curta, 320ms) var(--lum-ease, ease),
+              transform var(--lum-dur-curta, 320ms) var(--lum-ease, ease);
+}
+
+/* O nome do sistema. Não usa o gradiente da L: --lum-violeta mede 4,36:1 e
+   reprova AA (docs/06-acessibilidade.md). O gradiente é da marca, o texto
+   é do usuário. */
+.lum-abertura-nome {
+  color: var(--leg-1);
+  font-size: clamp(15px, 3.2vw, 26px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+}
+
+/* A fala (§1). Uma linha abaixo, mais discreta — quem fala é o assistente,
+   o nome já é o título. */
+.lum-abertura-fala {
+  color: var(--leg-2);
+  font-size: clamp(12px, 2.2vw, 17px);
+  font-weight: 400;
+  line-height: 1.45;
+  margin-block-start: 0.45em;
+  text-wrap: balance;
+}
+
+.lum-abertura--on {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Tipografia proporcional ao palco, não à janela: a mesma cena aparece em
+   640px na tela cheia e em 220px na grade de verificação. */
+@supports (container-type: inline-size) {
+  .lum-palco { container-type: inline-size; }
+  /* cqi só existe com o container declarado; por isso o vw fica como base
+     acima e a medida boa entra aqui, nunca ao contrário — uma unidade
+     desconhecida derrubaria a declaração inteira e o texto herdaria
+     tamanho de corpo. */
+  .lum-abertura-nome { font-size: clamp(15px, 3.4cqi, 26px); }
+  .lum-abertura-fala { font-size: clamp(12px, 2.4cqi, 17px); }
+}
+
+/* --------------------------------------------------------------------------
+   §35 item 8 / prefers-reduced-motion — o texto aparece, mas não se move.
+   A informação nunca depende do movimento.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .lum-abertura-nome,
+  .lum-abertura-fala {
+    transform: none;
+    transition: opacity var(--lum-dur-micro, 160ms) linear;
+  }
+  .lum-abertura::before { transition: none; }
+}
+
+/* Níveis rebaixados da Otimização Automática (§36): sem transição,
+   o texto simplesmente está lá. */
+:root[data-lum-nivel="basico"] .lum-abertura-nome,
+:root[data-lum-nivel="basico"] .lum-abertura-fala {
+  transition: none;
+  transform: none;
+}

@@ -183,18 +183,6 @@ function cortinaAurora(ctx, L, A, cx, larg, cor, fase, alfa, topo, base) {
   ctx.fill();
 }
 
-function texto(ctx, txt, x, y, tam, alfa, peso = '600') {
-  if (alfa <= 0) return;
-  ctx.save();
-  ctx.globalAlpha = alfa;
-  ctx.fillStyle = C.texto;
-  ctx.font = `${peso} ${tam}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(txt, x, y);
-  ctx.restore();
-}
-
 /* =========================================================================
    CENAS — cada uma recebe (ctx, t, L, A) com t de 0 a 1
    ========================================================================= */
@@ -242,9 +230,6 @@ const CENAS = {
       ctx.arc(cx, cy, raioFinal * (1 + halo * 1.6), 0, TAU);
       ctx.stroke();
     }
-
-    texto(ctx, 'Olá, eu sou o Elio.', cx, cy + raioFinal + A * 0.14,
-          Math.max(15, A * 0.045), ease(trecho(t, 0.80, 0.97)));
   },
 
   /* ---- abertura.aurora — "a noite chega e a aurora se forma e se move"
@@ -274,11 +259,6 @@ const CENAS = {
       }
       ctx.restore();
     }
-
-    texto(ctx, 'Olá, eu sou Aurora.', L / 2, A * 0.78,
-          Math.max(15, A * 0.045), ease(trecho(t, 0.62, 0.80)));
-    texto(ctx, 'Que minha luz domine o seu negócio.', L / 2, A * 0.86,
-          Math.max(13, A * 0.036), ease(trecho(t, 0.74, 0.92)), '400');
   },
 
   /* ---- abertura.rotacerta — "horizonte com veículos em silhueta azul e
@@ -365,9 +345,6 @@ const CENAS = {
       }
       ctx.restore();
     }
-
-    texto(ctx, 'RotaCerta', L / 2, A * 0.84, Math.max(17, A * 0.055),
-          ease(trecho(t, 0.68, 0.92)));
   },
 
   /* ---- abertura.business — "céu estrelado puro"
@@ -451,9 +428,6 @@ const CENAS = {
       }
       ctx.stroke();
     }
-
-    texto(ctx, 'Lumora Business', cx, A * 0.80, Math.max(17, A * 0.055),
-          ease(trecho(t, 0.70, 0.94)));
   },
 
   /* ---- abertura.ecossistema — "versão épica unindo os sistemas" §18.
@@ -509,9 +483,6 @@ const CENAS = {
     if (recolhe > 0) {
       bolha(ctx, cx, cy, Math.min(L, A) * 0.20 * recolhe, 1);
     }
-
-    texto(ctx, 'Lumora Ecossistema', cx, A * 0.82, Math.max(17, A * 0.055),
-          ease(trecho(t, 0.76, 0.96)));
   },
 
   /* ---- abertura.hub — "bolha central com conexões no estilo de neurônios"
@@ -568,11 +539,6 @@ const CENAS = {
       ctx.fill();
       bolha(ctx, cx, cy, R * cresce, 1, C.auroraVioleta, C.auroraTeal);
     }
-
-    texto(ctx, 'Lumora Hub', cx, A * 0.84, Math.max(16, A * 0.05),
-          ease(trecho(t, 0.70, 0.92)));
-    texto(ctx, 'uso interno', cx, A * 0.90, Math.max(11, A * 0.030),
-          ease(trecho(t, 0.78, 0.96)) * 0.75, '400');
   },
 
   /* ---- loading.criar_mundo — "bolha vira planeta" §2/§49.1 */
@@ -613,8 +579,6 @@ const CENAS = {
       ctx.stroke();
       ctx.restore();
     }
-    texto(ctx, 'criando o seu novo mundo', cx, A * 0.80,
-          Math.max(13, A * 0.042), 0.9, '500');
   },
 
   /* ---- loading.otimizar — "bolha vira engrenagens" §36/§49.1 */
@@ -656,8 +620,6 @@ const CENAS = {
                  hexA(C.auroraTeal, 0.85));
       ctx.restore();
     }
-    texto(ctx, 'otimizando o seu sistema', cx, A * 0.80,
-          Math.max(13, A * 0.042), 0.9, '500');
   },
 
   /* ---- loading.migra_elio — "bolha puxa pastas/papéis/dados com efeito
@@ -698,8 +660,6 @@ const CENAS = {
     ctx.stroke();
 
     bolha(ctx, cx, cy, R * (1 + Math.sin(t * TAU * 2.2) * 0.035), 1);
-    texto(ctx, 'trazendo os seus dados', cx, A * 0.80,
-          Math.max(13, A * 0.042), 0.9, '500');
   },
 
   /* ---- loading.migra_aurora — "informações nadando em rio de aurora boreal"
@@ -748,8 +708,6 @@ const CENAS = {
       ctx.fill();
       ctx.restore();
     }
-    texto(ctx, 'as informações estão nadando até você', L / 2, A * 0.82,
-          Math.max(12, A * 0.038), 0.9, '500');
   },
 
   /* ---- loading.nicho — "acertando em cheio o seu nicho": bola entrando no
@@ -802,8 +760,6 @@ const CENAS = {
       ctx.fillStyle = hexA(C.businessVerde, 0.35 * (1 - f));
       ctx.fillRect(gx, gy - gh / 2, gw, gh);
     }
-    texto(ctx, 'acertando em cheio o seu nicho', L / 2, A * 0.82,
-          Math.max(13, A * 0.042), 0.9, '500');
   },
 };
 
@@ -822,6 +778,37 @@ function misturar(a, b, f) {
 /* =========================================================================
    Motor de slots (§49)
    ========================================================================= */
+
+/* =========================================================================
+   LEGENDAS — o texto das aberturas
+   =========================================================================
+   Decisão do Fundador em 05/09/2026: em vez de produzir os áudios, entra o
+   TEXTO da fala nas animações que têm fala.
+
+   Isso resolve mais do que a estética. §45 fixa que "sons nunca são canal
+   único — texto sempre em paralelo"; aqui não há áudio nenhum, então o texto
+   é o único canal, e por isso ele é DOM de verdade (com aria-live), não
+   pixel desenhado no canvas. Leitor de tela lê, o usuário pode selecionar, e
+   a tipografia acompanha os tokens em vez de ser rasterizada.
+
+   As FALAS são textuais do Guia (§1). Os NOMES são o rótulo do sistema; os
+   microtextos de carregamento são os da §70.3 (os três registrados) mais os
+   marcados AGENTE em sotaque-cosmico.js. */
+export const LEGENDAS = {
+  'abertura.elio':        { nome: 'Elio',
+                            fala: 'Olá, eu sou o Elio.' },                      // §1
+  'abertura.aurora':      { nome: 'Aurora',
+                            fala: 'Olá, eu sou Aurora. Que minha luz domine o seu negócio.' }, // §1
+  'abertura.rotacerta':   { nome: 'RotaCerta' },
+  'abertura.business':    { nome: 'Lumora Business' },
+  'abertura.ecossistema': { nome: 'Lumora Ecossistema' },
+  'abertura.hub':         { nome: 'Lumora Hub', detalhe: 'uso interno' },       // §17
+  'loading.criar_mundo':  { nome: 'criando o seu novo mundo' },                 // §2
+  'loading.otimizar':     { nome: 'otimizando o seu sistema' },                 // §36
+  'loading.migra_elio':   { nome: 'trazendo os seus dados' },
+  'loading.migra_aurora': { nome: 'as informações estão nadando até você' },
+  'loading.nicho':        { nome: 'acertando em cheio o seu nicho' },           // §70.3
+};
 
 /** Durações-alvo do Guia (§18: ~4s; §45: Aurora ~5s, Ecossistema ~6s). */
 export const DURACOES = {
@@ -856,6 +843,135 @@ export class Animacoes {
     // Desligar o 3D é uma escolha legítima de quem integra (§36); o padrão é
     // usá-lo quando o aparelho aguenta.
     this.usar3D = opcoes.usar3D !== false;
+  }
+
+  /* ------------------------------------------------------------- legenda */
+
+  /** Envolve o canvas num `.lum-palco` posicionado (uma vez só).
+   *  Mudança contida e reversível, e a única forma de ancorar o texto à cena
+   *  sem depender do layout de quem integra. */
+  _palco(canvas) {
+    let palco = canvas.parentElement;
+    if (!palco?.classList.contains('lum-palco')) {
+      palco = document.createElement('div');
+      palco.className = 'lum-palco';
+      canvas.parentNode.insertBefore(palco, canvas);
+      palco.appendChild(canvas);
+      this._herdarCaixa(palco, canvas);
+    }
+    return palco;
+  }
+
+  /** A superfície certa para o tipo de contexto pedido ('gl' ou '2d').
+   *
+   *  Um <canvas> entrega UM tipo de contexto na vida. Como as 6 aberturas são
+   *  WebGL e os 5 carregamentos são Canvas 2D, o mesmo elemento não serve aos
+   *  dois — e trocar o elemento no lugar (clonar e substituir) é pior do que
+   *  parece: quem integra guardou a referência do canvas dele, e passou a
+   *  desenhar num nó fora do documento. Medido no banco: depois do primeiro
+   *  carregamento, TODAS as cenas seguintes pintavam um canvas órfão — tela
+   *  congelada, legenda parada.
+   *
+   *  Então nada é substituído. O palco passa a ter as duas superfícies, uma
+   *  visível por vez, e o elemento de quem integra continua no documento,
+   *  vivo e válido para sempre. */
+  _superficie(canvas, tipo) {
+    const dono = canvas.dataset.lumCtx;
+    if (!dono) { canvas.dataset.lumCtx = tipo; return canvas; }
+    if (dono === tipo) return canvas;
+
+    const palco = this._palco(canvas);
+    let irmao = palco.querySelector(`canvas[data-lum-ctx="${tipo}"]`);
+    if (!irmao) {
+      irmao = canvas.cloneNode(false);
+      // o id é de quem integra: não pode existir duas vezes no documento
+      irmao.removeAttribute('id');
+      irmao.dataset.lumCtx = tipo;
+      palco.appendChild(irmao);
+    }
+    // `hidden` basta porque tokens.css garante [hidden] { display:none }
+    for (const c of palco.querySelectorAll('canvas')) c.hidden = (c !== irmao);
+    return irmao;
+  }
+
+  /** Monta (uma vez) a camada de texto sobre a cena. */
+  _legenda(canvas) {
+    const palco = this._palco(canvas);
+    let el = palco.querySelector('.lum-abertura');
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'lum-abertura';
+      // §45: o texto é o canal de informação, então precisa ser anunciado.
+      el.setAttribute('aria-live', 'polite');
+      el.innerHTML = '<p class="lum-abertura-nome"></p>' +
+                     '<p class="lum-abertura-fala"></p>';
+      palco.appendChild(el);
+    }
+    return el;
+  }
+
+  /** O palco assume a caixa externa do canvas, e o canvas passa a preenchê-lo.
+   *
+   *  Sem isto a legenda não tem em que se ancorar. O caminho óbvio — deixar o
+   *  palco medir o canvas com `inline-size: fit-content` — NÃO funciona:
+   *  canvas é elemento substituído e, quando ele é dimensionado em
+   *  porcentagem (o caso normal, `inline-size:100%`), a porcentagem resolve
+   *  contra um container indefinido durante o cálculo intrínseco e dá ZERO.
+   *  Medido: o palco saiu com 0px e o canvas com 2px (só as bordas).
+   *
+   *  O caminho que funciona é o inverso: transferir a restrição de largura
+   *  para o palco, que é um <div> comum e a obedece sem drama, e mandar o
+   *  canvas ocupar 100% dele. A caixa resultante é a mesma de antes — e
+   *  continua responsiva, porque quem manda continua sendo uma restrição
+   *  em CSS, não um número em pixel congelado no momento em que medimos. */
+  _herdarCaixa(palco, canvas) {
+    const cs = getComputedStyle(canvas);
+    // `max-inline-size: none` significa que o limite é a própria largura
+    // usada; nesse caso ela vira o teto do palco.
+    const teto = cs.maxInlineSize !== 'none' ? cs.maxInlineSize : cs.inlineSize;
+    palco.style.inlineSize = '100%';
+    if (teto && teto !== '0px') palco.style.maxInlineSize = teto;
+    canvas.style.inlineSize = '100%';
+    canvas.style.maxInlineSize = 'none';
+  }
+
+  /** Atualiza a legenda conforme o progresso da cena. */
+  _atualizarLegenda(el, slot, p) {
+    const L = LEGENDAS[slot];
+    if (!el || !L) return;
+    const nome = el.querySelector('.lum-abertura-nome');
+    const fala = el.querySelector('.lum-abertura-fala');
+    const abertura = slot.startsWith('abertura.');
+    // Carregamento mostra o microtexto de cara; abertura deixa a cena montar
+    // antes de nomear o sistema.
+    const tNome = abertura ? 0.58 : 0.02;
+    const tFala = 0.74;
+
+    const nomeVisivel = p >= tNome;
+    const falaVisivel = !!L.fala && p >= tFala;
+
+    // A chave do guarda inclui o SLOT, não só a visibilidade. Sem isso, tocar
+    // uma cena depois da outra deixa o texto anterior congelado na tela: a
+    // legenda já estava visível, o booleano não muda, e o conteúdo nunca é
+    // reescrito. Medido: as seis aberturas saíram todas com "Elio".
+    const kNome = `${slot}:${nomeVisivel}`;
+    const kFala = `${slot}:${falaVisivel}`;
+
+    if (nome.dataset.on !== kNome) {
+      nome.dataset.on = kNome;
+      nome.textContent = nomeVisivel
+        ? L.nome + (L.detalhe ? ` · ${L.detalhe}` : '') : '';
+      nome.classList.toggle('lum-abertura--on', nomeVisivel);
+    }
+    if (fala.dataset.on !== kFala) {
+      fala.dataset.on = kFala;
+      fala.textContent = falaVisivel ? L.fala : '';
+      fala.classList.toggle('lum-abertura--on', falaVisivel);
+    }
+  }
+
+  _limparLegenda(canvas) {
+    canvas?.parentElement?.querySelector('.lum-abertura')?.remove();
   }
 
   /** As 6 aberturas têm cena 3D; os 5 carregamentos são Canvas 2D de
@@ -924,30 +1040,30 @@ export class Animacoes {
     // que é o fallback obrigatório da §49.3.
     if (!this.movimentoReduzido && this.nivel !== 'basico' && this.tem3D(slot)) {
       try {
-        const m = this._obterMotor3D(canvas);
-        return m.tocar(slot, dur).catch(() => this._tocar2D(slot, canvas, opcoes));
+        const gl = this._superficie(canvas, 'gl');
+        const m = this._obterMotor3D(gl);
+        const leg = this._legenda(gl);
+        const inicio = performance.now();
+        const acompanhar = () => {
+          if (!m._raf) return;
+          this._atualizarLegenda(leg, slot, Math.min(1, (performance.now() - inicio) / dur));
+          requestAnimationFrame(acompanhar);
+        };
+        requestAnimationFrame(acompanhar);
+        return m.tocar(slot, dur)
+          .then(() => { this._atualizarLegenda(leg, slot, 1); })
+          .catch(() => this._tocar2D(slot, canvas, opcoes));
       } catch (erro) {
+        // §49.3: qualquer falha do 3D cai no 2D, que pega a outra superfície.
         this.ultimoErro3D = erro;
-        // um canvas já usado por WebGL não aceita contexto 2D: precisa de outro
-        canvas = this._trocarCanvas(canvas);
       }
     }
     return this._tocar2D(slot, canvas, opcoes);
   }
 
-  /** Um <canvas> só entrega um tipo de contexto na vida. Se o 3D falhou
-   *  depois de pegar o contexto WebGL, o 2D precisa de um canvas novo no
-   *  mesmo lugar — senão o fallback não desenha nada. */
-  _trocarCanvas(canvas) {
-    if (!canvas.parentNode) return canvas;
-    const novo = canvas.cloneNode(false);
-    canvas.parentNode.replaceChild(novo, canvas);
-    if (this._canvas3d === canvas) { this._motor3d = null; this._canvas3d = null; }
-    return novo;
-  }
-
   _tocar2D(slot, canvas, opcoes = {}) {
     const cena = CENAS[slot];
+    canvas = this._superficie(canvas, '2d');
     const ctx = canvas.getContext('2d');
     if (!ctx) return Promise.resolve();
     const dpr = Math.min(devicePixelRatio || 1, this.nivel === 'basico' ? 1 : 2);
@@ -958,9 +1074,13 @@ export class Animacoes {
     canvas.height = Math.round(A * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    const leg = this._legenda(canvas);
+
     // §49.3: com prefers-reduced-motion, PÔSTER ESTÁTICO — o quadro final.
+    // A legenda aparece inteira de uma vez: o gesto some, o texto fica.
     if (this.movimentoReduzido) {
       cena(ctx, 1, L, A);
+      this._atualizarLegenda(leg, slot, 1);
       return Promise.resolve();
     }
 
@@ -973,6 +1093,7 @@ export class Animacoes {
         if (!ativo) return;
         const t = clamp01((agora - inicio) / dur);
         cena(ctx, t, L, A);
+        this._atualizarLegenda(leg, slot, t);
         if (t >= 1) { ativo = false; this._cancelar = null; resolve(); return; }
         this._raf = requestAnimationFrame(laco);
       };
@@ -986,9 +1107,15 @@ export class Animacoes {
     const cena = CENAS[slot];
     if (!cena) return;
     if (this.nivel !== 'basico' && this.tem3D(slot)) {
-      try { this._obterMotor3D(canvas).poster(slot); return; }
-      catch (erro) { this.ultimoErro3D = erro; canvas = this._trocarCanvas(canvas); }
+      try {
+        const gl = this._superficie(canvas, 'gl');
+        this._obterMotor3D(gl).poster(slot);
+        this._atualizarLegenda(this._legenda(gl), slot, 1);
+        return;
+      }
+      catch (erro) { this.ultimoErro3D = erro; }
     }
+    canvas = this._superficie(canvas, '2d');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -999,6 +1126,7 @@ export class Animacoes {
     canvas.height = Math.round(A * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cena(ctx, 1, L, A);
+    this._atualizarLegenda(this._legenda(canvas), slot, 1);
   }
 
   parar() {

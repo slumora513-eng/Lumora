@@ -67,6 +67,8 @@ Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da h
 | *"o pode ir vale pras animações também, pode fazer tudo"* | Estende o sinal às **animações dos slots §18/§49** e ao restante da Interface Viva. | [`../runtime/animacoes.js`](../runtime/animacoes.js) |
 | *"usa o céu estrelado puro como briefing oficial"* | Resolve a escalação §5. Define o briefing de `abertura.business`, órfão desde a revogação da aquarela. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
 | *"pode resolver os problemas que deu tranquilamente"* + *"tenta fazer algo mais 3D"* | Autoriza resolver as escalações abertas e manda as aberturas para **WebGL 3D** — a metade da §65.5 que faltava. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
+| *"nem precisa fazer esses áudios, só coloca o texto da fala"* | Descarta a produção de áudio e põe a **fala em texto** nas aberturas que têm fala. Mantém §48 intacta e §64.2 congelada. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
+| *"a animação do RotaCerta poderia ser melhor (...) ficou meio confuso"* | Reprova a primeira versão da cena e manda refazer. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
 
 ---
 
@@ -99,8 +101,11 @@ Com isso saíram do bloqueio, além dos seis passos da §71:
 ### A distinção que continua valendo: código procedural × arquivo de mídia
 
 §48 proíbe uma coisa nomeada: *"nenhuma nova **geração de imagem, vídeo ou áudio** será feita
-pela plataforma"*. **Nenhum arquivo de mídia foi gerado.** As animações entregues são **cenas
-procedurais em Canvas 2D** — código, no mesmo meio que a §65.5 decidiu para toda a estética e
+pela plataforma"*. **Nenhum arquivo de mídia foi gerado** — e em 05/09/2026 o Fundador fechou
+também a única brecha que restava, decidindo que as falas das aberturas entram como **texto**
+em vez de áudio produzido. As animações entregues são **cenas
+procedurais em Canvas 2D e WebGL** — código, no mesmo meio que a §65.5 decidiu para toda a
+estética e
 que a §71 exige por leveza (*"tudo em CSS/JS e texto, sem gerar novos assets de mídia"*).
 
 Elas entram no sistema de slots da §49 como versão `1`, com `fonte: "procedural-lumora"`.

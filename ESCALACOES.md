@@ -8,6 +8,10 @@ Fundador (§1, §5) e quatro sob a autorização *"pode resolver os problemas qu
 tranquilamente"* (§2, §3 parcial, §4, §7). **Um continua aberto** (§6) e **um resta parcial**
 (§3, só para o papel).
 
+Ainda em 05/09/2026 o Fundador **desbloqueou a parte de áudio da §6**, decidindo que a fala das
+aberturas entra como **texto** em vez de arquivo sonoro. Os arquivos continuam não entregues —
+o que mudou é que a ausência deixou de travar as animações.
+
 Tudo que foi resolvido sob autorização está marcado como **DEFAULT DO AGENTE** — nenhum deles
 é registrado como decisão do Fundador, conforme a regra 22.
 
@@ -159,6 +163,21 @@ registrar a ausência em vez de inventá-lo".
 **Pergunta:** o Fundador deseja anexar algum destes à biblioteca oficial? Os protótipos v1–v4
 são especialmente relevantes: são a única demonstração executável da Interface Viva, e §67/§68
 os citam como artefato oficial de cada decisão.
+
+### Os áudios saíram da lista de bloqueios em 05/09/2026
+
+**Decisão do Fundador:** *"nem precisa fazer esses áudios, só coloca mesmo um texto falando (...)
+só o texto da fala, das animações que tem uma fala."*
+
+A ausência dos 10 arquivos da §45 **deixou de bloquear as aberturas**: as falas entram como
+**texto em tela**, e as duas que existem são textuais da §1. Isso vale inclusive para o
+`business_abertura_som.mp3` marcado `[REVOGADO]` — ele não precisa mais ser refeito para o slot
+funcionar, o que fecha a pendência que a §5 tinha deixado aberta aqui dentro.
+
+**O que permanece nesta escalação:** os arquivos continuam não entregues, e a identidade sonora
+segue sendo produção do profissional contratado (§48/§64.2, congelada). Quando os áudios
+chegarem, o texto **não sai** — vira a legenda que a própria §45 exige (*"sons nunca são canal
+único"*). Nada foi gerado por esta plataforma.
 
 ---
 

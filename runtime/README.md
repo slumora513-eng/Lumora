@@ -55,6 +55,7 @@ sem motivo extra* (§65.1). Nenhuma cena é provisória.
 <link rel="stylesheet" href="runtime/tokens.css">
 <link rel="stylesheet" href="runtime/formas-que-sentem.css">
 <link rel="stylesheet" href="runtime/acessibilidade-bonita.css">
+<link rel="stylesheet" href="runtime/animacoes.css">   <!-- texto das aberturas -->
 
 <body class="lum-raiz">
   <canvas id="ceu" aria-hidden="true"></canvas>
@@ -92,7 +93,7 @@ Estas não são convenções que alguém possa esquecer — estão no caminho de
 |---|---|
 | **Humor nunca em contexto fiscal/crítico** (§70.3) | `SotaqueCosmico.frase()` troca para o catálogo neutro sozinha quando o contexto está em `CONTEXTOS_CRITICOS` |
 | **`prefers-reduced-motion` reduz gesto, nunca informação** (§35 item 8) | Céu Vivo desenha um quadro estático em vez de parar de existir; Viagem Cósmica vira fade e **ainda navega**; respingo não é criado; a constelação do documento permanece |
-| **Som nunca é canal único** (§45/§68.5/§69.5) | `anunciar()` é canal de texto independente, com `aria-live` polite/assertive |
+| **Som nunca é canal único** (§45/§68.5/§69.5) | `anunciar()` é canal de texto independente, com `aria-live` polite/assertive. Nas aberturas não há som algum: a fala é **texto em DOM** com `aria-live`, nunca pixel desenhado no canvas |
 | **Cor nunca carrega informação sozinha** (§35 item 3) | `.lum-estado` e `.lum-doc-status` injetam ícone por `::before` em toda paleta, inclusive preto/branco |
 | **Campo é geométrico, não bolha** (§65.3) | `tokens.css` aplica `--lum-raio-campo` a inputs, selects, textareas e tabelas |
 | **Nada pisca acima de 3 Hz** (§35 item 8) | Ciclo de respiração fixado em 3 s (0,33 Hz) |
@@ -152,7 +153,7 @@ desenho chapado:
 |---|---|
 | `abertura.elio` | Intersecção raio-esfera analítica, normal real, Fresnel e **refração**: o céu é reamostrado pelo raio que atravessa a bolha, com parede fina de bolha de sabão. É isso que dá volume. |
 | `abertura.aurora` | **Volume raymarchado** — a cortina tem espessura e o raio acumula densidade atravessando ela. |
-| `abertura.rotacerta` | Plano de chão em perspectiva, veículos em **SDF de caixa**, câmera que afasta de verdade. A malha de rotas é **teal** ligando waypoints **âmbar** (§65.1). |
+| `abertura.rotacerta` | **Refeita em 05/09/2026** (ver abaixo). Rota **teal** que serpenteia até o horizonte, waypoints **âmbar** pousados sobre ela, veículos em SDF de caixa correndo **ao longo** da rota, orientados pela tangente dela, com farol e oclusão real (§65.1). |
 | `abertura.business` | Campo estelar por direção do raio, com **paralaxe real** de três camadas de profundidade. |
 | `abertura.ecossistema` | Órbitas 3D em perspectiva; os sistemas são recolhidos por uma bolha de vidro. |
 | `abertura.hub` | Núcleo de vidro e conexões neurais como **segmentos 3D** com distância raio↔segmento. |
@@ -160,13 +161,60 @@ desenho chapado:
 WebGL1 cru: um triângulo de tela cheia e um fragment shader por cena.
 **Sem bibliotecas**, como a §65.5 exige.
 
+A silhueta do vidro é **anti-serrilhada por cobertura**: a intersecção raio-esfera
+é binária e desenhava a borda em degraus — e numa bolha Liquid Glass a borda é
+justamente o que se olha. `vidro()` devolve cobertura junto com a cor, medindo a
+silhueta contra uma janela de ~1 pixel projetada na profundidade da esfera.
+
 Os **5 carregamentos** ficam em Canvas 2D de propósito — são estados utilitários
 de ~2,5 s, e a §36 pede leveza onde a cena não é a peça de apresentação.
 
 **Cadeia de fallback (§36/§49.3):** WebGL indisponível, nível Básico, shader que
-não compila ou contexto perdido → as cenas Canvas 2D assumem, num canvas novo
-(um `<canvas>` só entrega um tipo de contexto na vida). Com
+não compila ou contexto perdido → as cenas Canvas 2D assumem. Com
 `prefers-reduced-motion` → pôster estático. O usuário nunca vê tela quebrada.
+
+**As duas superfícies.** Um `<canvas>` entrega **um** tipo de contexto na vida, e
+as aberturas são WebGL enquanto os carregamentos são 2D. O palco por isso guarda
+**duas superfícies**, uma visível por vez — e o canvas de quem integra **nunca é
+substituído**. A tentação é clonar e trocar o elemento; não funciona, porque quem
+integra guardou a referência dele e passa a desenhar num nó fora do documento.
+Medido no banco antes da correção: depois do primeiro carregamento, todas as cenas
+seguintes pintavam um canvas órfão — tela congelada.
+
+### `abertura.rotacerta` — por que foi refeita
+
+O Fundador reprovou a primeira versão: *"ficou algo meio confuso, tipo assim, meio
+estranho"*. O diagnóstico foi que a cena tinha **duas ideias que não se encontravam**
+— uma grade retrô de chão com caixas correndo por cima, e pontos âmbar boiando no
+céu, sem relação entre si. Nenhum dos dois estava "errado" isolado; juntos não
+formavam leitura.
+
+A versão nova tem **uma ideia só**: uma rota luminosa que vai daqui até o horizonte,
+e tudo o que aparece está **sobre ela**.
+
+| Antes | Agora |
+|---|---|
+| Grade de chão retrô ocupando a tela | Grade removida. O chão é escuro; quem desenha o espaço é a rota |
+| Waypoints âmbar flutuando soltos no céu | Waypoints **pousados na rota**, com um feixe curto até ela |
+| Veículos correndo em linha reta, alheios à rota | Veículos **sobre a rota**, seguindo a curva dela |
+| Luzes atravessando a lataria (soma sem profundidade) | Luzes **ocluídas** pelo corpo do veículo |
+
+Isso também é o que a §65.1 pede quando fala em *"malha de rotas luminosas
+(teal + âmbar) ligando waypoints"* — a rota é o assunto, não o cenário.
+
+### A camada de texto das aberturas
+
+Decisão do Fundador em 05/09/2026: em vez de produzir os áudios, entra o **texto
+da fala**. Ver [`../docs/09-producao-de-assets.md`](../docs/09-producao-de-assets.md).
+
+- Catálogo em `LEGENDAS` (`animacoes.js`), estilo em `animacoes.css`.
+- As **duas falas são textuais da §1**; as outras nove cenas não têm fala no Guia
+  e por isso não ganharam nenhuma.
+- O texto é **DOM com `aria-live="polite"`**, não pixel no canvas: sem áudio, ele
+  é o único canal de informação, e §35 não admite informação que só existe como
+  pixel. Assim o leitor de tela anuncia e o texto escala com o zoom.
+- O runtime envolve o canvas num `.lum-palco` — mudança contida, e a única forma
+  de ancorar o texto à cena sem depender do layout de quem integra.
 
 ---
 
@@ -192,6 +240,12 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   encenação quadro a quadro.)** Tempos, ordem dos trechos e composição de cada
   uma das 11 cenas são decisão deste agente; os briefings em si vêm da §18/§49.1,
   e o de `abertura.business` do Fundador (05/09/2026).
+- **(DEFAULT DO AGENTE — o Fundador decidiu *que* entra o texto da fala, não a
+  tipografia nem o momento em que ele aparece.)** O nome do sistema entra a 58% da
+  abertura e a fala a 74%; nos carregamentos o microtexto entra logo no início. O
+  véu de leitura sob o texto também é escolha deste agente — existe porque a cena
+  tem momentos claros (cortina de aurora, farol âmbar) onde branco puro perderia
+  contraste. **As falas em si não são default: são textuais da §1.**
 - **(DEFAULT DO AGENTE — §72.1 item 3 aprovou "notas procedurais WebAudio
   (fiscal/pedido/sistema)" sem fixar as notas.)** As frequências de
   `IdentidadeSonora` foram escolhidas por este agente.

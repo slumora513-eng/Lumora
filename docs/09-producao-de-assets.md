@@ -138,6 +138,38 @@ Watercolor Whisp) foram **rejeitados pelo Fundador** em 23/08/2026 e os novos es
 
 **Nenhum áudio novo foi gerado.** §48 proíbe.
 
+### Decisão do Fundador em 05/09/2026 — o texto no lugar do áudio
+
+> *"nem precisa fazer esses áudios, só coloca mesmo um texto falando, ai olá, eu sou o Elio,
+> ou algo assim do tipo (...) só o texto da fala, das animações que tem uma fala."*
+
+O Fundador ofereceu as duas saídas (produzir os áudios ou pôr o texto) e escolheu a segunda.
+As aberturas que têm fala passam a **exibir a fala como texto**, e nenhum arquivo de áudio é
+produzido — o que mantém a §48 intacta e não toca na §64.2, que segue congelada.
+
+Duas falas, ambas **textuais da §1**, sem uma palavra acrescentada:
+
+| Slot | Nome em tela | Fala |
+|---|---|---|
+| `abertura.elio` | Elio | "Olá, eu sou o Elio." |
+| `abertura.aurora` | Aurora | "Olá, eu sou Aurora. Que minha luz domine o seu negócio." |
+
+As outras nove cenas não têm fala no Guia e por isso **não ganharam nenhuma**: recebem apenas
+o nome do sistema (ou o microtexto de carregamento, §70.3). Inventar fala para elas seria
+inventar voz de marca — a mesma proibição da regra 14 aplicada a texto.
+
+**Consequência de acessibilidade, e é a parte que importa.** §45 exige que *"sons nunca sejam
+canal único — texto sempre em paralelo"*. Aqui não há som algum: o texto é o **único** canal.
+Por isso ele é **DOM de verdade** (`aria-live="polite"`), não pixel desenhado no canvas — leitor
+de tela anuncia, o usuário seleciona e copia, o texto escala com o zoom e segue os tokens.
+Desenhá-lo no canvas teria a mesma aparência e nenhuma dessas propriedades.
+
+Implementado em [`../runtime/animacoes.js`](../runtime/animacoes.js) (catálogo `LEGENDAS`) e
+[`../runtime/animacoes.css`](../runtime/animacoes.css).
+
+> **Quando o profissional entregar os áudios (§48/§64.2), o texto não sai.** Ele passa a ser
+> a legenda que a §45 já exigia. A camada foi construída para esse futuro, não contra ele.
+
 ---
 
 ## Estética procedural × assets oficiais (regra 21)

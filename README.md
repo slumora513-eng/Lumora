@@ -105,8 +105,10 @@ Registrados conforme a regra 22 do prompt operacional. Nenhum destes é decisão
 Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
 - **Nenhum arquivo de mídia gerado** — imagem, vídeo ou áudio. §48 proíbe nomeadamente
-  *"nova geração de imagem, vídeo ou áudio pela plataforma"*, e isso continua valendo. As 11
-  animações dos slots §49 são **cenas procedurais em Canvas 2D** — código, não mídia —
+  *"nova geração de imagem, vídeo ou áudio pela plataforma"*, e isso continua valendo. Em
+  05/09/2026 o Fundador fechou a última brecha: as falas das aberturas entram como **texto em
+  tela**, não como áudio produzido. As 11
+  animações dos slots §49 são **cenas procedurais em Canvas 2D e WebGL** — código, não mídia —
   registradas no manifest como `fonte: "procedural-lumora"`. Os vídeos finais do profissional
   contratado entram como versão superior e viram ativos sem mudar código (§49.3), com a versão
   procedural virando o fallback obrigatório. **§64.2 permanece congelada:** cronograma,
@@ -140,8 +142,9 @@ do Fundador (regra 22).
 2. Como suprir a **falta de alfa** nos 13 arquivos sem violar a regra de não alterar pixels.
    **Agora bloqueia a L canônica no papel-mãe.** *(§3)*
 3. **RotaCerta**: §65.1 pede "teal + âmbar"; o asset oficial traz violeta/azul + âmbar. *(§4)*
-4. **Assets citados no Guia que não foram entregues** (áudios §45, protótipos v1–v4, amostras
-   conceituais) — registrados como ausentes, não recriados. *(§6)*
+4. **Assets citados no Guia que não foram entregues** (protótipos v1–v4, amostras conceituais)
+   — registrados como ausentes, não recriados. Os **áudios da §45** continuam não entregues, mas
+   deixaram de bloquear: o Fundador decidiu em 05/09/2026 que a fala entra como texto. *(§6)*
 6. As três **paletas de alto contraste** (§70.6) são nomeadas, mas sem nenhum valor definido.
    **Agora bloqueia o passo 6 da Fase 3A.** *(§7)*
 
