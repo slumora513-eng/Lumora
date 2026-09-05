@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="formas-que-sentem.css">
 <link rel="stylesheet" href="acessibilidade-bonita.css">
 <link rel="stylesheet" href="documentos-com-alma.css">
+<link rel="stylesheet" href="notificacoes-vivas.css">
+<link rel="stylesheet" href="navegacao.css">
+<link rel="stylesheet" href="interface-viva.css">
 <style>
   /* Estilos SÓ desta página de verificação. Não fazem parte do runtime. */
   * { box-sizing: border-box; }
@@ -15,7 +18,7 @@
   body { background: var(--lum-deep-space); }
   /* canvas é elemento substituído: inset:0 sozinho NÃO estica — precisa de tamanho explícito */
   #ceu { position: fixed; inset: 0; z-index: 0; display: block; inline-size: 100%; block-size: 100%; }
-  .painel { position: relative; z-index: 1; padding: 24px; max-inline-size: 980px; margin-inline: auto; }
+  .painel { position: relative; z-index: 1; padding: 24px 24px 96px; max-inline-size: 980px; margin-inline: auto; padding-block-start: 86px; }
   h1 { font-size: 22px; margin: 0 0 4px; }
   h2 { font-size: 15px; margin: 28px 0 10px; color: var(--lum-texto-2);
        text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
@@ -145,15 +148,102 @@
     Cor + ícone + texto sempre juntos (§35 item 3). "Fogo de Nebulosa", "Aurora Dia" e
     "Aurora Noite" ainda não têm valores definidos no Guia — ver <code>ESCALACOES.md §7</code>.
   </p>
+
+  <h2>7 · Animações dos slots <span class="aviso">§18 / §49 — procedurais</span></h2>
+  <p class="aviso">
+    Cenas em Canvas 2D nos slots da §49, versão <code>procedural-lumora</code>.
+    Nenhum arquivo de mídia foi gerado (§48). Quando o profissional contratado entregar os
+    vídeos finais, eles entram como versão 2 no manifest e viram ativos sem mudar código.
+  </p>
+  <canvas id="palco" width="640" height="360"
+          style="inline-size:100%; max-inline-size:640px; aspect-ratio:16/9; block-size:auto;
+                 border:1px solid var(--lum-vidro-borda); border-radius:14px; display:block"></canvas>
+  <div class="linha" style="margin-top:12px">
+    <button class="lum-botao" data-slot="abertura.elio">Elio</button>
+    <button class="lum-botao" data-slot="abertura.aurora">Aurora</button>
+    <button class="lum-botao" data-slot="abertura.rotacerta">RotaCerta</button>
+    <button class="lum-botao" data-slot="abertura.business">Business ⚠</button>
+    <button class="lum-botao" data-slot="abertura.ecossistema">Ecossistema</button>
+    <button class="lum-botao" data-slot="abertura.hub">Hub</button>
+  </div>
+  <div class="linha" style="margin-top:8px">
+    <button class="lum-botao" data-slot="loading.criar_mundo">criar mundo</button>
+    <button class="lum-botao" data-slot="loading.otimizar">otimizar</button>
+    <button class="lum-botao" data-slot="loading.migra_elio">migra · Elio</button>
+    <button class="lum-botao" data-slot="loading.migra_aurora">migra · Aurora</button>
+    <button class="lum-botao" data-slot="loading.nicho">nicho</button>
+  </div>
+  <p class="aviso">⚠ <code>abertura.business</code> é PLACEHOLDER: o briefing original caiu com a
+     aquarela (§60.1) e nenhum substituto foi registrado — ESCALACOES §5.</p>
+
+  <h2>8 · Notificações Vivas <span class="aviso">§69</span></h2>
+  <div class="linha">
+    <button class="lum-botao" data-notif="normal">Normal</button>
+    <button class="lum-botao" data-notif="alta">Alta</button>
+    <button class="lum-botao" data-notif="critica">Crítica (fiscal) — não some</button>
+    <button class="lum-botao" id="bolido">Bólido (excepcional)</button>
+    <button class="lum-botao" id="ventania">Ventania</button>
+  </div>
+
+  <h2>9 · Navegação <span class="aviso">§65.3 bolhas · §66 ondas</span></h2>
+  <p class="aviso">A bolha-âncora está no canto superior esquerdo. Ctrl+K abre a Nebulosa de Ações.
+     No tema Aurora, o scroll percorre a crista da onda.</p>
+  <div class="linha">
+    <button class="lum-botao" data-tema="elio">Tema Elio (bolhas)</button>
+    <button class="lum-botao" data-tema="aurora">Tema Aurora (ondas)</button>
+    <button class="lum-botao" id="abrir-nav">Abrir navegação</button>
+    <button class="lum-botao" id="abrir-neb">Nebulosa (Ctrl+K)</button>
+  </div>
+
+  <h2>10 · Interface Viva <span class="aviso">§67 / §68</span></h2>
+  <div class="linha" id="badges"></div>
+  <div class="linha" style="margin-top:10px">
+    <button class="lum-botao" id="rastro">Rastro de Aurora (3s)</button>
+    <button class="lum-botao" id="pulso">Pulso no Sismógrafo</button>
+  </div>
+  <div class="grade" style="margin-top:12px">
+    <div class="lum-card" data-lum-estrelinha="card-1"><strong>Pedido #1042</strong><br>
+      <span class="aviso">Estrelinha = favorito celeste (§68.4)</span></div>
+    <div class="lum-card" data-lum-estrelinha="card-2"><strong>Cliente Aurora Ltda</strong><br>
+      <span class="aviso">Clique na estrela</span></div>
+  </div>
+  <canvas id="sismo" class="lum-sismografo"></canvas>
 </main>
 
 <script type="module">
 import { Lumora, anunciar, restaurarPaleta } from './lumora.js';
+import { estrelaDoUsuario, climaDoDia } from './interface-viva.js';
 
 restaurarPaleta();
 
 const canvas = document.getElementById('ceu');
-const lum = new Lumora({ canvasCeu: canvas });
+const abas = [
+  { id:'financeiro', rotulo:'Financeiro', sub:[
+      {id:'pdv',rotulo:'PDV'},{id:'pedidos',rotulo:'Pedidos'},{id:'comprov',rotulo:'Comprovantes'}]},
+  { id:'operacao', rotulo:'Controle de Operação', sub:[
+      {id:'rotas',rotulo:'Rotas'},{id:'entregas',rotulo:'Entregas'}]},
+  { id:'estoque', rotulo:'Estoque' },
+  { id:'fiscal', rotulo:'Fiscal', sub:[{id:'nfe',rotulo:'NF-e'},{id:'nfce',rotulo:'NFC-e'}]},
+  { id:'comunidade', rotulo:'Comunidade' },
+  { id:'patio', rotulo:'Vista de Pátio' },
+];
+const acoes = [
+  { id:'venda', rotulo:'Nova venda', grupo:'Financeiro', executar(){ anunciar('Nova venda aberta.'); } },
+  { id:'patio', rotulo:'Vista de Pátio', grupo:'Painéis', executar(){ anunciar('Vista de Pátio.'); } },
+  { id:'lgpd', rotulo:'Relatório LGPD', grupo:'Conformidade', executar(){ anunciar('Relatório LGPD.'); } },
+  { id:'nfe', rotulo:'Emitir NF-e', grupo:'Fiscal', executar(){ anunciar('Rascunho de NF-e criado.'); } },
+  { id:'foco', rotulo:'Modo Foco', grupo:'Interface', executar(){ lum.modoFoco(true); } },
+];
+const lum = new Lumora({
+  canvasCeu: canvas,
+  canvasSismografo: document.getElementById('sismo'),
+  abas, acoes,
+  aoNavegar: (aba, sub) => anunciar(`Abrindo ${(sub||aba).rotulo}.`),
+});
+document.getElementById('badges').append(
+  estrelaDoUsuario({ nome:'Fundador', nivel:12, plano:'Ecossistema' }),
+  climaDoDia({ tipo:'bom', texto:'dia de céu aberto' }),
+);
 document.getElementById('saudacao').textContent = lum.sotaque.saudacao();
 
 // Céu Vivo
@@ -207,6 +297,49 @@ document.getElementById('ir-b').addEventListener('click', (ev) =>
   lum.viajar(a, b, { foco: { x: ev.clientX, y: ev.clientY } }));
 document.getElementById('ir-a').addEventListener('click', (ev) =>
   lum.viajar(b, a, { foco: { x: ev.clientX, y: ev.clientY } }));
+
+// Animações dos slots (§49)
+const palco = document.getElementById('palco');
+for (const b of document.querySelectorAll('[data-slot]')) {
+  b.addEventListener('click', () => {
+    lum.tocarAnimacao(b.dataset.slot, palco);
+    anunciar(`Tocando a animação ${b.dataset.slot}.`);
+  });
+}
+
+// Notificações Vivas (§69)
+for (const b of document.querySelectorAll('[data-notif]')) {
+  b.addEventListener('click', () => {
+    const u = b.dataset.notif;
+    lum.notificar(u === 'critica'
+      ? { texto:'Rascunho de NF-e aguardando aprovação', categoria:'fiscal', valor:'R$ 1.250,00' }
+      : { texto:'Pagamento recebido', categoria:'pagamento_demo', urgencia:u, valor:'R$ 320,00' });
+  });
+}
+document.getElementById('bolido').addEventListener('click', () =>
+  lum.lancarBolido({ texto:'Falha crítica no serviço de emissão fiscal.' }));
+document.getElementById('ventania').addEventListener('click', () => {
+  lum.notificacoes.ventania();
+  anunciar('Notificações não críticas dispensadas.');
+});
+
+// Tema e navegação
+for (const b of document.querySelectorAll('[data-tema]')) {
+  b.addEventListener('click', () => {
+    lum.definirTema(b.dataset.tema);
+    anunciar(`Tema ${b.dataset.tema} aplicado.`);
+  });
+}
+document.getElementById('abrir-nav').addEventListener('click', () => lum.navegacao.abrir());
+document.getElementById('abrir-neb').addEventListener('click', () => lum.nebulosa.abrir());
+
+// Interface Viva
+document.getElementById('rastro').addEventListener('click', () =>
+  lum.rastro.durante(new Promise(r => setTimeout(r, 3000))));
+document.getElementById('pulso').addEventListener('click', () => {
+  lum.acenderEstrela({ tipo:'venda', forca: 1.2 });
+  anunciar('Pulso injetado no Sismógrafo e estrela acesa.');
+});
 
 // Paletas
 for (const bt of document.querySelectorAll('[data-paleta]')) {

@@ -1,0 +1,230 @@
+{
+  "apiVersion": "lumora.animations/v1",
+  "_nota": "Registro oficial de slots da §49. A versão 1 de cada slot é a cena PROCEDURAL (Canvas 2D, runtime/animacoes.js) — nenhum arquivo de mídia foi gerado, o que mantém §48. Quando o profissional contratado entregar os vídeos finais (§48/§64.2), eles entram como versão 2 com fonte 'profissional-contratado' e viram ativos SEM mudar código (§49.3, troca sem deploy). A versão 1 permanece como o fallback obrigatório que a §49.3 exige. Limite de 5 versões por slot; mais antigas são arquivadas, não apagadas.",
+  "_regras": {
+    "troca_sem_deploy": "upload no Hub -> pré-visualização -> aprovação -> ativação (§49.3)",
+    "fallback_obrigatorio": "toda versão nova convive com a anterior; falha cai para a anterior",
+    "aprovacao": "nenhuma versão vira ativa sem aprovado_por + data_aprovacao preenchidos",
+    "peso_maximo": { "abertura": "8 MB", "loading": "3 MB", "microinteracao": "3 MB" },
+    "formatos_v1": ["MP4 (H.264)", "WebM (VP9/AV1)", "Lottie JSON", "poster JPG/WebP"],
+    "movimento_reduzido": "poster estático; avisos de segurança nunca suprimidos (§26)"
+  },
+
+  "slots": {
+    "abertura.elio": {
+      "tipo": "inicializacao",
+      "sistema": "Elio",
+      "briefing": "Bolhinhas se juntando até formar a bolha principal; fala \"Olá, eu sou o Elio.\"",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'abertura.elio'",
+          "formatos": { "procedural": "CENAS['abertura.elio']" },
+          "audio": { "abertura": "elio_abertura_som.mp3", "voz": "elio_boas_vindas.mp3" },
+          "audio_status": "NÃO ENTREGUE — §45 lista o arquivo, o repositório não o tem (ESCALACOES §6)",
+          "duracao_alvo_s": 4.2,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "abertura.aurora": {
+      "tipo": "inicializacao",
+      "sistema": "Aurora",
+      "briefing": "Noite chegando e aurora boreal se formando; fala etérea e ecoante. Aurora é aurora boreal, NUNCA bolha (§60.11).",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'abertura.aurora'",
+          "formatos": { "procedural": "CENAS['abertura.aurora']" },
+          "audio": { "abertura": "aurora_abertura_som.mp3", "voz": "aurora_boas_vindas.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 5.0,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "abertura.rotacerta": {
+      "tipo": "inicializacao",
+      "sistema": "RotaCerta",
+      "briefing": "Horizonte com veículos em silhueta azul e zoom out.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'abertura.rotacerta'",
+          "formatos": { "procedural": "CENAS['abertura.rotacerta']" },
+          "audio": { "abertura": "rotacerta_abertura_som.mp3", "voz": "rotacerta_boas_vindas.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 4.0,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "abertura.business": {
+      "tipo": "inicializacao",
+      "sistema": "Lumora Business",
+      "briefing": "SEM BRIEFING VIGENTE. O original — \"gota de aquarela se espalhando formando o nome\" — foi REVOGADO em §60.1 junto com a aquarela, e nenhum substituto foi registrado no Guia. ESCALACOES.md §5 continua ABERTA.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'abertura.business'",
+          "_aviso": "PLACEHOLDER DECLARADO, não briefing aprovado. Derivado da única decisão visual que o Guia dá ao Business (§65.1, \"céu estrelado puro, sem motivo extra\"): as estrelas se condensam numa constelação. Substituir assim que o Fundador responder a ESCALACOES §5.",
+          "formatos": { "procedural": "CENAS['abertura.business']" },
+          "audio": { "abertura": "business_abertura_som.mp3", "voz": "business_boas_vindas.mp3" },
+          "audio_status": "REVOGADO em §60.1 (acompanhava a gota de aquarela) e NÃO ENTREGUE",
+          "duracao_alvo_s": 4.0,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "abertura.ecossistema": {
+      "tipo": "inicializacao",
+      "sistema": "Lumora Ecossistema",
+      "briefing": "Versão épica unindo os sistemas. Não é soma de logos: os sistemas orbitam e são recolhidos por uma bolha única.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'abertura.ecossistema'",
+          "formatos": { "procedural": "CENAS['abertura.ecossistema']" },
+          "audio": { "abertura": "ecossistema_abertura_som.mp3", "voz": "ecossistema_boas_vindas.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 6.0,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "abertura.hub": {
+      "tipo": "inicializacao",
+      "sistema": "Lumora Hub (INTERNO — §17, nunca produto do catálogo)",
+      "briefing": "Bolha central com conexões no estilo de neurônios; esfera técnica liquid-glass.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'abertura.hub'",
+          "formatos": { "procedural": "CENAS['abertura.hub']" },
+          "audio": { "abertura": "hub_abertura_som.mp3", "voz": "hub_boas_vindas.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 4.0,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "loading.criar_mundo": {
+      "tipo": "carregamento",
+      "contexto": "Personalização por nicho (§2)",
+      "briefing": "\"Criando o seu novo mundo\" — bolha vira planeta.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'loading.criar_mundo'",
+          "formatos": { "procedural": "CENAS['loading.criar_mundo']" },
+          "audio": { "abertura": "elio_criando_mundo.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 2.6,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "loading.otimizar": {
+      "tipo": "carregamento",
+      "contexto": "Otimização adaptativa (§36)",
+      "briefing": "\"Otimizando o seu sistema\" — bolha vira engrenagens.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'loading.otimizar'",
+          "formatos": { "procedural": "CENAS['loading.otimizar']" },
+          "audio": { "abertura": "elio_otimizando.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 2.6,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "loading.migra_elio": {
+      "tipo": "carregamento",
+      "contexto": "MigraLumora (§3)",
+      "briefing": "Bolha puxa pastas, papéis e dados para dentro dela com efeito de splash.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'loading.migra_elio'",
+          "formatos": { "procedural": "CENAS['loading.migra_elio']" },
+          "audio": { "abertura": "elio_migrando.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 2.6,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "loading.migra_aurora": {
+      "tipo": "carregamento",
+      "contexto": "MigraLumora (§3)",
+      "briefing": "As informações nadam em um rio de aurora boreal.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'loading.migra_aurora'",
+          "formatos": { "procedural": "CENAS['loading.migra_aurora']" },
+          "audio": { "abertura": "aurora_informacoes.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 2.6,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    },
+
+    "loading.nicho": {
+      "tipo": "carregamento",
+      "contexto": "Personalização por nicho (§2)",
+      "briefing": "\"Acertando em cheio o seu nicho\" — bola entrando no gol.",
+      "versao_ativa": "1",
+      "versoes": {
+        "1": {
+          "fonte": "procedural-lumora",
+          "autor": "runtime/animacoes.js — cena 'loading.nicho'",
+          "formatos": { "procedural": "CENAS['loading.nicho']" },
+          "audio": { "abertura": "elio_nicho.mp3" },
+          "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
+          "duracao_alvo_s": 2.4,
+          "aprovado_por": "fundador",
+          "data_aprovacao": "2026-09-05"
+        }
+      }
+    }
+  },
+
+  "_slots_nao_registrados": {
+    "_nota": "§49.3: registrar um slot novo exige entrada no registro da §49.1 ANTES de existir no manifest. Estes dois foram cobrados pelo próprio Guia (§45, §49.3) e seguem pendentes de definição — nenhuma cena foi inventada para eles.",
+    "fia alto": "não é slot registrado; sem briefing na §18",
+    "magos": "não é slot registrado; sem briefing na §18"
+  }
+}

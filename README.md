@@ -27,7 +27,7 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`docs/09-producao-de-assets.md`](docs/09-producao-de-assets.md) | O que a plataforma **não** produz; slots §49 |
 | [`docs/10-paleta.md`](docs/10-paleta.md) | Paleta **medida** nos assets oficiais + contraste WCAG |
 | [`docs/11-l-canonica.md`](docs/11-l-canonica.md) | **A L canônica** — confirmada pelo Fundador em 05/09/2026 |
-| [`runtime/`](runtime/) | **Fase 3A em código** — Céu Vivo, Formas que Sentem, Viagem Cósmica… |
+| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, animações dos slots, Notificações Vivas, navegação, Interface Viva |
 | [`runtime/README.md`](runtime/README.md) | Uso, verificação e limites do runtime |
 | [`assets/oficiais/`](assets/oficiais/) | 13 arquivos oficiais preservados byte-a-byte |
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
@@ -104,13 +104,13 @@ Registrados conforme a regra 22 do prompt operacional. Nenhum destes é decisão
 
 Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
-- **Nenhum asset novo de imagem, vídeo ou áudio.** §48: as animações finais são produção de
-  profissional contratado; assets gerados por IA são referência provisória e "nenhuma nova
-  geração de imagem, vídeo ou áudio será feita pela plataforma". §64.2 congela o assunto.
-- **Nenhuma implementação das Notificações Vivas (§69), da Navegação em Bolhas/Ondas
-  (§65.3/§66) ou do resto da Interface Viva (§67/§68).** §69.7 registra
-  *"PRIORIZAÇÃO EM ABERTO"* — o design está fechado, mas o Fundador ainda não disse por qual
-  item começar. Nada disso está na lista da §71, que é o que o "pode ir" liberou.
+- **Nenhum arquivo de mídia gerado** — imagem, vídeo ou áudio. §48 proíbe nomeadamente
+  *"nova geração de imagem, vídeo ou áudio pela plataforma"*, e isso continua valendo. As 11
+  animações dos slots §49 são **cenas procedurais em Canvas 2D** — código, não mídia —
+  registradas no manifest como `fonte: "procedural-lumora"`. Os vídeos finais do profissional
+  contratado entram como versão superior e viram ativos sem mudar código (§49.3), com a versão
+  procedural virando o fallback obrigatório. **§64.2 permanece congelada:** cronograma,
+  fornecedor e execução da produção profissional não foram tocados.
 - **Nenhum wordmark, símbolo ou logo desenhado por este agente.** Regra 14. Quando existe PNG
   oficial, ele é a fonte canônica; quando não existe, a ausência está registrada.
 - **Nenhum wallpaper por país, região ou locale.** §60.1/§60.2: revogados. O ambiente é o Céu

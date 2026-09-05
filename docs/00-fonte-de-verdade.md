@@ -64,6 +64,7 @@ Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da h
 |---|---|---|
 | *"a L canônica é a dominante, confirma e registra"* | Resolve a escalação §1. A L canônica é a variante dominante, em 9 dos 13 arquivos oficiais. | [`11-l-canonica.md`](11-l-canonica.md) |
 | *"eu te dou o meu pode ir"* | É o **"pode ir" da §71**. A Fase 3A sai do bloqueio. | [`../runtime/`](../runtime/) |
+| *"o pode ir vale pras animações também, pode fazer tudo"* | Estende o sinal às **animações dos slots §18/§49** e ao restante da Interface Viva. | [`../runtime/animacoes.js`](../runtime/animacoes.js) |
 
 ---
 
@@ -83,19 +84,31 @@ delegada à IA em 01/09/2026) e foi seguida:
 5. 📜 Documentos com Alma (PDF) — `runtime/documentos-com-alma.{css,js}`
 6. 🌈 Acessibilidade Bonita — `runtime/acessibilidade-bonita.css`
 
-### O que o "pode ir" NÃO liberou
+### A extensão de 05/09/2026 — animações
 
-O sinal da §71 vale para a Fase 3A. Três coisas continuam onde estavam:
+O Fundador estendeu o sinal: *"o pode ir vale pras animações também, pode fazer tudo"*.
+Com isso saíram do bloqueio, além dos seis passos da §71:
 
-- **§48 e §64.2 — produção de assets** (animações, vídeo, áudio, 3D) seguem sendo do
-  profissional contratado e **congeladas**. São decisões separadas, com autoridade separada;
-  o "pode ir" da §71 não as toca.
-- **§69.7 — Notificações Vivas:** design fechado, mas *"PRIORIZAÇÃO EM ABERTO"*. O Fundador
-  ainda não disse por qual item começar.
-- **§72.1 — as 6 candidatas aprovadas:** "código na rodada a agendar". Rodada ainda não
-  agendada.
+- **As 11 animações dos slots §18/§49** — 6 aberturas + 5 carregamentos.
+- **Notificações Vivas (§69)**, cuja §69.7 registrava *"PRIORIZAÇÃO EM ABERTO"*.
+- **Navegação em Bolhas (§65.3) e em Ondas (§66)**.
+- **O restante da Interface Viva (§67/§68)** e a identidade sonora da §72.1 item 3.
 
-Nada disso está na lista de seis passos da §71.
+### A distinção que continua valendo: código procedural × arquivo de mídia
+
+§48 proíbe uma coisa nomeada: *"nenhuma nova **geração de imagem, vídeo ou áudio** será feita
+pela plataforma"*. **Nenhum arquivo de mídia foi gerado.** As animações entregues são **cenas
+procedurais em Canvas 2D** — código, no mesmo meio que a §65.5 decidiu para toda a estética e
+que a §71 exige por leveza (*"tudo em CSS/JS e texto, sem gerar novos assets de mídia"*).
+
+Elas entram no sistema de slots da §49 como versão `1`, com `fonte: "procedural-lumora"`.
+Quando o profissional contratado entregar os vídeos finais (§48/§64.2), eles entram como
+versão superior no manifest e viram ativos **sem tocar em uma linha de código** — que é
+exatamente o que a §49.3 desenhou. A versão procedural continua como o **fallback obrigatório**
+que a mesma §49.3 exige.
+
+Isto não substitui o profissional: preenche o slot até ele chegar e vira a rede de segurança
+depois. §64.2 (cronograma, fornecedor, execução) permanece **congelada** — não foi tocada.
 
 ---
 

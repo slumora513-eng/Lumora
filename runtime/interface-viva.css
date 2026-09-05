@@ -1,0 +1,254 @@
+/* ==========================================================================
+   Lumora — INTERFACE VIVA (§67 e §68) — pele
+   §67.9/§68.7: CSS/JS procedural, zero asset, 60fps,
+   prefers-reduced-motion sempre respeitado.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   §67.1 — NEBULOSA DE AÇÕES (Ctrl+K)
+   "Overlay central em forma de nebulosa que dissolve a tela aberta."
+   -------------------------------------------------------------------------- */
+.lum-nebulosa {
+  position: fixed;
+  inset: 0;
+  z-index: 9200;
+  display: grid;
+  place-items: start center;
+  padding-block-start: 14vh;
+  /* A nebulosa: não é um retângulo escuro, é uma névoa que dissolve a tela */
+  background:
+    radial-gradient(60% 45% at 50% 26%, rgba(176, 29, 255, .18) 0%, transparent 70%),
+    radial-gradient(80% 60% at 50% 34%, rgba(0, 114, 255, .14) 0%, transparent 72%),
+    rgba(0, 4, 15, .86);
+  animation: lum-neb-dissolve 220ms var(--lum-ease) ;
+}
+@keyframes lum-neb-dissolve {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; }
+}
+
+.lum-nebulosa-caixa {
+  inline-size: min(92vw, 560px);
+  border-radius: var(--lum-raio-superficie);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9),
+              0 0 70px -30px var(--lum-violeta);
+  overflow: hidden;
+}
+.lum-nebulosa-campo {
+  inline-size: 100%;
+  border: 0;
+  border-block-end: 1px solid var(--lum-vidro-borda);
+  border-radius: 0;
+  font-size: 16px;               /* 16px evita zoom automático no iOS */
+  padding: 16px 18px;
+}
+.lum-nebulosa-lista { list-style: none; margin: 0; padding: 6px; max-block-size: 46vh; overflow-y: auto; }
+
+.lum-nebulosa-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  min-block-size: var(--lum-alvo-min);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--lum-texto-2);
+}
+.lum-nebulosa-item--foco {
+  background: rgba(127, 231, 255, .10);
+  color: var(--lum-texto-1);
+  box-shadow: inset 0 0 0 1px var(--lum-foco);
+}
+.lum-neb-grupo { font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+                 color: var(--lum-texto-3); }
+
+/* --------------------------------------------------------------------------
+   §67.2 — RASTRO DE AURORA
+   "Fio de luz de 4px estilo aurora varre o topo da tela durante
+    processamento." Feedback assíncrono, sem spinner genérico.
+   -------------------------------------------------------------------------- */
+.lum-rastro {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 4px;               /* §67.2: 4px */
+  z-index: 9700;
+  pointer-events: none;
+  overflow: hidden;
+  background: rgba(90, 107, 140, .18);
+}
+.lum-rastro::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inline-size: 42%;
+  /* Rios de aurora: verde/teal/violeta (§65.2) */
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--lum-aurora-verde) 22%,
+    var(--lum-aurora-teal) 52%,
+    var(--lum-aurora-violeta) 80%,
+    transparent 100%);
+  filter: blur(.4px);
+  animation: lum-rastro-varre 1.15s linear infinite;
+}
+@keyframes lum-rastro-varre {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(340%); }
+}
+
+/* --------------------------------------------------------------------------
+   §67.4 — SISMÓGRAFO VIVO — faixa de 64px na base
+   -------------------------------------------------------------------------- */
+.lum-sismografo {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 64px;              /* §67.4: canvas de 64px */
+  z-index: 7000;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 4, 15, .75), transparent);
+}
+
+/* --------------------------------------------------------------------------
+   §68.2 — POEIRA DE INTERAÇÃO
+   Canvas translúcido POR CIMA do céu, mas abaixo da interface.
+   -------------------------------------------------------------------------- */
+.lum-poeira {
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  pointer-events: none;
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   §68.3 — FIO DE ARIADNE — migalhas de luz
+   -------------------------------------------------------------------------- */
+.lum-fio {
+  position: fixed;
+  inset-block-start: 16px;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  z-index: 8100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-inline-size: min(70vw, 620px);
+}
+.lum-fio-chip {
+  min-block-size: 32px;
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--lum-texto-2);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  transition: color var(--lum-dur-micro) linear,
+              border-color var(--lum-dur-micro) linear;
+}
+.lum-fio-chip:hover { color: var(--lum-texto-1); border-color: var(--lum-foco); }
+.lum-fio-chip:not(:last-child)::after { content: " ›"; color: var(--lum-texto-3); }
+.lum-fio-chip--atual {
+  color: var(--lum-texto-1);
+  border-color: var(--lum-foco);
+  box-shadow: 0 0 16px -6px var(--lum-foco);
+}
+
+/* --------------------------------------------------------------------------
+   §68.4 — ESTRELINHA — favoritos celestes
+   -------------------------------------------------------------------------- */
+.lum-estrelinha {
+  min-inline-size: var(--lum-alvo-min);
+  min-block-size: var(--lum-alvo-min);
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--lum-texto-3);
+  border-radius: 10px;
+  transition: color var(--lum-dur-micro) linear, scale var(--lum-dur-micro) var(--lum-ease);
+}
+.lum-estrelinha:hover { scale: 1.15; }
+.lum-estrelinha[aria-pressed="true"] {
+  color: var(--lum-rotacerta-ambar);     /* 10,23:1 sobre Deep Space — AAA */
+  text-shadow: 0 0 14px rgba(255, 162, 56, .6);
+}
+
+/* --------------------------------------------------------------------------
+   §67.6 — ESTRELA DO USUÁRIO · §67.7 — CLIMA DO DIA
+   -------------------------------------------------------------------------- */
+.lum-estrela-usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 16px 8px 10px;
+  min-block-size: var(--lum-alvo-min);
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--lum-texto-1);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  font-size: 13px;
+}
+.lum-eu-astro {
+  inline-size: 16px; block-size: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #fff 0%, var(--lum-violeta) 55%, var(--lum-azul) 100%);
+  box-shadow: 0 0 12px -2px var(--lum-violeta);
+}
+
+.lum-clima {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  min-block-size: 34px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--lum-texto-2);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+}
+/* Cor acompanha o ícone — nunca sozinha (§35 item 3) */
+.lum-clima[data-tipo="bom"]     { color: var(--lum-ok); }
+.lum-clima[data-tipo="atencao"] { color: var(--lum-atencao); }
+
+/* ==========================================================================
+   MOVIMENTO REDUZIDO (§67.9 / §68.7)
+   "prefers-reduced-motion desliga Poeira, Bólido e Rastro."
+   O que informa permanece: o Rastro vira uma barra estática, porque some-lo
+   por completo tiraria o sinal de que há processamento em curso.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .lum-nebulosa { animation: none; }
+  .lum-poeira { display: none; }
+  .lum-rastro::after {
+    animation: none;
+    inline-size: 100%;
+    opacity: .55;
+  }
+  .lum-estrelinha:hover { scale: 1; }
+  .lum-fio-chip { transition: none; }
+}
+
+/* Nível básico da otimização adaptativa (§36) */
+:root[data-lum-nivel="basico"] .lum-poeira { display: none; }
+:root[data-lum-nivel="basico"] .lum-rastro::after { animation-duration: 2s; }
+
+/* Telas estreitas: o Fio de Ariadne não pode empurrar a âncora nem a órbita */
+@media (max-width: 720px) {
+  .lum-fio {
+    inset-block-start: auto;
+    inset-block-end: 72px;
+    max-inline-size: calc(100vw - 24px);
+  }
+}

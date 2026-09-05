@@ -111,11 +111,15 @@ veículos, versão épica, esfera técnica). Este é o único órfão da revoga�
 Agravante coerente: §65.1 define o Business como **"céu estrelado puro, sem motivo extra"** —
 o que é uma decisão de *fundo*, não de *abertura de 4 segundos*.
 
-**Não inventado.** §48 proíbe a plataforma de produzir animação; propor um briefing novo seria
-criar identidade que o Guia não sustenta.
+**Estado em 05/09/2026:** com o "pode ir" das animações, o slot `abertura.business` recebeu uma
+cena procedural — mas ela é **PLACEHOLDER DECLARADO, não briefing aprovado**. Foi derivada da
+única decisão visual que o Guia dá ao Business (§65.1, *"céu estrelado puro, sem motivo
+extra"*): as estrelas se condensam numa constelação. Está marcada como tal no código
+(`runtime/animacoes.js`) e no manifest (`_aviso`), e é a única das 11 cenas nessa condição.
 
-**Pergunta:** qual é a animação de abertura do Lumora Business, agora que a gota de aquarela
-caiu? (E o áudio `business_abertura_som.mp3` deve ser refeito ou reaproveitado?)
+**A pergunta continua aberta:** qual é a animação de abertura do Lumora Business, agora que a
+gota de aquarela caiu? (E o áudio `business_abertura_som.mp3`, marcado `[REVOGADO]` na §45,
+deve ser refeito ou reaproveitado?)
 
 ---
 

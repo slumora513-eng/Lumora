@@ -24,6 +24,13 @@ import { CeuVivo } from './ceu-vivo.js';
 import { SotaqueCosmico } from './sotaque-cosmico.js';
 import { ViagemCosmica } from './viagem-cosmica.js';
 import { aplicarConstelacoes } from './documentos-com-alma.js';
+import { Animacoes } from './animacoes.js';
+import { NotificacoesVivas, Bolido, IdentidadeSonora } from './notificacoes-vivas.js';
+import { Navegacao } from './navegacao.js';
+import {
+  NebulosaDeAcoes, RastroDeAurora, SismografoVivo,
+  PoeiraDeInteracao, FioDeAriadne, Estrelinha, ComandosDeVoz,
+} from './interface-viva.js';
 
 const PALETAS_VALIDAS = new Set([
   'padrao', 'preto-branco', 'daltonismo',
@@ -39,36 +46,96 @@ export class Lumora {
    * @param {HTMLElement} [opcoes.raiz=document.body]
    * @param {string} [opcoes.idioma='pt-BR']
    * @param {boolean} [opcoes.sotaque=true]  personalidade ligada (§21)
+   * @param {'elio'|'aurora'} [opcoes.tema='elio']  §66.3
+   * @param {HTMLCanvasElement} [opcoes.canvasSismografo]  §67.4
+   * @param {Array} [opcoes.abas]    navegação §65.3/§66
+   * @param {Array} [opcoes.acoes]   Nebulosa de Ações §67.1
    */
   constructor(opcoes = {}) {
     this.raiz = opcoes.raiz || document.body;
     this.movimentoReduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.nivel = this._detectarNivel();
+    this.tema = opcoes.tema === 'aurora' ? 'aurora' : 'elio';
     document.documentElement.dataset.lumNivel = this.nivel;
+    document.documentElement.dataset.lumTema = this.tema;
 
     this.sotaque = new SotaqueCosmico({
       idioma: opcoes.idioma,
       ligado: opcoes.sotaque !== false,
     });
     this.viagem = new ViagemCosmica({ nivel: this.nivel });
+    this.animacoes = new Animacoes({ nivel: this.nivel });
 
     this.ceu = opcoes.canvasCeu
       ? new CeuVivo(opcoes.canvasCeu, { nivel: this.nivel })
+      : null;
+
+    // Interface Viva (§67/§68)
+    this.som = new IdentidadeSonora();                      // §72.1 item 3
+    this.notificacoes = new NotificacoesVivas({             // §69
+      tema: this.tema, raiz: this.raiz, som: this.som,
+    });
+    this.bolido = new Bolido();                             // §67.5
+    this.rastro = new RastroDeAurora();                     // §67.2
+    this.poeira = new PoeiraDeInteracao({ nivel: this.nivel }); // §68.2
+    this.fio = new FioDeAriadne({ raiz: this.raiz });        // §68.3
+    this.estrelinha = new Estrelinha();                      // §68.4
+    this.nebulosa = new NebulosaDeAcoes({ acoes: opcoes.acoes || [] }); // §67.1
+
+    this.sismografo = opcoes.canvasSismografo                // §67.4
+      ? new SismografoVivo(opcoes.canvasSismografo)
+      : null;
+
+    this.navegacao = opcoes.abas?.length                     // §65.3 / §66
+      ? new Navegacao({
+          abas: opcoes.abas, tema: this.tema, raiz: this.raiz,
+          aoEscolher: (aba, sub) => {
+            this.fio.registrar({ id: (sub || aba).id, rotulo: (sub || aba).rotulo });
+            opcoes.aoNavegar?.(aba, sub);
+          },
+        })
       : null;
 
     this._ligarRespingo();
     this._ligarMudancaDePreferencia();
     this.sotaque.aplicar(this.raiz);
     aplicarConstelacoes(this.raiz);
+    this.estrelinha.aplicar(this.raiz);
     if (this.ceu) this.ceu.iniciar();
+    if (this.sismografo) this.sismografo.iniciar();
   }
 
   /* -------------------------------------------------------- API pública */
 
   /** Acende uma estrela por ação real do negócio (§70.1).
+   *  A mesma ação também injeta um pulso no Sismógrafo Vivo (§67.4): a tela
+   *  inteira "sente" a atividade, que é o que a §67.4 pede.
    *  @param {object} dados venda, entrega, pedido, lançamento… */
-  acenderEstrela(dados) {
+  acenderEstrela(dados = {}) {
+    this.sismografo?.pulso(dados.forca ?? 1);
     return this.ceu ? this.ceu.acenderEstrela(dados) : null;
+  }
+
+  /** Publica uma notificação viva (§69). */
+  notificar(dados) { return this.notificacoes.notificar(dados); }
+
+  /** Lança o Bólido — classe EXCEPCIONAL (§67.5/§69.3): incidentes de
+   *  segurança e falha crítica. Não é notificação cotidiana. */
+  lancarBolido(dados) { return this.bolido.lancar(dados); }
+
+  /** Toca a animação de um slot da §49 (§18). */
+  tocarAnimacao(slot, canvas, opcoes) {
+    return this.animacoes.tocar(slot, canvas, opcoes);
+  }
+
+  /** Troca o tema. §66.3: a navegação acompanha o tema; §69.5: as
+   *  notificações na tela se transformam sem perda. */
+  definirTema(tema) {
+    this.tema = tema === 'aurora' ? 'aurora' : 'elio';
+    document.documentElement.dataset.lumTema = this.tema;
+    this.notificacoes.definirTema(this.tema);
+    this.navegacao?.definirTema(this.tema);
+    return this;
   }
 
   /** Desenha a Constelação do Dia (§71.1). */
@@ -113,7 +180,15 @@ export class Lumora {
     if (this._mqMovimento) {
       this._mqMovimento.removeEventListener('change', this._onPreferencia);
     }
-    if (this.ceu) this.ceu.destruir();
+    this.ceu?.destruir();
+    this.sismografo?.destruir();
+    this.navegacao?.destruir();
+    this.notificacoes.destruir();
+    this.nebulosa.destruir();
+    this.rastro.destruir();
+    this.poeira.destruir();
+    this.fio.destruir();
+    this.animacoes.parar();
   }
 
   /* ------------------------------------------------------------ interno */
@@ -206,4 +281,9 @@ export function restaurarPaleta() {
   } catch { /* modo privado: segue no padrão */ }
 }
 
-export { CeuVivo, SotaqueCosmico, ViagemCosmica, PALETAS_VALIDAS };
+export {
+  CeuVivo, SotaqueCosmico, ViagemCosmica, PALETAS_VALIDAS,
+  Animacoes, NotificacoesVivas, Bolido, IdentidadeSonora, Navegacao,
+  NebulosaDeAcoes, RastroDeAurora, SismografoVivo, PoeiraDeInteracao,
+  FioDeAriadne, Estrelinha, ComandosDeVoz,
+};

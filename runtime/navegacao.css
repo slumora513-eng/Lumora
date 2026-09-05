@@ -1,0 +1,252 @@
+/* ==========================================================================
+   Lumora — NAVEGAÇÃO EM BOLHAS (§65.3) e EM ONDAS (§66) — pele
+
+   §65.3: "Não há menu lateral sólido." Nenhuma regra aqui cria sidebar.
+   §65.3: campos, tabelas e inputs permanecem geométricos — quem cuida disso
+          é tokens.css; este arquivo só trata da navegação.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   A bolha-âncora — canto superior ESQUERDO (§65.3)
+   A órbita de notificação fica no canto direito (§69.1): nunca se encostam.
+   -------------------------------------------------------------------------- */
+.lum-ancora {
+  position: fixed;
+  inset-block-start: 16px;
+  inset-inline-start: 16px;
+  z-index: 8000;
+  inline-size: 52px;
+  block-size: 52px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  transition: transform var(--lum-dur-micro) var(--lum-ease);
+}
+@supports (backdrop-filter: blur(1px)) {
+  :root:not([data-lum-nivel="basico"]):not([data-lum-nivel="economico"]) .lum-ancora {
+    background: var(--lum-vidro);
+    backdrop-filter: blur(var(--lum-vidro-blur)) saturate(1.2);
+  }
+}
+.lum-ancora:hover { transform: scale(1.06); }
+.lum-ancora[aria-expanded="true"] { transform: scale(.92); }
+
+.lum-ancora-nucleo {
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: 50%;
+  background: var(--lum-gradiente);
+  box-shadow: 0 0 14px -2px var(--lum-violeta);
+}
+
+/* --------------------------------------------------------------------------
+   Painel comum
+   -------------------------------------------------------------------------- */
+.lum-nav {
+  position: fixed;
+  inset: 0;
+  z-index: 7900;
+  display: grid;
+  place-items: center;
+  /* Escurece o fundo sem apagar o Céu Vivo — ele continua vivo por trás. */
+  background: radial-gradient(120% 100% at 50% 45%,
+              rgba(0, 4, 15, .55) 0%, rgba(0, 4, 15, .88) 100%);
+}
+
+.lum-voltar {
+  position: fixed;
+  inset-block-start: 84px;
+  inset-inline-start: 16px;
+  z-index: 8001;
+  font-size: 13px;
+  padding: 10px 16px;
+}
+
+/* ==========================================================================
+   MODO BOLHAS (§65.3) — mapa mental orbital
+   ========================================================================== */
+
+.lum-mapa {
+  position: relative;
+  inline-size: min(78vmin, 620px);
+  block-size: min(78vmin, 620px);
+}
+
+/* A bolha grande do centro */
+.lum-mapa-nucleo {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  inline-size: 34%;
+  block-size: 34%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 8px;
+  font-size: clamp(13px, 2.4vmin, 17px);
+  font-weight: 600;
+  color: var(--lum-texto-1);
+  border: 1px solid var(--lum-vidro-borda);
+  background:
+    radial-gradient(circle at 34% 30%,
+      rgba(255,255,255,.22) 0%, rgba(176,29,255,.14) 45%, rgba(0,114,255,.18) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18),
+              0 0 60px -20px var(--lum-violeta);
+}
+
+/* As bolhas pequenas orbitando (§65.3) */
+.lum-orbe {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 25%;
+  block-size: 25%;
+  min-inline-size: var(--lum-alvo-min);
+  min-block-size: var(--lum-alvo-min);
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  text-align: center;
+  font-size: clamp(11px, 1.9vmin, 14px);
+  color: var(--lum-texto-1);
+  cursor: pointer;
+  border: 1px solid var(--lum-vidro-borda);
+  background:
+    radial-gradient(circle at 36% 30%,
+      rgba(255,255,255,.16) 0%, rgba(133,65,250,.12) 50%, rgba(0,114,255,.14) 100%);
+  /* Só transform: as bolhas entram orbitando, sem tocar em layout. */
+  translate: calc(-50% + var(--x)) calc(-50% + var(--y));
+  animation: lum-orbe-entra var(--lum-dur-curta) var(--lum-ease) var(--atraso) backwards;
+  transition: scale var(--lum-dur-micro) var(--lum-ease),
+              box-shadow var(--lum-dur-micro) var(--lum-ease);
+}
+@keyframes lum-orbe-entra {
+  from { translate: -50% -50%; scale: .2; opacity: 0; }
+}
+.lum-orbe:hover { scale: 1.08; }
+.lum-orbe--foco {
+  scale: 1.1;
+  border-color: var(--lum-foco);
+  box-shadow: 0 0 0 1px var(--lum-foco), 0 0 28px -8px var(--lum-foco);
+}
+
+/* ==========================================================================
+   MODO ONDAS (§66) — a crista senoidal
+   ========================================================================== */
+
+.lum-crista {
+  position: relative;
+  inline-size: 100%;
+  block-size: 240px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  /* O rio de aurora sob a crista: verde/teal/violeta (§65.2) */
+  background: linear-gradient(100deg,
+    rgba(43,207,146,.10) 0%, rgba(29,143,197,.16) 40%,
+    rgba(133,65,250,.13) 74%, rgba(43,207,146,.09) 100%);
+  background-size: 220% 100%;
+  animation:
+    lum-onda-varre var(--lum-dur-onda) var(--lum-ease) backwards,
+    lum-crista-ondula 9s linear infinite var(--lum-dur-onda);
+}
+.lum-crista--mini { block-size: 150px; }
+
+/* §66.2: "entrada lateral com easing cubic-bezier(.22,1,.36,1) — a onda varre
+   a tela da esquerda para o centro em ~0,8s" */
+@keyframes lum-onda-varre {
+  from { transform: translateX(-60%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes lum-crista-ondula {
+  from { background-position: 0% 50%; }
+  to   { background-position: 220% 50%; }
+}
+
+.lum-crista-item {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  min-inline-size: var(--lum-alvo-min);
+  min-block-size: var(--lum-alvo-min);
+  padding: 12px 22px;
+  white-space: nowrap;
+  font-size: 15px;
+  color: var(--lum-texto-2);
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  /* Só transform e opacity (§66.2) */
+  translate: calc(-50% + var(--x)) calc(-50% + var(--y));
+  transition: translate var(--lum-dur-curta) var(--lum-ease),
+              scale var(--lum-dur-curta) var(--lum-ease),
+              opacity var(--lum-dur-curta) var(--lum-ease),
+              color var(--lum-dur-micro) linear;
+  opacity: .45;
+}
+
+/* §66.1: "o item central entra em foco (snap) com escala e brilho" */
+.lum-crista-item--foco {
+  scale: 1.2;
+  opacity: 1;
+  color: var(--lum-texto-1);
+  font-weight: 600;
+  border-color: var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  text-shadow: 0 0 18px rgba(127, 231, 255, .55);
+}
+.lum-crista-item:hover { opacity: .85; }
+
+/* ==========================================================================
+   MOVIMENTO REDUZIDO (§65.3 / §66.2)
+   "sem varredura — fade simples; fallback funcional = listagem em bolhas"
+   A navegação continua inteira: só perde o gesto.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .lum-orbe,
+  .lum-crista {
+    animation: lum-nav-fade 160ms linear !important;
+  }
+  .lum-crista-item { transition-duration: 1ms; }
+  .lum-ancora { transition: none; }
+
+  /* Fallback funcional: a crista vira lista legível, empilhada e rolável —
+     nada de itens senoidais fora da tela quando não há varredura. */
+  .lum-crista {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    block-size: auto;
+    max-block-size: 70vh;
+    overflow-y: auto;
+    inline-size: min(92vw, 460px);
+    padding: 10px;
+  }
+  .lum-crista-item {
+    position: static;
+    translate: none !important;
+    scale: 1 !important;
+    opacity: 1;
+    text-align: start;
+    border-color: var(--lum-vidro-borda);
+    border-radius: var(--lum-raio-superficie);
+  }
+  .lum-crista-item[aria-hidden="true"] { display: none; }
+}
+@keyframes lum-nav-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Nível básico da otimização adaptativa (§36) */
+:root[data-lum-nivel="basico"] .lum-orbe { animation: none; }
+:root[data-lum-nivel="basico"] .lum-crista { animation: none; }
+
+/* Telas estreitas: o mapa orbital fica apertado; vira lista rolável. */
+@media (max-width: 520px) {
+  .lum-mapa { inline-size: 92vw; block-size: 92vw; }
+  .lum-orbe { font-size: 11px; }
+}

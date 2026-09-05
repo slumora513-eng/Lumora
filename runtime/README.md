@@ -19,7 +19,33 @@ Estética procedural da Lumora em código. **Zero asset, zero rede, zero depend�
 | 5 | 📜 **Documentos com Alma** (PDF) | `documentos-com-alma.{css,js}` | ⚠️ área da L reservada e vazia |
 | 6 | 🌈 **Acessibilidade Bonita** | `acessibilidade-bonita.css` | ⚠️ 3 de 6 paletas |
 
+## Extensão de 05/09/2026 — "pode fazer tudo"
+
+O Fundador estendeu o "pode ir" às animações. Saíram do bloqueio:
+
+| Módulo | Arquivos | Guia |
+|---|---|---|
+| **Animações dos slots** — 6 aberturas + 5 carregamentos, em Canvas 2D | `animacoes.js` + `animations.manifest.json` | §18 / §49 |
+| **Notificações Vivas** — bolha (Elio), faixa-onda (Aurora), Bólido, hierarquia de urgência, identidade sonora WebAudio | `notificacoes-vivas.{js,css}` | §69 · §67.5 · §72.1(3) |
+| **Navegação em Bolhas e em Ondas** | `navegacao.{js,css}` | §65.3 · §66 |
+| **Interface Viva** — Nebulosa de Ações, Rastro de Aurora, Sismógrafo Vivo, Poeira de Interação, Fio de Ariadne, Estrelinha, Comandos de Voz, Estrela do Usuário, Clima do Dia | `interface-viva.{js,css}` | §67 · §68 |
+
 Base compartilhada: `tokens.css`. Bootstrap: `lumora.js`.
+
+### Animações: código procedural, não arquivo de mídia
+
+§48 proíbe *"nenhuma nova **geração de imagem, vídeo ou áudio**"*. **Nenhum arquivo de mídia
+foi gerado.** As 11 cenas são Canvas 2D — código, no meio que a §65.5 decidiu e que a §71 exige
+por leveza.
+
+Elas ocupam os slots da §49 como versão `1`, `fonte: "procedural-lumora"`. Os vídeos finais do
+profissional contratado (§48/§64.2) entram como versão superior no manifest e viram ativos
+**sem mudar código** — a "troca sem deploy" da §49.3. A versão procedural continua como o
+**fallback obrigatório** que a mesma §49.3 exige. §64.2 permanece congelada.
+
+**Uma exceção declarada:** `abertura.business` é **PLACEHOLDER**, não briefing aprovado — o
+briefing original caiu com a aquarela (§60.1) e nenhum substituto foi registrado. Marcado no
+código e no manifest. Ver [`../ESCALACOES.md`](../ESCALACOES.md) §5.
 
 ---
 
@@ -84,25 +110,30 @@ python3 -m http.server 8765          # na raiz do repositório
 
 `verificacao.html` é bancada de teste local — **não é produto nem asset de marca**.
 
-Conferido em Chromium (1200×760, DPR 2), 13 checagens + 6 no caminho de
-movimento reduzido, todas passando; **0 pedidos de rede externos**.
+Conferido em Chromium, **50 checagens automatizadas**, todas passando:
+
+| Suíte | Checagens |
+|---|---|
+| Fase 3A (§71) | 13 |
+| Animações, notificações, navegação, Interface Viva | 24 |
+| Movimento reduzido — Fase 3A | 6 |
+| Movimento reduzido — módulos novos | 7 |
+
+**0 pedidos de rede externos** (custo zero, §65.5).
 
 ---
 
 ## O que este runtime NÃO faz
 
-- **Não produz animação, vídeo ou áudio.** §48 e §64.2 continuam valendo — o
-  "pode ir" liberou a Fase 3A (§71), não a produção de assets, que é do
-  profissional contratado e segue **congelada**.
 - **Não desenha a L canônica.** Ela está confirmada
   ([`../docs/11-l-canonica.md`](../docs/11-l-canonica.md)), mas os 9 arquivos
   que a portam são JPEG sem alfa. `documentos-com-alma.css` **reserva** a área
   e a deixa vazia. Desenhar um substituto violaria a regra 14.
-- **Não implementa as Notificações Vivas (§69).** §69.7 registra
-  *"PRIORIZAÇÃO EM ABERTO"* — o design está fechado, mas o Fundador ainda não
-  disse por qual item começar. Fora do escopo da §71.
-- **Não implementa Navegação em Bolhas/Ondas (§65.3/§66)** nem o restante da
-  Interface Viva (§67/§68). Também fora da lista da §71.
+- **Não gera arquivo de mídia** — imagem, vídeo ou áudio. §48 continua valendo;
+  o que existe é código procedural.
+- **Não substitui o profissional contratado.** §64.2 (cronograma, fornecedor,
+  execução) segue congelada. As cenas procedurais preenchem o slot até os
+  vídeos finais chegarem, e viram fallback depois.
 - **Não define "Fogo de Nebulosa", "Aurora Dia" nem "Aurora Noite".** Nomeadas
   em §70.6 sem nenhum valor no Guia. Os seletores existem e estão **vazios** —
   ver [`../ESCALACOES.md`](../ESCALACOES.md) §7.
@@ -137,3 +168,11 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   item 7 existir.)** Base Okabe-Ito, contraste calculado sobre Deep Space
   (8,89:1 / 9,10:1 / 5,30:1 / 15,50:1). O teste em simulador (Coblis, Stark)
   que a §35 exige é etapa de QA, ainda não feita.
+- **(DEFAULT DO AGENTE — o Guia dá o briefing de cada abertura, mas não a
+  encenação quadro a quadro.)** Tempos, ordem dos trechos e composição de cada
+  uma das 11 cenas são decisão deste agente; os briefings em si são textuais da
+  §18/§49.1. `abertura.business` é a única sem briefing vigente e está marcada
+  como placeholder.
+- **(DEFAULT DO AGENTE — §72.1 item 3 aprovou "notas procedurais WebAudio
+  (fiscal/pedido/sistema)" sem fixar as notas.)** As frequências de
+  `IdentidadeSonora` foram escolhidas por este agente.

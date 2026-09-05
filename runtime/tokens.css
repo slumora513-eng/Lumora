@@ -113,6 +113,16 @@
 }
 
 /* --------------------------------------------------------------------------
+   [hidden] tem que vencer sempre.
+   O atributo `hidden` aplica display:none pela folha do navegador, e QUALQUER
+   `display` declarado pelo autor o derruba. Sem esta regra, um overlay de tela
+   cheia (Nebulosa, painel de navegação) continua capturando cliques enquanto
+   parece escondido — um bloqueador invisível de página inteira. Vale para todo
+   componente deste runtime que alterna visibilidade por `el.hidden`.
+   -------------------------------------------------------------------------- */
+[hidden] { display: none !important; }
+
+/* --------------------------------------------------------------------------
    Base
    -------------------------------------------------------------------------- */
 .lum-raiz {

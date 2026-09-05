@@ -1,0 +1,287 @@
+/* ==========================================================================
+   Lumora — NOTIFICAÇÕES VIVAS (§69) — pele
+   Tema Elio: bolha. Tema Aurora: faixa de onda. Bólido: excepcional.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TEMA ELIO — a órbita de notificação (§69.1)
+   Canto superior DIREITO, em coluna. Nunca sobrepõe o conteúdo central nem o
+   menu-bolha, que vive no canto esquerdo.
+   -------------------------------------------------------------------------- */
+.lum-orbita {
+  position: fixed;
+  inset-block-start: 16px;
+  inset-inline-end: 16px;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  pointer-events: none;
+  max-inline-size: min(360px, calc(100vw - 32px));
+}
+.lum-orbita > * { pointer-events: auto; }
+
+.lum-bolha-notif {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  min-block-size: var(--lum-alvo-min);      /* §35 item 4 */
+  /* Bolha, não retângulo: o raio é generoso mas o conteúdo é texto, então
+     não vira círculo — a matéria é de bolha, a forma serve à leitura. */
+  border-radius: 26px;
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  color: var(--lum-texto-1);
+  cursor: pointer;
+  max-inline-size: 100%;
+  /* Nasce pequena e infla (~0,4s) com brilho de refração (§69.1) */
+  animation: lum-bolha-nasce var(--lum-dur-bolha-nasce, 400ms)
+             var(--lum-ease, cubic-bezier(.22,1,.36,1)) backwards;
+  box-shadow: 0 8px 28px -12px rgba(0, 0, 0, .8),
+              inset 0 1px 0 var(--lum-vidro-brilho);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  :root:not([data-lum-nivel="basico"]):not([data-lum-nivel="economico"]) .lum-bolha-notif {
+    background: var(--lum-vidro);
+    backdrop-filter: blur(var(--lum-vidro-blur)) saturate(1.2);
+  }
+}
+
+@keyframes lum-bolha-nasce {
+  from { transform: scale(.3); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+
+/* Permanência: flutua "respirando" — escala 1 <-> 1,03, ciclo ~3s (§69.1).
+   0,33 Hz, muito abaixo do limite de 3 flashes/s da §35 item 8. */
+.lum-bolha-notif {
+  animation-name: lum-bolha-nasce, lum-respira;
+  animation-duration: var(--lum-dur-bolha-nasce, 400ms), var(--lum-respiracao-ciclo, 3s);
+  animation-delay: 0s, var(--lum-dur-bolha-nasce, 400ms);
+  animation-iteration-count: 1, infinite;
+  animation-timing-function: var(--lum-ease, cubic-bezier(.22,1,.36,1)), ease-in-out;
+}
+@keyframes lum-respira {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(var(--lum-respiracao-escala, 1.03)); }
+}
+
+.lum-bolha-icone {
+  inline-size: 10px; block-size: 10px; border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--lum-texto-3);
+}
+.lum-bolha-corpo { display: flex; flex-direction: column; gap: 2px; min-inline-size: 0; }
+.lum-bolha-cat {
+  font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lum-texto-3);
+}
+.lum-bolha-txt { font-size: 14px; line-height: 1.35; }
+
+/* --- Hierarquia de urgência (§69.3) --------------------------------------
+   Cada nível muda cor E ritmo E ícone — nunca só a cor (§35 item 3). */
+
+.lum-bolha-notif.lum-u-alta {
+  border-color: var(--lum-atencao);
+  /* "Bolha âmbar, respiração rápida" — 1,5s = 0,67 Hz, ainda longe de 3 Hz. */
+  animation-duration: var(--lum-dur-bolha-nasce, 400ms), 1.5s;
+}
+.lum-bolha-notif.lum-u-alta .lum-bolha-icone { background: var(--lum-atencao); }
+
+/* "Bolha congelada brilhando — não estoura" (§69.3).
+   A respiração PARA: o congelamento é o sinal de que exige ação explícita. */
+.lum-bolha-notif.lum-u-critica {
+  border-color: var(--lum-critico);
+  border-width: 2px;
+  animation-name: lum-bolha-nasce;
+  animation-iteration-count: 1;
+  box-shadow: 0 0 0 1px var(--lum-critico),
+              0 0 22px -6px var(--lum-critico),
+              0 8px 28px -12px rgba(0, 0, 0, .8);
+}
+.lum-bolha-notif.lum-u-critica .lum-bolha-icone {
+  background: var(--lum-critico);
+  border-radius: 2px;                      /* forma diferente, não só cor */
+}
+.lum-bolha-notif.lum-u-critica .lum-bolha-cat::after {
+  content: " · exige ação";
+  color: var(--lum-critico);
+}
+
+/* Saída: estoura em 5–7 bolhinhas (§69.1) */
+.lum-bolha-notif.lum-estourando {
+  animation: lum-estoura 500ms var(--lum-ease, cubic-bezier(.22,1,.36,1)) forwards;
+}
+@keyframes lum-estoura {
+  0%   { transform: scale(1);    opacity: 1; }
+  35%  { transform: scale(1.12); opacity: .9; }
+  100% { transform: scale(.4);   opacity: 0; }
+}
+
+.lum-bolhinha {
+  position: fixed;
+  z-index: 9001;
+  inline-size: var(--tam, 8px);
+  block-size: var(--tam, 8px);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at 35% 30%,
+              rgba(255,255,255,.85), rgba(176,29,255,.35) 60%, transparent 72%);
+  border: 1px solid rgba(255,255,255,.45);
+  animation: lum-bolhinha 500ms var(--lum-ease, cubic-bezier(.22,1,.36,1)) forwards;
+}
+@keyframes lum-bolhinha {
+  from { transform: translate(-50%, -50%) scale(.4); opacity: .95; }
+  to   { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1);
+         opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   TEMA AURORA — a faixa horizontal no topo (§69.2)
+   -------------------------------------------------------------------------- */
+.lum-faixa-aurora {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+.lum-faixa-aurora > * { pointer-events: auto; }
+
+.lum-onda-notif {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  min-block-size: var(--lum-alvo-min);
+  color: var(--lum-texto-1);
+  cursor: pointer;
+  border-block-end: 1px solid rgba(255, 255, 255, .10);
+  /* Rios de aurora: verde/teal/violeta (§65.2), medidos em 05 */
+  background: linear-gradient(100deg,
+    rgba(43, 207, 146, .20) 0%,
+    rgba(29, 143, 197, .28) 38%,
+    rgba(133, 65, 250, .24) 72%,
+    rgba(43, 207, 146, .18) 100%);
+  background-size: 220% 100%;
+  /* Entra varrendo da esquerda em ~0,8s — mesma física da navegação (§66) */
+  animation:
+    lum-onda-entra var(--lum-dur-onda, 800ms) var(--lum-ease, cubic-bezier(.22,1,.36,1)) backwards,
+    lum-onda-ondula 7s linear infinite var(--lum-dur-onda, 800ms);
+}
+
+@keyframes lum-onda-entra {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+/* Permanência: a faixa ondula continuamente (deslocamento senoidal suave) */
+@keyframes lum-onda-ondula {
+  from { background-position: 0% 50%; }
+  to   { background-position: 220% 50%; }
+}
+
+.lum-onda-cat {
+  font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lum-texto-2); flex: 0 0 auto;
+}
+.lum-onda-txt { font-size: 14px; }
+
+.lum-onda-notif.lum-u-alta { box-shadow: inset 0 0 40px -8px var(--lum-atencao); }
+
+/* "Faixa ancorada — ondulação para, brilho contínuo, ventania não leva" */
+.lum-onda-notif.lum-u-critica {
+  animation-name: lum-onda-entra;          /* sem a ondulação */
+  border-block-end: 2px solid var(--lum-critico);
+  box-shadow: inset 0 0 60px -10px var(--lum-critico);
+}
+.lum-onda-notif.lum-u-critica .lum-onda-cat::after {
+  content: " · exige ação"; color: var(--lum-critico);
+}
+
+/* Saída: a VENTANIA (§69.2/§69.4) — rajada que dissolve em poeira estelar */
+.lum-onda-notif.lum-ventania {
+  animation: lum-ventania 1s var(--lum-ease, cubic-bezier(.22,1,.36,1)) forwards;
+}
+@keyframes lum-ventania {
+  0%   { transform: translateX(0);     opacity: 1; filter: blur(0); }
+  100% { transform: translateX(120%);  opacity: 0; filter: blur(8px); }
+}
+
+/* --------------------------------------------------------------------------
+   Contador de excesso (§69.5) — "+3" que abre o Centro
+   -------------------------------------------------------------------------- */
+.lum-contador {
+  align-self: flex-end;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
+/* --------------------------------------------------------------------------
+   BÓLIDO (§67.5) — a classe excepcional
+   -------------------------------------------------------------------------- */
+.lum-bolido-canvas {
+  position: fixed; inset: 0; z-index: 9500; pointer-events: none;
+}
+.lum-bolido-toast {
+  position: fixed;
+  inset-block-start: 24px;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: fit-content;
+  max-inline-size: min(560px, calc(100vw - 32px));
+  z-index: 9600;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px;
+  min-block-size: var(--lum-alvo-min);
+  border-radius: 14px;
+  border: 2px solid var(--lum-critico);
+  background: var(--lum-vidro-solido);
+  color: var(--lum-texto-1);
+  cursor: pointer;
+  box-shadow: 0 0 30px -8px var(--lum-critico);
+}
+.lum-bolido-toast strong { color: var(--lum-critico); letter-spacing: .04em; }
+.lum-bolido-toast--anim { animation: lum-bolido-entra 600ms 1.5s backwards; }
+@keyframes lum-bolido-entra { from { opacity: 0; transform: translateY(-10px); } }
+
+.lum-bolido-fechar {
+  margin-inline-start: auto;
+  min-inline-size: 32px; min-block-size: 32px;
+  border: 0; background: none; color: var(--lum-texto-2);
+  font-size: 16px; cursor: pointer; border-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   MOVIMENTO REDUZIDO (§69.5)
+   "estourar" vira fade simples; "ventania" vira dissolução suave.
+   A notificação continua nascendo, sendo lida e saindo — só sem o gesto.
+   A CRÍTICA continua sem timeout em qualquer caminho (§69.3).
+   -------------------------------------------------------------------------- */
+.lum-saida-suave { animation: lum-fade-out 180ms linear forwards !important; }
+@keyframes lum-fade-out { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lum-bolha-notif,
+  .lum-onda-notif {
+    animation: lum-fade-in 180ms linear !important;
+  }
+  .lum-bolhinha { display: none; }
+  .lum-bolido-toast--anim { animation: lum-fade-in 180ms linear; }
+}
+@keyframes lum-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Nível básico da otimização adaptativa (§36): mesmo corte, por hardware. */
+:root[data-lum-nivel="basico"] .lum-bolhinha { display: none; }
+:root[data-lum-nivel="basico"] .lum-bolha-notif { animation-name: lum-bolha-nasce; }
+
+/* Mobile: a faixa-aurora empilha em duas ondas no topo (§69.2) */
+@media (max-width: 640px) {
+  .lum-faixa-aurora > *:nth-child(n + 3) { display: none; }
+  .lum-orbita { max-inline-size: calc(100vw - 24px); }
+}
