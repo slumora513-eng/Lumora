@@ -907,4 +907,7 @@ export class Motor3D {
   }
 }
 
-export { CENAS_GL };
+/* COMUM e VS saem daqui para o Atlas Estelar (§16) reusar a MESMA paleta em
+   espaço linear, o mesmo campo estelar e a mesma nebulosa. Duplicar essas
+   constantes seria garantir que as duas telas divergissem com o tempo. */
+export { CENAS_GL, COMUM, VS };

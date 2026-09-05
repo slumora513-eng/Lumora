@@ -27,7 +27,7 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`docs/09-producao-de-assets.md`](docs/09-producao-de-assets.md) | O que a plataforma **não** produz; slots §49 |
 | [`docs/10-paleta.md`](docs/10-paleta.md) | Paleta **medida** nos assets oficiais + contraste WCAG |
 | [`docs/11-l-canonica.md`](docs/11-l-canonica.md) | **A L canônica** — confirmada pelo Fundador em 05/09/2026 |
-| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, animações dos slots, Notificações Vivas, navegação, Interface Viva |
+| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, animações dos slots, Atlas Estelar, Notificações Vivas, navegação, Interface Viva |
 | [`runtime/README.md`](runtime/README.md) | Uso, verificação e limites do runtime |
 | [`assets/oficiais/`](assets/oficiais/) | 13 arquivos oficiais preservados byte-a-byte |
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |

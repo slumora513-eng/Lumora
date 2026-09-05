@@ -56,6 +56,7 @@ sem motivo extra* (§65.1). Nenhuma cena é provisória.
 <link rel="stylesheet" href="runtime/formas-que-sentem.css">
 <link rel="stylesheet" href="runtime/acessibilidade-bonita.css">
 <link rel="stylesheet" href="runtime/animacoes.css">   <!-- texto das aberturas -->
+<link rel="stylesheet" href="runtime/atlas-estelar.css">
 
 <body class="lum-raiz">
   <canvas id="ceu" aria-hidden="true"></canvas>
@@ -72,6 +73,7 @@ sem motivo extra* (§65.1). Nenhuma cena é provisória.
   lum.modoFoco(true);                                 // §13 + §67.3
   await lum.viajar(telaA, telaB, { foco: { x, y } }); // §70.2
   lum.definirPaleta('daltonismo');                    // §35 item 7
+  lum.abrirAtlas(elemento, { dados: catalogo });      // §16 Atlas Estelar
   anunciar('Pedido autorizado.', 'assertive');        // §69.5
 </script>
 ```
@@ -218,6 +220,69 @@ da fala**. Ver [`../docs/09-producao-de-assets.md`](../docs/09-producao-de-asset
 
 ---
 
+## Atlas Estelar (§16) — o cosmógrafo 3D da Comunidade
+
+Nome oficial aprovado pelo Fundador em 01/09/2026. O Guia fixa as quatro
+camadas e quem narra:
+
+> galáxias (categorias) → constelações (temas) → estrelas (nichos) →
+> nicho individual, **com narração da Aurora**
+
+Era a única assinatura de sistema da §65.1 que ainda não existia em código.
+
+### O 3D é a pele; o DOM é a verdade
+
+Cada nó visível é um `<button>` de verdade, posicionado sobre a projeção da
+estrela na tela. Isso não é acessibilidade pendurada no fim: navegação que só
+existe como pixel **não tem foco, não tem leitor de tela, não tem teclado e
+não tem como ser testada** — reprovaria a §35 inteira. Com o botão real, tudo
+isso vem de graça e o WebGL cuida só do que faz bem, que é a luz.
+
+É a mesma decisão da legenda das aberturas, pelo mesmo motivo.
+
+| O que | Como |
+|---|---|
+| Descer uma camada | Clique ou <kbd>Enter</kbd> na estrela |
+| Subir | <kbd>Esc</kbd>, ou o passo anterior no fio |
+| Andar entre estrelas | Setas — vão para a estrela **visualmente** mais próxima naquela direção, não para a próxima do documento |
+| Aproximar | Roda ou **pinça** (o gesto que o Guia nomeia para o Atlas) |
+| Orbitar | Arrastar o céu |
+| Buscar | Varre a árvore **inteira** e salta direto para o achado, com o caminho dele |
+
+**O foco nunca é largado.** Trocar de camada destrói os botões da camada
+anterior, inclusive o que estava focado; sem reposicionar, quem navega por
+teclado é devolvido ao `<body>` e perde o Atlas sem nenhum aviso. Quem entra
+com foco aqui dentro sai com foco aqui dentro.
+
+### Modo lista — a mesma navegação sem GPU
+
+`[data-lum-modo="lista"]` usa **a mesma marcação**: os mesmos botões viram
+grade legível. Vale para nível básico (§36), para aparelho sem WebGL e para
+contexto perdido. Não é degradação de emergência, é a experiência inteira sem
+custo — e como a marcação é uma só, **nenhuma funcionalidade mora só no 3D**.
+
+### Posição determinística
+
+A mesma categoria cai **sempre** no mesmo lugar do céu: espiral de Fibonacci
+para não formar aglomerado, deslocada pelo hash do id. Sem isso a memória
+espacial de quem navega não vale nada — e memória espacial é a única razão de
+um atlas ser 3D em vez de lista. O gerador é o mesmo dos Documentos com Alma;
+a regra de determinismo mora num lugar só.
+
+### Enquadramento, não distância fixa
+
+A distância da câmera é **calculada para a camada caber**. Com um número fixo
+por camada, uma galáxia com muitos temas simplesmente sai da tela — e no 3D
+"sair da tela" não avisa, só some.
+
+### O que o Atlas NÃO faz
+
+Avaliação de 1 a 5 estrelas, comentários moderados, gamificação e pagamentos
+(§16) são **regra de negócio da Comunidade**, não identidade visual. Este
+runtime entrega a navegação e a narração; o resto é do produto.
+
+---
+
 ## Defaults do agente neste runtime
 
 Conforme a regra 22. Nenhum é decisão do Fundador.
@@ -240,6 +305,13 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   encenação quadro a quadro.)** Tempos, ordem dos trechos e composição de cada
   uma das 11 cenas são decisão deste agente; os briefings em si vêm da §18/§49.1,
   e o de `abertura.business` do Fundador (05/09/2026).
+- **(DEFAULT DO AGENTE — §16 manda a Aurora narrar o Atlas Estelar e não
+  escreve as frases.)** As falas da narração são deste agente, no tom que a
+  §16 descreve para ela (guardiã, calma quando ajuda). O que é do Guia é a
+  função — narrar —, não o texto.
+- **(DEFAULT DO AGENTE — o Guia fixa as quatro camadas do Atlas e não a
+  encenação.)** Cores por camada, ligação das constelações pelo vizinho mais
+  próximo, achatamento do céu e limites de zoom são escolha deste agente.
 - **(DEFAULT DO AGENTE — o Fundador decidiu *que* entra o texto da fala, não a
   tipografia nem o momento em que ele aparece.)** O nome do sistema entra a 58% da
   abertura e a fala a 74%; nos carregamentos o microtexto entra logo no início. O

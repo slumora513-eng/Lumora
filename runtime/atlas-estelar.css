@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Lumora — Atlas Estelar (§16)
+   Cosmógrafo 3D da Comunidade. Nome aprovado pelo Fundador em 01/09/2026.
+
+   DOIS MODOS, UMA MARCAÇÃO
+   `[data-lum-modo="3d"]`   — os botões flutuam sobre a projeção das estrelas.
+   `[data-lum-modo="lista"]` — os MESMOS botões viram grade legível.
+
+   O modo lista não é degradação de emergência: é a experiência inteira sem
+   WebGL, sem GPU e sem custo. §36 pede leveza no aparelho fraco e §35 exige
+   que a informação exista sem depender do gesto. Como a marcação é a mesma,
+   nenhuma funcionalidade mora só no 3D.
+   ========================================================================== */
+
+.lum-atlas {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: min(70vh, 560px);
+  border-radius: var(--lum-raio-superficie, 18px);
+  overflow: hidden;
+  background: var(--lum-deep-space, #00040F);
+  color: var(--lum-texto-1, #fff);
+  font-family: var(--lum-fonte);
+  isolation: isolate;
+}
+
+.lum-atlas-ceu {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
+}
+.lum-atlas[data-lum-modo="lista"] .lum-atlas-ceu { display: none; }
+
+/* --------------------------------------------------------------------------
+   Topo: fio de Ariadne + busca
+   -------------------------------------------------------------------------- */
+.lum-atlas-topo {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lum-espaco, 8px);
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(to bottom,
+              rgba(0, 4, 15, 0.88), rgba(0, 4, 15, 0));
+}
+
+.lum-atlas-fio { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.lum-atlas-passo {
+  font: inherit;
+  font-size: 13px;
+  color: var(--lum-texto-2, #C8D2E8);
+  background: none;
+  border: 0;
+  padding: 6px 8px;
+  border-radius: var(--lum-raio-campo, 10px);
+  cursor: pointer;
+}
+.lum-atlas-passo + .lum-atlas-passo::before {
+  content: "›";
+  margin-inline-end: 8px;
+  color: var(--lum-texto-3, #8FA0BF);
+}
+button.lum-atlas-passo:hover { color: var(--lum-texto-1, #fff); }
+.lum-atlas-passo[aria-current] { color: var(--lum-texto-1, #fff); font-weight: 500; }
+
+/* O rótulo da busca existe de verdade e fica fora da tela: placeholder não é
+   rótulo — some ao digitar e vários leitores de tela nem o anunciam (§35). */
+.lum-atlas-rotulo {
+  position: absolute;
+  inline-size: 1px; block-size: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
+.lum-atlas-busca input {
+  font: inherit;
+  font-size: 13px;
+  inline-size: min(240px, 42vw);
+  padding: 9px 12px;
+  color: var(--lum-texto-1, #fff);
+  background: var(--lum-vidro-solido, #0A1526);
+  border: 1px solid var(--lum-vidro-borda, #5A6B8C);
+  border-radius: var(--lum-raio-campo, 10px);   /* §65.3: campo é geométrico */
+}
+.lum-atlas-busca input::placeholder { color: var(--lum-texto-3, #8FA0BF); }
+
+/* --------------------------------------------------------------------------
+   Resultados da busca
+   -------------------------------------------------------------------------- */
+.lum-atlas-achados {
+  position: absolute;
+  inset-block-start: 58px;
+  inset-inline-end: 14px;
+  z-index: 4;
+  inline-size: min(300px, 70vw);
+  max-block-size: 46%;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--lum-vidro-solido, #0A1526);
+  border: 1px solid var(--lum-vidro-borda, #5A6B8C);
+  border-radius: var(--lum-raio-superficie, 18px);
+}
+.lum-atlas-achado {
+  display: block;
+  inline-size: 100%;
+  text-align: start;
+  font: inherit;
+  padding: 8px 10px;
+  color: var(--lum-texto-1, #fff);
+  background: none;
+  border: 0;
+  border-radius: var(--lum-raio-campo, 10px);
+  cursor: pointer;
+}
+.lum-atlas-achado:hover { background: rgba(133, 65, 250, 0.22); }
+.lum-atlas-achado-nome { display: block; font-size: 14px; }
+.lum-atlas-achado-onde {
+  display: block;
+  font-size: 12px;
+  color: var(--lum-texto-3, #8FA0BF);
+}
+
+/* --------------------------------------------------------------------------
+   Os nós — modo 3D
+   A lista inteira não recebe eventos; cada botão recebe. Assim arrastar o
+   céu funciona no espaço entre as estrelas, e clicar na estrela também.
+   -------------------------------------------------------------------------- */
+.lum-atlas-nos {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.lum-atlas[data-lum-modo="3d"] .lum-atlas-nos > li { position: absolute; inset-block-start: 0; inset-inline-start: 0; }
+
+.lum-atlas-no {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font: inherit;
+  color: var(--lum-texto-1, #fff);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.lum-atlas[data-lum-modo="3d"] .lum-atlas-nos > li {
+  /* O JS escreve aqui: translate(projeção) scale(perspectiva). Um transform
+     só, num elemento só. */
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.lum-atlas[data-lum-modo="3d"] .lum-atlas-no {
+  /* Centrado na horizontal, empurrado para BAIXO da estrela na vertical.
+     Centrar nos dois eixos põe o nome em cima do brilho, e aí nem o nome nem
+     a estrela se leem. O recuo mora no filho, DENTRO do sistema já escalado,
+     então a relação com a estrela não muda com a perspectiva. */
+  transform: translate(-50%, 12px);
+  inline-size: 128px;
+}
+/* O ponto é a estrela no modo lista; no 3D a estrela é a do WebGL, e o ponto
+   sai até do layout para não empurrar o nome para longe. */
+.lum-atlas[data-lum-modo="3d"] .lum-atlas-ponto { display: none; }
+
+/* O ponto luminoso do botão. No modo 3D ele fica sutil — a estrela de
+   verdade é a do WebGL, atrás. No modo lista ele é a estrela. */
+.lum-atlas-ponto {
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: 50%;
+  background: var(--no-cor, #8541FA);
+  box-shadow: 0 0 14px 2px var(--no-cor, #8541FA);
+}
+
+.lum-atlas-nome {
+  font-size: 13px;
+  line-height: 1.25;
+  text-shadow: 0 1px 10px rgba(0, 4, 15, 0.95), 0 0 3px rgba(0, 4, 15, 0.9);
+}
+.lum-atlas[data-lum-modo="3d"] .lum-atlas-no:not(:hover):not(:focus-visible) .lum-atlas-nome {
+  color: var(--lum-texto-2, #C8D2E8);
+}
+
+/* --------------------------------------------------------------------------
+   Os nós — modo lista (sem WebGL, nível básico, contexto perdido)
+   -------------------------------------------------------------------------- */
+.lum-atlas[data-lum-modo="lista"] .lum-atlas-nos {
+  position: absolute;
+  inset-block-start: 62px;
+  inset-block-end: 44px;
+  inset-inline: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 14px;
+  pointer-events: auto;
+}
+.lum-atlas[data-lum-modo="lista"] .lum-atlas-no {
+  flex-direction: row;
+  gap: 10px;
+  inline-size: 100%;
+  min-block-size: var(--lum-alvo-min, 44px);
+  padding: 12px;
+  text-align: start;
+  background: var(--lum-vidro-solido, #0A1526);
+  border: 1px solid var(--lum-vidro-borda, #5A6B8C);
+  border-radius: var(--lum-raio-superficie, 18px);
+}
+.lum-atlas[data-lum-modo="lista"] .lum-atlas-no:hover { border-color: var(--no-cor, #8541FA); }
+
+/* --------------------------------------------------------------------------
+   Narração da Aurora (§16)
+   -------------------------------------------------------------------------- */
+.lum-atlas-narracao {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 3;
+  margin: 0;
+  padding: 12px 16px 14px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--lum-texto-2, #C8D2E8);
+  background: linear-gradient(to top,
+              rgba(0, 4, 15, 0.92) 0%, rgba(0, 4, 15, 0.55) 60%, rgba(0, 4, 15, 0) 100%);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   §35 item 8 — o gesto some, a navegação fica
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .lum-atlas-no { transition: none; }
+}

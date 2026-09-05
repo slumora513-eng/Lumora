@@ -95,6 +95,8 @@ Com isso saíram do bloqueio, além dos seis passos da §71:
 
 - **As 11 animações dos slots §18/§49** — 6 aberturas + 5 carregamentos.
 - **Notificações Vivas (§69)**, cuja §69.7 registrava *"PRIORIZAÇÃO EM ABERTO"*.
+- **O Atlas Estelar (§16)** — o cosmógrafo 3D da Comunidade, última assinatura de sistema da
+  §65.1 que ainda não existia em código.
 - **Navegação em Bolhas (§65.3) e em Ondas (§66)**.
 - **O restante da Interface Viva (§67/§68)** e a identidade sonora da §72.1 item 3.
 

@@ -91,6 +91,24 @@ identidade própria dentro da linguagem cósmica geral.
 > estrelas (nichos) → nicho individual** — com narração da Aurora.
 > *"Cosmógrafo 3D" permanece como descrição técnica.*
 
+**Implementado** em [`../runtime/atlas-estelar.js`](../runtime/atlas-estelar.js) e
+[`../runtime/atlas-estelar.css`](../runtime/atlas-estelar.css), sob o "pode fazer tudo" de
+05/09/2026. As quatro camadas e a narração da Aurora são do Guia; a encenação (cores por
+camada, ligação das constelações, enquadramento) está registrada como **DEFAULT DO AGENTE**
+em [`../runtime/README.md`](../runtime/README.md).
+
+Duas decisões que valem registro aqui, porque são de identidade e não de código:
+
+- **Cada estrela é um `<button>` de verdade.** O WebGL desenha a luz; a navegação mora no
+  DOM. Navegação que só existe como pixel não tem foco, teclado nem leitor de tela — a §35
+  não a aceitaria. É a mesma escolha da legenda das aberturas.
+- **A posição de cada galáxia é determinística.** A mesma categoria cai sempre no mesmo lugar
+  do céu. Sem isso, o 3D não acrescenta nada a uma lista: o que ele oferece é memória
+  espacial, e memória espacial exige que o céu não mude de lugar.
+
+Avaliação por estrelas, comentários, gamificação e pagamentos (§16) são regra de negócio da
+Comunidade — o runtime entrega a **navegação** e a **narração**, não o produto inteiro.
+
 Personalidades (§16): **Aurora é a guardiã** (firme quando necessário, calma quando ajuda,
 revisa temas e nichos); **Elio é o administrativo** (calmo, sério, mais frio; cria categorias,
 executa banimentos de forma objetiva). Nenhum dos dois xinga. A personalidade forte pode ser

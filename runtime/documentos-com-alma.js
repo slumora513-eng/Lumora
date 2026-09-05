@@ -123,4 +123,8 @@ export function aplicarConstelacoes(raiz = document) {
   }
 }
 
-export { hash32 };
+/* hash32 e prng saem daqui para o Atlas Estelar posicionar galáxias,
+   constelações e estrelas de forma DETERMINÍSTICA: a mesma categoria tem que
+   cair sempre no mesmo lugar do céu, ou a memória espacial de quem navega não
+   vale nada. A regra de determinismo mora num lugar só. */
+export { hash32, prng };

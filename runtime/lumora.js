@@ -27,6 +27,7 @@ import { aplicarConstelacoes } from './documentos-com-alma.js';
 import { Animacoes } from './animacoes.js';
 import { NotificacoesVivas, Bolido, IdentidadeSonora } from './notificacoes-vivas.js';
 import { Navegacao } from './navegacao.js';
+import { AtlasEstelar } from './atlas-estelar.js';
 import {
   NebulosaDeAcoes, RastroDeAurora, SismografoVivo,
   PoeiraDeInteracao, FioDeAriadne, Estrelinha, ComandosDeVoz,
@@ -128,6 +129,19 @@ export class Lumora {
     return this.animacoes.tocar(slot, canvas, opcoes);
   }
 
+  /** Abre o Atlas Estelar (§16) num elemento.
+   *  O nível §36 e o narrador já entram amarrados: a narração da Aurora sai
+   *  pelo mesmo canal aria-live de todo o resto (§45, som nunca é único). */
+  abrirAtlas(raiz, opcoes = {}) {
+    this.atlas?.destruir();
+    this.atlas = new AtlasEstelar(raiz, {
+      nivel: this.nivel,
+      narrar: (texto) => anunciar(texto),
+      ...opcoes,
+    });
+    return this.atlas;
+  }
+
   /** Troca o tema. §66.3: a navegação acompanha o tema; §69.5: as
    *  notificações na tela se transformam sem perda. */
   definirTema(tema) {
@@ -176,6 +190,7 @@ export class Lumora {
   }
 
   destruir() {
+    this.atlas?.destruir();
     this.raiz.removeEventListener('pointerdown', this._onRespingo);
     if (this._mqMovimento) {
       this._mqMovimento.removeEventListener('change', this._onPreferencia);

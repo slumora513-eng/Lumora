@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="navegacao.css">
 <link rel="stylesheet" href="interface-viva.css">
 <link rel="stylesheet" href="animacoes.css">
+<link rel="stylesheet" href="atlas-estelar.css">
 <style>
   /* Estilos SÓ desta página de verificação. Não fazem parte do runtime. */
   * { box-sizing: border-box; }
@@ -177,6 +178,17 @@
   <p class="aviso">As 11 cenas têm briefing vigente. <code>abertura.business</code> segue o briefing
      definido pelo Fundador em 05/09/2026 — céu estrelado puro, sem motivo extra (§65.1).</p>
 
+  <h2>7.5 · Atlas Estelar <span class="aviso">§16 — Comunidade</span></h2>
+  <p class="aviso">Galáxias (categorias) → constelações (temas) → estrelas (nichos) → nicho.
+     Clique numa estrela para descer, <kbd>Esc</kbd> para subir, setas andam no céu,
+     arraste para orbitar, roda ou pinça para aproximar. Cada nó é um
+     <code>&lt;button&gt;</code> de verdade — o 3D é a pele, o DOM é a verdade.</p>
+  <div id="atlas"></div>
+  <div class="linha" style="margin-top:12px">
+    <button class="lum-botao" id="atlas-lista">Alternar modo lista (§36 básico)</button>
+    <button class="lum-botao" id="atlas-topo">Voltar às galáxias</button>
+  </div>
+
   <h2>8 · Notificações Vivas <span class="aviso">§69</span></h2>
   <div class="linha">
     <button class="lum-botao" data-notif="normal">Normal</button>
@@ -307,6 +319,41 @@ for (const b of document.querySelectorAll('[data-slot]')) {
     anunciar(`Tocando a animação ${b.dataset.slot}.`);
   });
 }
+
+// Atlas Estelar (§16) — dados de exemplo, só para o banco de verificação
+const catalogo = [
+  { id:'varejo', nome:'Varejo', temas:[
+    { id:'alimentacao', nome:'Alimentação', nichos:[
+      { id:'pizzaria', nome:'Pizzaria' }, { id:'padaria', nome:'Padaria' },
+      { id:'hamburgueria', nome:'Hamburgueria' }, { id:'acai', nome:'Açaí' }]},
+    { id:'moda', nome:'Moda', nichos:[
+      { id:'boutique', nome:'Boutique' }, { id:'calcados', nome:'Calçados' }]},
+    { id:'mercado', nome:'Mercearia', nichos:[
+      { id:'hortifruti', nome:'Hortifruti' }, { id:'conveniencia', nome:'Conveniência' }]}]},
+  { id:'servicos', nome:'Serviços', temas:[
+    { id:'beleza', nome:'Beleza', nichos:[
+      { id:'salao', nome:'Salão' }, { id:'barbearia', nome:'Barbearia' }]},
+    { id:'oficina', nome:'Oficinas', nichos:[
+      { id:'mecanica', nome:'Mecânica' }, { id:'funilaria', nome:'Funilaria' }]}]},
+  { id:'logistica', nome:'Logística', temas:[
+    { id:'entregas', nome:'Entregas', nichos:[
+      { id:'motoboy', nome:'Motoboy' }, { id:'fracionada', nome:'Carga fracionada' }]},
+    { id:'armazem', nome:'Armazenagem', nichos:[{ id:'cd', nome:'Centro de distribuição' }]}]},
+  { id:'saude', nome:'Saúde', temas:[
+    { id:'clinicas', nome:'Clínicas', nichos:[
+      { id:'odonto', nome:'Odontologia' }, { id:'fisio', nome:'Fisioterapia' }]}]},
+  { id:'educacao', nome:'Educação', temas:[
+    { id:'cursos', nome:'Cursos livres', nichos:[{ id:'idiomas', nome:'Idiomas' }]}]},
+];
+const atlas = lum.abrirAtlas(document.getElementById('atlas'), { dados: catalogo });
+document.getElementById('atlas-lista').addEventListener('click', () => {
+  const alvo = atlas.modo === '3d' ? 'lista' : '3d';
+  atlas.modo = alvo;
+  atlas.raiz.dataset.lumModo = alvo;
+  atlas._posicionarBotoes();
+  anunciar(`Atlas em modo ${alvo === 'lista' ? 'lista' : 'cosmográfico'}.`);
+});
+document.getElementById('atlas-topo').addEventListener('click', () => atlas.irPara([]));
 
 // Notificações Vivas (§69)
 for (const b of document.querySelectorAll('[data-notif]')) {
