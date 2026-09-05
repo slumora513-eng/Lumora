@@ -71,16 +71,16 @@
     "abertura.business": {
       "tipo": "inicializacao",
       "sistema": "Lumora Business",
-      "briefing": "SEM BRIEFING VIGENTE. O original — \"gota de aquarela se espalhando formando o nome\" — foi REVOGADO em §60.1 junto com a aquarela, e nenhum substituto foi registrado no Guia. ESCALACOES.md §5 continua ABERTA.",
+      "briefing": "Céu estrelado puro — estrelas, partículas e constelações do Céu Vivo, sem motivo extra (§65.1). BRIEFING OFICIAL definido pelo Fundador em 05/09/2026, substituindo o original (\"gota de aquarela se espalhando formando o nome\"), revogado com a aquarela em §60.1.",
       "versao_ativa": "1",
       "versoes": {
         "1": {
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.business'",
-          "_aviso": "PLACEHOLDER DECLARADO, não briefing aprovado. Derivado da única decisão visual que o Guia dá ao Business (§65.1, \"céu estrelado puro, sem motivo extra\"): as estrelas se condensam numa constelação. Substituir assim que o Fundador responder a ESCALACOES §5.",
+          "_nota": "Nada converge nem se monta: um movimento de montagem seria o \"motivo extra\" que a §65.1 exclui. As estrelas acendem onde estão (§70.1) e a constelação se desenha entre elas (§71.1). Fixa, sem variação por horário (§44).",
           "formatos": { "procedural": "CENAS['abertura.business']" },
           "audio": { "abertura": "business_abertura_som.mp3", "voz": "business_boas_vindas.mp3" },
-          "audio_status": "REVOGADO em §60.1 (acompanhava a gota de aquarela) e NÃO ENTREGUE",
+          "audio_status": "NÃO ENTREGUE. O arquivo da §45 acompanhava a gota de aquarela e está marcado [REVOGADO] — com o briefing novo, precisa ser refeito (ESCALACOES §6).",
           "duracao_alvo_s": 4.0,
           "aprovado_por": "fundador",
           "data_aprovacao": "2026-09-05"

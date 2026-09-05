@@ -53,9 +53,14 @@ Consequência prática: em telas fiscais e de PDV, a estética recua e a funçã
 respeitoso e sem humor em contexto fiscal é regra de voz (§70.3), não preferência.
 
 **Abertura:** o briefing original (§18) era *"gota de aquarela se espalhando formando o nome"* —
-**REVOGADO em 01/09/2026** (§60.1). O slot `abertura.business` existe e está registrado, mas
-**seu briefing visual está vago desde a revogação da aquarela** — ver
-[`ESCALACOES.md`](../ESCALACOES.md) §5.
+**REVOGADO em 01/09/2026** (§60.1). Em **05/09/2026 o Fundador definiu o briefing oficial**:
+**céu estrelado puro**, estrelas, partículas e constelações do Céu Vivo, **sem motivo extra**
+(§65.1) — a mesma decisão que rege o fundo do Business, agora também na abertura. Implementado
+em [`../runtime/animacoes.js`](../runtime/animacoes.js).
+
+Consequência de encenação: nada converge nem se monta na cena. Um movimento de montagem seria
+o "motivo extra" que a §65.1 exclui — as estrelas acendem onde estão e a constelação se desenha
+entre elas.
 
 ---
 

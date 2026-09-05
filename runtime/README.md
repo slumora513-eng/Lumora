@@ -43,9 +43,9 @@ profissional contratado (§48/§64.2) entram como versão superior no manifest e
 **sem mudar código** — a "troca sem deploy" da §49.3. A versão procedural continua como o
 **fallback obrigatório** que a mesma §49.3 exige. §64.2 permanece congelada.
 
-**Uma exceção declarada:** `abertura.business` é **PLACEHOLDER**, não briefing aprovado — o
-briefing original caiu com a aquarela (§60.1) e nenhum substituto foi registrado. Marcado no
-código e no manifest. Ver [`../ESCALACOES.md`](../ESCALACOES.md) §5.
+**As 11 cenas têm briefing vigente.** `abertura.business` era a única sem — o original caiu com
+a aquarela (§60.1) — e recebeu briefing oficial do Fundador em 05/09/2026: *céu estrelado puro,
+sem motivo extra* (§65.1). Nenhuma cena é provisória.
 
 ---
 
@@ -170,9 +170,8 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   que a §35 exige é etapa de QA, ainda não feita.
 - **(DEFAULT DO AGENTE — o Guia dá o briefing de cada abertura, mas não a
   encenação quadro a quadro.)** Tempos, ordem dos trechos e composição de cada
-  uma das 11 cenas são decisão deste agente; os briefings em si são textuais da
-  §18/§49.1. `abertura.business` é a única sem briefing vigente e está marcada
-  como placeholder.
+  uma das 11 cenas são decisão deste agente; os briefings em si vêm da §18/§49.1,
+  e o de `abertura.business` do Fundador (05/09/2026).
 - **(DEFAULT DO AGENTE — §72.1 item 3 aprovou "notas procedurais WebAudio
   (fiscal/pedido/sistema)" sem fixar as notas.)** As frequências de
   `IdentidadeSonora` foram escolhidas por este agente.

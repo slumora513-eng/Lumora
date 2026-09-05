@@ -63,7 +63,7 @@ a animação em todo o sistema, **sem mexer em código**.
 | `abertura.elio` | Elio | Bolhinhas se juntando até formar a bolha principal; fala *"Olá, eu sou o Elio."* | `elio_abertura_som.mp3` + `elio_boas_vindas.mp3` |
 | `abertura.aurora` | Aurora | Noite chegando e aurora boreal se formando; fala etérea e ecoante | `aurora_abertura_som.mp3` + `aurora_boas_vindas.mp3` |
 | `abertura.rotacerta` | RotaCerta | Horizonte com veículos em silhueta azul e zoom out | `rotacerta_abertura_som.mp3` + `rotacerta_boas_vindas.mp3` |
-| `abertura.business` | Lumora Business | ~~Gota de aquarela se espalhando formando o nome~~ **REVOGADO (§60.1)** — briefing vago, ver [`ESCALACOES.md`](../ESCALACOES.md) §5 | `business_abertura_som.mp3` + `business_boas_vindas.mp3` |
+| `abertura.business` | Lumora Business | **Céu estrelado puro** — estrelas, partículas e constelações, sem motivo extra (§65.1). Briefing oficial do Fundador, 05/09/2026, substituindo a ~~gota de aquarela~~ revogada em §60.1 | `business_abertura_som.mp3` (**a refazer** — acompanhava a aquarela) + `business_boas_vindas.mp3` |
 | `abertura.ecossistema` | Ecossistema | Versão épica unindo os sistemas | `ecossistema_abertura_som.mp3` + `ecossistema_boas_vindas.mp3` |
 | `abertura.hub` | Lumora Hub *(interno)* | Esfera técnica liquid-glass / bolha central com conexões neurais | `hub_abertura_som.mp3` + `hub_boas_vindas.mp3` |
 

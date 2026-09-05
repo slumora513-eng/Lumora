@@ -30,7 +30,7 @@
    abertura.elio        bolhinhas se juntando até formar a bolha principal
    abertura.aurora      a noite chega e a aurora boreal se forma e se move
    abertura.rotacerta   horizonte com veículos em silhueta azul e zoom out
-   abertura.business    [briefing REVOGADO com a aquarela — ver ESCALACOES §5]
+   abertura.business    céu estrelado puro, sem motivo extra (Fundador, 05/09/2026)
    abertura.ecossistema versão épica unindo os sistemas
    abertura.hub         bolha central com conexões no estilo de neurônios
    loading.criar_mundo  "criando o seu novo mundo" — bolha vira planeta
@@ -368,38 +368,76 @@ const CENAS = {
           ease(trecho(t, 0.68, 0.92)));
   },
 
-  /* ---- abertura.business
-     ATENÇÃO: o briefing original desta abertura era "gota de aquarela se
-     espalhando formando o nome", REVOGADO em §60.1. Nenhum briefing
-     substituto foi registrado no Guia — é a ESCALACOES.md §5, ainda aberta.
+  /* ---- abertura.business — "céu estrelado puro"
+     BRIEFING OFICIAL, definido pelo Fundador em 05/09/2026, resolvendo a
+     ESCALACOES §5. Substitui o original ("gota de aquarela se espalhando
+     formando o nome"), revogado com a aquarela em §60.1.
 
-     (DEFAULT DO AGENTE — sem briefing, a cena foi derivada da única decisão
-     visual que o Guia dá ao Business: §65.1, "céu estrelado puro, sem motivo
-     extra". As estrelas se condensam numa constelação e assentam. É
-     placeholder declarado, não briefing aprovado.) */
+     A cena É o Céu Vivo do Business: estrelas, partículas e constelações
+     (§65.1), SEM MOTIVO EXTRA. Por isso nada voa, converge nem se monta —
+     um movimento de montagem seria justamente o "motivo extra" que a §65.1
+     exclui. O que acontece é o que o céu já faz: as estrelas acendem onde
+     estão (§70.1, "cada ação acende uma estrela") e a constelação se desenha
+     entre elas (§71.1, a Constelação do Dia).
+
+     Fixa, sem variação por horário: §44 registra que a animação de
+     inicialização de um sistema é sempre a mesma. */
   'abertura.business'(ctx, t, L, A) {
     limpar(ctx, L, A);
-    const cx = L / 2, cy = A * 0.44;
-    const conv = ease(trecho(t, 0.08, 0.62));
+    const cx = L / 2;
 
-    // Estrelas dispersas que convergem para os vértices da constelação
-    const alvos = [[-0.20,-0.10],[-0.10,0.10],[0.00,-0.05],[0.10,0.12],[0.20,-0.02]];
-    let s = 99;
-    const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-    const pontos = [];
-    for (let i = 0; i < alvos.length; i++) {
-      const ax = cx + alvos[i][0] * L, ay = cy + alvos[i][1] * A;
-      const ix = rnd() * L, iy = rnd() * A;
-      const x = ix + (ax - ix) * conv, y = iy + (ay - iy) * conv;
-      pontos.push([x, y]);
+    // 1. O céu se revela — as estrelas de fundo acendem onde já estão.
+    estrelas(ctx, L, A, 160, 5, ease(trecho(t, 0, 0.45)));
+
+    // 2. Partículas do Céu Vivo, à deriva (§65.1: "estrelas, partículas").
+    const part = ease(trecho(t, 0.15, 0.55));
+    if (part > 0) {
+      let s = 421;
+      const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 22; i++) {
+        const x = rnd() * L;
+        const y = (rnd() * A + t * A * 0.10) % A;
+        const a = part * (0.25 + rnd() * 0.45);
+        ctx.fillStyle = hexA(C.businessVerde, a * 0.55);
+        ctx.beginPath();
+        ctx.arc(x, y, 0.9 + rnd() * 1.5, 0, TAU);
+        ctx.fill();
+      }
+      ctx.restore();
     }
-    estrelas(ctx, L, A, 100, 5, ease(trecho(t, 0, 0.4)) * 0.7);
 
-    // Liga a constelação
+    // 3. As estrelas da constelação acendem UMA A UMA, nos lugares delas.
+    // Espaçamento irregular de propósito: constelação real não é zigue-zague
+    // de passo uniforme, e o céu do Business não deve parecer um gráfico.
+    const pontos = [[0.28, 0.31], [0.37, 0.49], [0.46, 0.27], [0.58, 0.44], [0.72, 0.35]]
+      .map(([px, py]) => [px * L, py * A]);
+
+    const acende = trecho(t, 0.30, 0.68);
+    pontos.forEach(([x, y], i) => {
+      const f = clamp01(acende * pontos.length - i);
+      if (f <= 0) return;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, 16);
+      g.addColorStop(0, hexA('#FFFFFF', f));
+      g.addColorStop(0.30, hexA(C.businessVerde, 0.55 * f));
+      g.addColorStop(1, hexA(C.businessVerde, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, 16, 0, TAU);
+      ctx.fill();
+      ctx.fillStyle = `rgba(255,255,255,${f.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(x, y, 1.6, 0, TAU);
+      ctx.fill();
+    });
+
+    // 4. A constelação se desenha entre elas.
     const liga = ease(trecho(t, 0.58, 0.86));
     if (liga > 0) {
-      ctx.strokeStyle = hexA(C.businessVerde, 0.6);
-      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = hexA(C.businessVerde, 0.55);
+      ctx.lineWidth = 1.1;
+      ctx.lineCap = 'round';
       ctx.beginPath();
       const total = pontos.length - 1;
       ctx.moveTo(pontos[0][0], pontos[0][1]);
@@ -410,16 +448,6 @@ const CENAS = {
         if (f < 1) break;
       }
       ctx.stroke();
-    }
-    for (const [x, y] of pontos) {
-      const g = ctx.createRadialGradient(x, y, 0, x, y, 14);
-      g.addColorStop(0, hexA('#FFFFFF', conv));
-      g.addColorStop(0.4, hexA(C.businessVerde, 0.5 * conv));
-      g.addColorStop(1, hexA(C.businessVerde, 0));
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, 14, 0, TAU);
-      ctx.fill();
     }
 
     texto(ctx, 'Lumora Business', cx, A * 0.80, Math.max(17, A * 0.055),

@@ -123,10 +123,11 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
 ## Escalações abertas
 
-**Uma resolvida** em 05/09/2026: a **L canônica é a dominante** (§1), registrada em
-[`docs/11-l-canonica.md`](docs/11-l-canonica.md).
+**Duas resolvidas** em 05/09/2026: a **L canônica é a dominante** (§1, em
+[`docs/11-l-canonica.md`](docs/11-l-canonica.md)) e o **briefing da abertura do Business**
+é o céu estrelado puro (§5).
 
-**Seis continuam abertas** — exigem decisão de marca e não foram resolvidas por default
+**Cinco continuam abertas** — exigem decisão de marca e não foram resolvidas por default
 ([`ESCALACOES.md`](ESCALACOES.md)):
 
 1. O **"A" do wordmark LUMORA** aparece com e sem travessão em arquivos oficiais diferentes —
@@ -134,8 +135,7 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 2. Como suprir a **falta de alfa** nos 13 arquivos sem violar a regra de não alterar pixels.
    **Agora bloqueia a L canônica no papel-mãe.** *(§3)*
 3. **RotaCerta**: §65.1 pede "teal + âmbar"; o asset oficial traz violeta/azul + âmbar. *(§4)*
-4. A **abertura do Lumora Business** ficou sem briefing após a revogação da aquarela. *(§5)*
-5. **Assets citados no Guia que não foram entregues** (áudios §45, protótipos v1–v4, amostras
+4. **Assets citados no Guia que não foram entregues** (áudios §45, protótipos v1–v4, amostras
    conceituais) — registrados como ausentes, não recriados. *(§6)*
 6. As três **paletas de alto contraste** (§70.6) são nomeadas, mas sem nenhum valor definido.
    **Agora bloqueia o passo 6 da Fase 3A.** *(§7)*

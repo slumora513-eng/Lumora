@@ -3,8 +3,9 @@
 > Regra 24 do prompt operacional: *"Quando houver dúvida crítica de identidade, não improvisar:
 > registrar a dúvida e escalar ao Fundador."*
 
-Sete itens. **Nenhum foi resolvido por default** — todos exigem decisão de identidade que o
-Guia não sustenta. Nada aqui é pendência de execução: são perguntas.
+Sete itens registrados; **duas resolvidas pelo Fundador em 05/09/2026** (§1 e §5), cinco
+abertas. Nenhuma foi resolvida por default — todas exigem decisão de identidade que o Guia não
+sustenta. Nada aqui é pendência de execução: são perguntas.
 
 Itens **congelados** (§64 — caridade e animações 3D) **não aparecem nesta lista**, conforme
 §64.3: aparecem apenas como "congelado (ver §64)", sem status de pendência.
@@ -96,30 +97,34 @@ Duas leituras possíveis, e o Guia não desempata:
 
 ---
 
-## §5 — Briefing da abertura do Lumora Business ficou vago
+## ~~§5 — Briefing da abertura do Lumora Business~~ — ✅ RESOLVIDA pelo Fundador em 05/09/2026
 
-**Bloqueia:** o briefing do slot `abertura.business` para o profissional contratado (§48/§49.4).
+**Decisão do Fundador (05/09/2026):** *"usa o céu estrelado puro como briefing oficial"*.
 
-O briefing original (§18, §49.1) era *"gota de aquarela se espalhando e formando o nome"* —
-**revogado em 01/09/2026** (§60.1), junto com o áudio emparelhado
-`business_abertura_som.mp3`, marcado `[REVOGADO]` na §45.
+O briefing do slot `abertura.business` passa a ser:
 
-O slot `abertura.business` continua registrado, mas **sem briefing visual substituto**. Os
-outros cinco slots de abertura mantêm briefing íntegro (bolhinhas, aurora, horizonte com
-veículos, versão épica, esfera técnica). Este é o único órfão da revogação.
+> **Céu estrelado puro** — estrelas, partículas e constelações do Céu Vivo, **sem motivo
+> extra** (§65.1).
 
-Agravante coerente: §65.1 define o Business como **"céu estrelado puro, sem motivo extra"** —
-o que é uma decisão de *fundo*, não de *abertura de 4 segundos*.
+Substitui o original — *"gota de aquarela se espalhando formando o nome"* — revogado com a
+aquarela em §60.1. Era o único dos seis slots de abertura órfão dessa revogação; agora os seis
+têm briefing vigente.
 
-**Estado em 05/09/2026:** com o "pode ir" das animações, o slot `abertura.business` recebeu uma
-cena procedural — mas ela é **PLACEHOLDER DECLARADO, não briefing aprovado**. Foi derivada da
-única decisão visual que o Guia dá ao Business (§65.1, *"céu estrelado puro, sem motivo
-extra"*): as estrelas se condensam numa constelação. Está marcada como tal no código
-(`runtime/animacoes.js`) e no manifest (`_aviso`), e é a única das 11 cenas nessa condição.
+Registrado em `runtime/animations.manifest.json` e implementado em `runtime/animacoes.js`.
+A cena deixou de ser placeholder: **nenhuma das 11 cenas dos slots é mais provisória.**
 
-**A pergunta continua aberta:** qual é a animação de abertura do Lumora Business, agora que a
-gota de aquarela caiu? (E o áudio `business_abertura_som.mp3`, marcado `[REVOGADO]` na §45,
-deve ser refeito ou reaproveitado?)
+**Consequência na encenação:** a cena foi ajustada para ser fiel ao "sem motivo extra". Antes,
+as estrelas convergiam de posições dispersas para formar a constelação — um movimento de
+montagem, que é justamente o motivo extra que a §65.1 exclui. Agora elas **acendem onde estão**
+(§70.1, "cada ação acende uma estrela") e a constelação **se desenha entre elas** (§71.1, a
+Constelação do Dia). O céu não monta nada: ele faz o que já faz.
+
+Fixa, sem variação por horário — §44 registra que a animação de inicialização de um sistema é
+sempre a mesma.
+
+> **Continua aberto (dentro da §6):** o áudio `business_abertura_som.mp3` está marcado
+> `[REVOGADO]` na §45 porque acompanhava a gota de aquarela. Com o briefing novo, **precisa ser
+> refeito** — e áudio é produção do profissional contratado (§48), não desta plataforma.
 
 ---
 

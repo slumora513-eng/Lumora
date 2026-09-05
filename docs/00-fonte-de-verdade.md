@@ -65,6 +65,7 @@ Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da h
 | *"a L canônica é a dominante, confirma e registra"* | Resolve a escalação §1. A L canônica é a variante dominante, em 9 dos 13 arquivos oficiais. | [`11-l-canonica.md`](11-l-canonica.md) |
 | *"eu te dou o meu pode ir"* | É o **"pode ir" da §71**. A Fase 3A sai do bloqueio. | [`../runtime/`](../runtime/) |
 | *"o pode ir vale pras animações também, pode fazer tudo"* | Estende o sinal às **animações dos slots §18/§49** e ao restante da Interface Viva. | [`../runtime/animacoes.js`](../runtime/animacoes.js) |
+| *"usa o céu estrelado puro como briefing oficial"* | Resolve a escalação §5. Define o briefing de `abertura.business`, órfão desde a revogação da aquarela. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
 
 ---
 
