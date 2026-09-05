@@ -33,6 +33,7 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
 | [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py) | As seis paletas sob protanopia, deuteranopia e tritanopia — simulação em código, com autoteste |
+| [`ferramentas/testes/`](ferramentas/testes/) | As **118 checagens** do runtime em Chromium — `node ferramentas/testes/rodar.mjs` |
 | [`ESCALACOES.md`](ESCALACOES.md) | **Dúvidas críticas de identidade abertas ao Fundador** |
 
 ---

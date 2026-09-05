@@ -109,6 +109,8 @@ Estas não são convenções que alguém possa esquecer — estão no caminho de
 ```bash
 python3 -m http.server 8765          # na raiz do repositório
 # abre http://localhost:8765/runtime/verificacao.html
+
+node ferramentas/testes/rodar.mjs    # as 118 checagens, de uma vez
 ```
 
 `verificacao.html` é bancada de teste local — **não é produto nem asset de marca**.
