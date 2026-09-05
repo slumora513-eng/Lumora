@@ -67,7 +67,7 @@ são proposta, pendente de aprovação.)**
 | Elemento | Proposta |
 |---|---|
 | Fundo cosmos | Densidade **muito baixa**, sem gradiente cheio; nunca atrás de bloco de texto fiscal |
-| L canônica | Cabeçalho, monocromática ou no gradiente oficial, com área de respiro própria |
+| L canônica | Cabeçalho, no gradiente oficial, com área de respiro própria. **Impressa desde 05/09/2026**: `marca-com-alfa.js` recupera o alfa do oficial 11 e a L compõe sobre papel branco (ESCALACOES.md §3). No modo econômico ela permanece, mas com `print-color-adjust: economy` — a impressora decide a tinta |
 | Constelação do rodapé | Área reservada no rodapé, **fora** dos campos obrigatórios; linhas finas, uma cor |
 | Texto do corpo | Preto ou cinza-escuro sobre branco — **nunca** cor de marca |
 | Modo econômico | Documento fiscal deve imprimir corretamente **em preto e branco puro**, sem perda de informação |

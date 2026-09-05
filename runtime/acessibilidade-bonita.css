@@ -94,12 +94,23 @@
 
 /* --------------------------------------------------------------------------
    PALETA 3 — daltonismo (§35 item 7)
-   Base Okabe-Ito, distinguível em protanopia, deuteranopia e tritanopia.
-   §35 exige paletas "testadas em simuladores (Coblis, Stark)" — este é o
-   ponto de partida verificado por contraste; o teste em simulador é etapa de
-   QA, não de token.
+   Base Okabe-Ito (2008).
    Contraste sobre Deep Space (calculado): azul-céu 8,89:1 · laranja 9,10:1 ·
    vermelhão 5,30:1 · amarelo 15,50:1 — todos >= AA, três deles AAA.
+
+   §35 exige paletas "testadas em simuladores (Coblis, Stark)". O teste foi
+   feito, mas em código — ferramentas/verificar_daltonismo.py, que é
+   reproduzível e lê estes mesmos valores daqui. MEDIDO, menor ΔE00 entre os
+   quatro estados:
+
+       visão normal 21,7 · protanopia 15,3 · deuteranopia 11,7 · tritanopia 8,6
+
+   Os 8,6 da tritanopia NÃO são um descuido: das 7 cores Okabe-Ito, 6 passam em
+   AA aqui, e as 15 combinações de 4 dessas 6 empatam em 8,6. É o teto da
+   paleta. Okabe-Ito foi construída para o eixo vermelho-verde, não para o
+   azul-amarelo — trocar cores pioraria o eixo que ela existe para resolver.
+   Por isso a cor nunca é canal único: forma e texto acompanham todo estado
+   (§35 item 3), inclusive a urgência "alta" em notificacoes-vivas.css.
    -------------------------------------------------------------------------- */
 :root[data-lum-paleta="daltonismo"] {
   --lum-ok:            #56B4E9;   /* azul-céu no lugar do verde */

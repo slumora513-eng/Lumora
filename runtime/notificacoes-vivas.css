@@ -82,14 +82,32 @@
 .lum-bolha-txt { font-size: 14px; line-height: 1.35; }
 
 /* --- Hierarquia de urgência (§69.3) --------------------------------------
-   Cada nível muda cor E ritmo E ícone — nunca só a cor (§35 item 3). */
+   Cada nível muda cor E forma E texto — nunca só a cor (§35 item 3).
+   O ritmo entra também, mas NÃO conta como o canal de reserva: quem pede
+   prefers-reduced-motion não o recebe. O canal que sempre sobra é o texto. */
 
 .lum-bolha-notif.lum-u-alta {
   border-color: var(--lum-atencao);
   /* "Bolha âmbar, respiração rápida" — 1,5s = 0,67 Hz, ainda longe de 3 Hz. */
   animation-duration: var(--lum-dur-bolha-nasce, 400ms), 1.5s;
 }
-.lum-bolha-notif.lum-u-alta .lum-bolha-icone { background: var(--lum-atencao); }
+.lum-bolha-notif.lum-u-alta .lum-bolha-icone {
+  background: var(--lum-atencao);
+  /* Losango — terceira forma, distinta do círculo (normal) e do quadrado
+     (crítica). Sem ela o ícone de "alta" diferia de "normal" SÓ pela cor. */
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+/* A respiração de 1,5 s É um canal não-cor, mas prefers-reduced-motion a
+   desliga (ver o bloco no fim deste arquivo) — e aí "alta" voltava a ser só
+   cor. Texto não depende de movimento, de visão de cor nem de tinta colorida
+   na impressão. Medido: sob tritanopia --lum-atencao e --lum-critico ficam a
+   ΔE00 = 8,6 (ferramentas/verificar_daltonismo.py), perto demais para a cor
+   sozinha carregar a urgência. */
+.lum-bolha-notif.lum-u-alta .lum-bolha-cat::after {
+  content: " · prioridade";
+  color: var(--lum-atencao);
+}
 
 /* "Bolha congelada brilhando — não estoura" (§69.3).
    A respiração PARA: o congelamento é o sinal de que exige ação explícita. */
@@ -192,6 +210,12 @@
 .lum-onda-txt { font-size: 14px; }
 
 .lum-onda-notif.lum-u-alta { box-shadow: inset 0 0 40px -8px var(--lum-atencao); }
+/* Na faixa, "alta" não tinha ritmo próprio nem ícone: era só o brilho âmbar —
+   o único nível de urgência de todo o runtime distinguível apenas pela cor. */
+.lum-onda-notif.lum-u-alta .lum-onda-cat::after {
+  content: " · prioridade";
+  color: var(--lum-atencao);
+}
 
 /* "Faixa ancorada — ondulação para, brilho contínuo, ventania não leva" */
 .lum-onda-notif.lum-u-critica {

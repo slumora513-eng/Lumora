@@ -16,10 +16,13 @@
      backdrop-filter não existe em PDF nem em impressora; um documento cuja
      legibilidade dependesse dele quebraria ao imprimir.
 
-   - Não desenha a L canônica. Ela é confirmada (docs/11-l-canonica.md) mas os
-     9 arquivos que a portam são JPEG sem canal alfa (ESCALACOES.md §3, ainda
-     aberta). A área fica RESERVADA e vazia. Desenhar um substituto seria
-     inventar versão de marca oficial — proibido pela regra 14.
+   - Não desenha a L canônica — e continua não desenhando. O que mudou em
+     05/09/2026 é que ela deixou de faltar: marca-com-alfa.js RECUPERA o alfa
+     do arquivo oficial 11, despremultiplicando a luz aditiva que o JPEG
+     achatou sobre preto, e a L passa a compor sobre papel branco
+     (ESCALACOES.md §3). É leitura do oficial, não desenho — a regra 14 segue
+     valendo. Se a extração não rodar, a área volta a ficar RESERVADA e vazia:
+     nenhum substituto é inventado em nenhuma hipótese.
 
    - Não colore texto de corpo. Em papel branco o verde do Business mede
      1,63:1 e o âmbar do RotaCerta 2,00:1 — ilegíveis
@@ -69,7 +72,7 @@
 .lum-doc > * { position: relative; z-index: 1; }
 
 /* --------------------------------------------------------------------------
-   2. Cabeçalho — a L canônica em destaque (ÁREA RESERVADA, VAZIA)
+   2. Cabeçalho — a L canônica em destaque (§70.5/§71.5) — PREENCHIDA
    -------------------------------------------------------------------------- */
 .lum-doc-cabecalho {
   display: flex;
@@ -79,15 +82,33 @@
   border-block-end: 1px solid var(--doc-filete);
 }
 
-/* A área da L. Sem imagem: aguarda arquivo com alfa ou vetor
-   (ESCALACOES.md §3). O contorno tracejado aparece só na tela, para o
-   operador ver que o lugar existe — some na impressão. */
+/* A área da L. Deixou de ser reservada-e-vazia em 05/09/2026: marca-com-alfa.js
+   recupera o alfa verdadeiro do oficial 11 despremultiplicando a luz aditiva,
+   e a L passa a compor sobre papel branco. Ver ESCALACOES.md §3.
+   Enquanto o script não roda — ou se ele falhar — vale o estado anterior: área
+   reservada, contorno tracejado só na tela, NADA desenhado no lugar. */
 .lum-doc-marca {
   inline-size: 22mm;
   block-size: 22mm;
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   outline: 1px dashed var(--doc-filete);
   outline-offset: 2px;
+}
+
+/* Preenchida: o contorno de "lugar reservado" perde a função e sai. */
+.lum-doc-marca[data-lum-marca-estado="pronta"] { outline: none; }
+
+.lum-marca-arte {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  /* O gradiente violeta→azul é a identidade da L: impressora não pode
+     descartá-lo como se fosse fundo decorativo. */
+  -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
 }
 
 .lum-doc-titulo { margin: 0; font-size: 16pt; font-weight: 600; letter-spacing: 0.01em; }
@@ -181,6 +202,13 @@
 @media print {
   .lum-doc[data-economico="true"]::before { display: none; }
   .lum-doc[data-economico="true"] .lum-doc-constelacao { display: none; }
+  /* A L permanece — é a marca, não decoração — mas devolve à impressora o
+     direito de economizar tinta: `economy` é justamente o valor padrão que o
+     modo normal sobrescreve. */
+  .lum-doc[data-economico="true"] .lum-marca-arte {
+    -webkit-print-color-adjust: economy;
+            print-color-adjust: economy;
+  }
 }
 
 /* Alto contraste também vale no papel. */

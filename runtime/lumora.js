@@ -9,7 +9,7 @@
      3. 💬 Sotaque Cósmico     -> sotaque-cosmico.js
      4. 🚀 Viagem Cósmica      -> viagem-cosmica.js
      5. 📜 Documentos com Alma -> documentos-com-alma.{css,js}
-     6. 🌈 Acessibilidade Bonita -> acessibilidade-bonita.css (2 paletas pendentes)
+     6. 🌈 Acessibilidade Bonita -> acessibilidade-bonita.css (6 paletas, verificadas)
 
    REGRAS TRANSVERSAIS APLICADAS AQUI, NÃO DELEGADAS À DISCIPLINA DE QUEM USA:
      - prefers-reduced-motion desliga gesto, nunca informação (§35 item 8)
@@ -24,6 +24,7 @@ import { CeuVivo } from './ceu-vivo.js';
 import { SotaqueCosmico } from './sotaque-cosmico.js';
 import { ViagemCosmica } from './viagem-cosmica.js';
 import { aplicarConstelacoes } from './documentos-com-alma.js';
+import { aplicarMarcas, marcaComAlfa } from './marca-com-alfa.js';
 import { Animacoes } from './animacoes.js';
 import { NotificacoesVivas, Bolido, IdentidadeSonora } from './notificacoes-vivas.js';
 import { Navegacao } from './navegacao.js';
@@ -35,8 +36,10 @@ import {
 
 const PALETAS_VALIDAS = new Set([
   'padrao', 'preto-branco', 'daltonismo',
-  // Declaradas em §70.6, sem valores definidos — aceitas para que a troca
-  // funcione, mas hoje não mudam nada. Ver ESCALACOES.md §7.
+  // As três da §70.6, com valores definidos e contraste calculado. Verificadas
+  // sob protanopia, deuteranopia e tritanopia por
+  // ferramentas/verificar_daltonismo.py — o menor contraste de texto em todo o
+  // sistema é 6,21:1, acima de AA. Ver ESCALACOES.md §7.
   'fogo-de-nebulosa', 'aurora-dia', 'aurora-noite',
 ]);
 
@@ -101,6 +104,10 @@ export class Lumora {
     this._ligarMudancaDePreferencia();
     this.sotaque.aplicar(this.raiz);
     aplicarConstelacoes(this.raiz);
+    // A L canônica com alfa verdadeiro (ESCALACOES.md §3). Assíncrono de
+    // propósito: se o oficial não carregar, a área fica reservada e vazia e o
+    // resto da interface não espera nem quebra.
+    aplicarMarcas(this.raiz).catch(() => { /* área segue reservada */ });
     this.estrelinha.aplicar(this.raiz);
     if (this.ceu) this.ceu.iniciar();
     if (this.sismografo) this.sismografo.iniciar();
@@ -301,4 +308,5 @@ export {
   Animacoes, NotificacoesVivas, Bolido, IdentidadeSonora, Navegacao,
   NebulosaDeAcoes, RastroDeAurora, SismografoVivo, PoeiraDeInteracao,
   FioDeAriadne, Estrelinha, ComandosDeVoz,
+  aplicarMarcas, marcaComAlfa,
 };

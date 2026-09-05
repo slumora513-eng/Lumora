@@ -27,11 +27,12 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`docs/09-producao-de-assets.md`](docs/09-producao-de-assets.md) | O que a plataforma **não** produz; slots §49 |
 | [`docs/10-paleta.md`](docs/10-paleta.md) | Paleta **medida** nos assets oficiais + contraste WCAG |
 | [`docs/11-l-canonica.md`](docs/11-l-canonica.md) | **A L canônica** — confirmada pelo Fundador em 05/09/2026 |
-| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, animações dos slots, Atlas Estelar, Notificações Vivas, navegação, Interface Viva |
+| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, animações dos slots, Atlas Estelar, Notificações Vivas, navegação, Interface Viva, marca com alfa |
 | [`runtime/README.md`](runtime/README.md) | Uso, verificação e limites do runtime |
 | [`assets/oficiais/`](assets/oficiais/) | 13 arquivos oficiais preservados byte-a-byte |
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
+| [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py) | As seis paletas sob protanopia, deuteranopia e tritanopia — simulação em código, com autoteste |
 | [`ESCALACOES.md`](ESCALACOES.md) | **Dúvidas críticas de identidade abertas ao Fundador** |
 
 ---
@@ -60,8 +61,8 @@ container — proibido sem autorização:
 
 | # | Achado | Impacto |
 |---|---|---|
-| 1 | **Todos os 13 são JPEG, não PNG.** A extensão `.png` não corresponde ao conteúdo (magic `FF D8`, JFIF, baseline, 3 canais, ICC RGB). | **Sem canal alfa.** Glyphs e wordmarks não têm transparência — não há como sobrepor ao Céu Vivo sem moldura opaca. |
-| 2 | **`01_lumora_glass_orb` e `02_lumora_neon_coins` têm fundo branco puro** (`#FFFFFF` nos 4 cantos). Os outros 11 têm fundo Deep Space (`#000000`–`#00080F`). | Sobre a interface escura, esses dois renderizam como caixa branca. |
+| 1 | **Todos os 13 são JPEG, não PNG.** A extensão `.png` não corresponde ao conteúdo (magic `FF D8`, JFIF, baseline, 3 canais, ICC RGB). | ✅ **Contornado em 05/09/2026 sem alterar os arquivos:** `runtime/marca-com-alfa.js` **recupera** o alfa despremultiplicando a luz aditiva. A marca compõe sobre Céu Vivo, aurora acesa e papel branco. Erro de ida-e-volta ≤ 12/255 — só o ruído JPEG. |
+| 2 | **`01_lumora_glass_orb` e `02_lumora_neon_coins` têm fundo branco puro** (`#FFFFFF` nos 4 cantos). Os outros 11 têm fundo Deep Space (`#000000`–`#00080F`). | ✅ **Contornado pela mesma via:** a chave inversa zera o campo branco (ruído medido: **zero**), e a caixa branca some sobre a interface escura. |
 | 3 | **Três anatomias diferentes de "L"** convivem na biblioteca. | ✅ **Resolvido pelo Fundador em 05/09/2026:** a L canônica é a dominante (9 de 13 arquivos) — ver [`docs/11-l-canonica.md`](docs/11-l-canonica.md). |
 
 Detalhe completo por arquivo: [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md).
@@ -91,8 +92,24 @@ Registrados conforme a regra 22 do prompt operacional. Nenhum destes é decisão
   foi criada para representar céu, partículas, bolhas, aurora, ondas ou rastros — §65.1 exige
   que essa camada seja "procedural (canvas/WebGL), **nunca imagem estática**".
 
+- **(DEFAULT DO AGENTE — o Guia não diz como suprir a falta de alfa; a regra 13 proíbe
+  alterar os arquivos, e a regra 14 proíbe desenhar a marca. Sobrou medir.)**
+  `runtime/marca-com-alfa.js` **recupera** o alfa despremultiplicando a luz aditiva que o
+  JPEG achatou sobre preto — a mesma categoria de operação com que a paleta foi extraída.
+  O piso de ruído (12/255) e a regra de recorte (maior componente conexo, mais o que estiver
+  contido na caixa dele) são deste agente, medidos nos oficiais. **Nada é escrito em disco:
+  a extração vive em memória e os sha256 continuam conferindo.**
+
+- **(DEFAULT DO AGENTE — a §35 exige teste em simulador de daltonismo, mas um relato de
+  ferramenta externa não é reproduzível por quem confere depois.)** A simulação virou código:
+  [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py), método de
+  Viénot, Brettel & Mollon (1999), lendo as cores do CSS realmente servido e se autovalidando
+  antes de reportar. Os limiares de aprovação também são deste agente — e o de tritanopia
+  (8,0) sai de uma busca exaustiva que mostrou que **8,6 é o teto do Okabe-Ito** ali.
+
 - Os defaults internos ao runtime (horários das fases do céu, microtextos não registrados no
-  Guia, pilha tipográfica de sistema, valores da paleta daltonismo) estão listados em
+  Guia, pilha tipográfica de sistema, valores da paleta daltonismo, piso de ruído da extração
+  de alfa, o microtexto `" · prioridade"`) estão listados em
   [`runtime/README.md`](runtime/README.md).
 
 - **(DEFAULT DO AGENTE — nomenclatura dos documentos e ordem do índice; puramente editorial,
@@ -114,7 +131,10 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
   procedural virando o fallback obrigatório. **§64.2 permanece congelada:** cronograma,
   fornecedor e execução da produção profissional não foram tocados.
 - **Nenhum wordmark, símbolo ou logo desenhado por este agente.** Regra 14. Quando existe PNG
-  oficial, ele é a fonte canônica; quando não existe, a ausência está registrada.
+  oficial, ele é a fonte canônica; quando não existe, a ausência está registrada. A extração de
+  alfa de `runtime/marca-com-alfa.js` **não é exceção a isto**: ela lê o oficial e recupera uma
+  informação que o achatamento em JPEG destruiu, sem produzir forma nova e sem escrever arquivo
+  — o resultado existe só em memória, no navegador de quem abre a página.
 - **Nenhum wallpaper por país, região ou locale.** §60.1/§60.2: revogados. O ambiente é o Céu
   Vivo global.
 - **Nenhuma tagline alternativa.** A frase oficial é a da Aurora. "Te ajudo a enxergar melhor"
@@ -125,28 +145,37 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
 ## Escalações abertas
 
-**Seis resolvidas** em 05/09/2026 — duas por decisão direta do Fundador (**§1** a L canônica
-é a dominante, **§5** o briefing do Business é o céu estrelado puro) e quatro sob a
-autorização *"pode resolver os problemas que deu tranquilamente"*: **§2** o "A" do wordmark é
-o sem travessão, **§3** a marca compõe sobre o Céu Vivo com `mix-blend-mode: screen`,
-**§4** o teal da §65.1 é da malha de rotas e não do símbolo, **§7** as seis paletas de alto
-contraste estão definidas com contraste calculado.
+**Seis das sete resolvidas** em 05/09/2026 — duas por decisão direta do Fundador (**§1** a L
+canônica é a dominante, **§5** o briefing do Business é o céu estrelado puro) e quatro sob
+autorização dele, primeiro *"pode resolver os problemas que deu tranquilamente"* e depois
+*"pode decidir. Eu deixo você tomar controle de tudo"*:
+
+- **§2** o "A" do wordmark é o sem travessão (4 de 5 lockups oficiais);
+- **§3** o alfa é **recuperado** do próprio arquivo oficial, e a marca compõe sobre Céu Vivo,
+  aurora acesa **e papel branco** — sem alterar um byte;
+- **§4** o teal da §65.1 é da malha de rotas e não do símbolo;
+- **§7** as seis paletas de alto contraste, com contraste calculado **e verificadas sob os três
+  tipos de dicromacia** por simulação em código.
 
 Tudo que veio da autorização está marcado como **DEFAULT DO AGENTE**, nunca como decisão
 do Fundador (regra 22).
 
-**Continua aberto** ([`ESCALACOES.md`](ESCALACOES.md)):
+**Continua aberto — um item** ([`ESCALACOES.md`](ESCALACOES.md)):
 
-1. O **"A" do wordmark LUMORA** aparece com e sem travessão em arquivos oficiais diferentes —
-   e nenhuma família tipográfica é nomeada em 59 páginas. *(§2)*
-2. Como suprir a **falta de alfa** nos 13 arquivos sem violar a regra de não alterar pixels.
-   **Agora bloqueia a L canônica no papel-mãe.** *(§3)*
-3. **RotaCerta**: §65.1 pede "teal + âmbar"; o asset oficial traz violeta/azul + âmbar. *(§4)*
-4. **Assets citados no Guia que não foram entregues** (protótipos v1–v4, amostras conceituais)
-   — registrados como ausentes, não recriados. Os **áudios da §45** continuam não entregues, mas
-   deixaram de bloquear: o Fundador decidiu em 05/09/2026 que a fala entra como texto. *(§6)*
-6. As três **paletas de alto contraste** (§70.6) são nomeadas, mas sem nenhum valor definido.
-   **Agora bloqueia o passo 6 da Fase 3A.** *(§7)*
+1. **Assets citados no Guia que não foram entregues** (protótipos v1–v4, amostras conceituais,
+   wallpapers) — registrados como ausentes, não recriados. Os **áudios da §45** continuam não
+   entregues, mas deixaram de bloquear: o Fundador decidiu em 05/09/2026 que a fala entra como
+   texto. *(§6)*
+
+**Duas coisas que só o produtor pode entregar**, registradas e sem bloquear nada hoje:
+
+- nenhuma **família tipográfica** é nomeada em 59 páginas, e nenhum arquivo de fonte foi
+  entregue — por isso `--lum-fonte` usa pilha de sistema, justamente para **não** simular o
+  wordmark (dentro da §2);
+- o wordmark "LUMORA" é branco, e sobre papel branco ele some — resultado fisicamente correto,
+  não falha da extração. Wordmark impresso sobre fundo claro exigiria uma **versão em tinta
+  escura** (dentro da §3). §70.5/§71.5 pedem *a L canônica*, que é cromática e sobrevive ao
+  papel — então isso não trava os Documentos com Alma.
 
 Itens congelados (§64 — caridade e animações 3D) **não** aparecem como pendência, conforme
 §64.3 determina.

@@ -127,7 +127,7 @@ Reproduzir os cálculos: `python3 ferramentas/verificar_assets.py --contraste`
 
 | Público | Solução |
 |---|---|
-| Daltonismo (protanopia, deuteranopia, tritanopia, acromatopsia) | Status com cor+ícone+texto; paletas testadas em simuladores (Coblis, Stark) |
+| Daltonismo (protanopia, deuteranopia, tritanopia, acromatopsia) | Status com cor+**forma**+texto; as seis paletas **medidas sob simulação em código** — ver abaixo |
 | Baixa visão | Alto contraste, zoom 200–400%, leitor de tela, foco reforçado |
 | Surdez / deficiência auditiva | Legendas + Libras; alertas com vibração e visual, **sem depender de áudio** |
 | Mobilidade reduzida | Teclado completo, alvos ≥ 44×44 px, **sem gestos obrigatórios de arrastar** |
@@ -139,9 +139,58 @@ Reproduzir os cálculos: `python3 ferramentas/verificar_assets.py --contraste`
 
 ---
 
-## Alerta de identidade: contraste e alfa
+## Verificação sob daltonismo — medida, não relatada
 
-Os 13 arquivos oficiais **não têm canal alfa** (são JPEG). Compor um glyph sobre o Céu Vivo
-exige moldura opaca, o que introduz uma borda dura entre o asset e o céu. Isso afeta contraste
-percebido e a leitura do símbolo. Registrado em [`ESCALACOES.md`](../ESCALACOES.md) §3 —
-**não corrigido**, porque exigiria alterar os arquivos.
+A §35 exige teste em simulador. Ferramenta externa (Coblis, Stark) produz um relato que
+ninguém consegue repetir depois e obter o mesmo número; por isso a simulação virou código:
+[`ferramentas/verificar_daltonismo.py`](../ferramentas/verificar_daltonismo.py).
+
+Método de Viénot, Brettel & Mollon (1999). As cores saem **do CSS realmente servido**, com
+`var()` resolvido — a ferramenta não pode divergir do runtime. O script **se autovalida antes
+de reportar**: ΔE2000 conferido contra os vetores publicados por Sharma, Wu & Dalal; eixo
+neutro preservado; cada tipo colapsa exatamente a dimensão do seu cone ausente e não mais que
+isso. Falhando um invariante, ele não reporta número nenhum.
+
+**Contraste de texto sob simulação — menor valor de cada paleta, nos três tipos:**
+
+| Paleta | Normal | Protanopia | Deuteranopia | Tritanopia |
+|---|---|---|---|---|
+| Padrão | 7,76 | 7,90 | 7,68 | 7,72 |
+| Preto / branco | 21,00 | 21,00 | 21,00 | 21,00 |
+| Daltonismo | 7,76 | 7,90 | 7,68 | 7,72 |
+| Fogo de Nebulosa | 10,14 | 9,26 | 10,60 | 11,77 |
+| Aurora Noite | 10,12 | 10,76 | 9,78 | 9,15 |
+| Aurora Dia | 6,62 | **6,21** | 6,86 | 6,68 |
+
+Nenhum valor cai abaixo de **AA (4,5:1)**. O menor medido em todo o sistema é 6,21:1.
+
+### Distinção entre estados, e o limite honesto do Okabe-Ito
+
+A paleta **daltonismo** é a única que promete separar os quatro estados *pela cor*. Medida:
+ΔE00 = 21,7 (visão normal), 15,3 (protanopia), 11,7 (deuteranopia) e **8,6 (tritanopia)**.
+
+O 8,6 é o **teto do que Okabe-Ito permite aqui**, não um descuido: das 7 cores da paleta, 6
+passam em AA sobre o Deep Space, e **as 15 combinações de 4 dessas 6 empatam em 8,6** sob
+tritanopia. Okabe-Ito foi construída para o eixo vermelho-verde, não para o azul-amarelo.
+Trocar cores pioraria o eixo que a paleta existe para resolver.
+
+**É por isso que a cor nunca é o canal único.** Nas outras paletas a cor é identidade (o
+âmbar do Fogo de Nebulosa, o teal da Aurora) e os estados chegam a ΔE00 de 2,5 sob
+tritanopia — ali a separação viaja inteira por **forma e texto**, como a §35 item 3 exige.
+
+A verificação encontrou um ponto onde isso não estava cumprido: a urgência **"alta"** das
+Notificações Vivas se distinguia de "normal" só pela cor âmbar (o ritmo que serviria de
+reserva é desligado por `prefers-reduced-motion`, e na variante de faixa não havia ritmo
+próprio). Corrigido: "alta" ganhou forma própria (losango) e sufixo de texto
+(`" · prioridade"`) nas duas variantes.
+
+## Alerta de identidade: contraste e alfa — resolvido em 05/09/2026
+
+Os 13 arquivos oficiais **não têm canal alfa** (são JPEG), e compor um glyph sobre o Céu Vivo
+exigia moldura opaca — borda dura entre o asset e o céu, afetando contraste percebido e a
+leitura do símbolo.
+
+**Resolvido sem alterar os arquivos:** `runtime/marca-com-alfa.js` recupera o alfa por
+despremultiplicação da luz aditiva. Não há mais moldura opaca, e a marca compõe sobre Céu
+Vivo, aurora acesa e papel branco. Método e medições em
+[`ESCALACOES.md`](../ESCALACOES.md) §3. Os sha256 dos oficiais continuam conferindo.

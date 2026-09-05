@@ -4,9 +4,15 @@
 > registrar a dúvida e escalar ao Fundador."*
 
 Sete itens registrados. Em 05/09/2026, **seis foram resolvidos**: dois por decisão direta do
-Fundador (§1, §5) e quatro sob a autorização *"pode resolver os problemas que deu
-tranquilamente"* (§2, §3 parcial, §4, §7). **Um continua aberto** (§6) e **um resta parcial**
-(§3, só para o papel).
+Fundador (§1, §5) e quatro sob autorização dele — primeiro *"pode resolver os problemas que
+deu tranquilamente"*, depois *"pode decidir. Eu deixo você tomar controle de tudo"* (§2, §3,
+§4, §7). **Um continua aberto** (§6).
+
+A §3 era o último item parcial: estava resolvida para a tela e aberta para o papel. Fechou
+quando o alfa passou a ser **recuperado** do próprio arquivo oficial em vez de esperado de
+um arquivo novo. A §7 fechou quando o teste em simulador de daltonismo virou código
+verificável no repositório — e, ao virar código, encontrou e corrigiu um defeito de
+acessibilidade que ninguém tinha visto.
 
 Ainda em 05/09/2026 o Fundador **desbloqueou a parte de áudio da §6**, decidindo que a fala das
 aberturas entra como **texto** em vez de arquivo sonoro. Os arquivos continuam não entregues —
@@ -66,29 +72,81 @@ imagem — e a imagem é JPEG 1024×1024 com perda. Registrado na §6.
 
 ---
 
-## §3 — Falta de canal alfa — 🟡 RESOLVIDA PARA A TELA, ABERTA PARA O PAPEL
+## §3 — Falta de canal alfa — ✅ RESOLVIDA em 05/09/2026 (tela e papel)
+
+**Autorização do Fundador (05/09/2026):** *"pode decidir. Eu deixo você tomar
+controle de tudo"*.
 
 Os 13 arquivos são JPEG (apesar da extensão `.png`), portanto **sem transparência**.
 
-**Resolvido para o Céu Vivo, sem tocar num pixel.** A arte é **luz aditiva sobre preto**, e
-para esse caso existe o operador certo: `mix-blend-mode: screen` faz o preto virar neutro.
-Implementado como `.lum-marca-ceu` em `runtime/tokens.css`.
+### A saída não foi conseguir um arquivo novo — foi recuperar o alfa do que já existe
 
-Verificado empiricamente, não suposto — comparação lado a lado renderizada em Chromium:
+A arte oficial é **luz aditiva sobre preto**. Achatar luz aditiva sobre preto é uma
+operação conhecida e **inversível**:
 
-| Fundo | Resultado com `screen` |
+```
+observado   C = A·K + (1−A)·0 = A·K
+recupera    A = max(C)/255          (a máscara)
+            K = C · 255/max(C)      (a cor despremultiplicada)
+```
+
+Implementado em [`runtime/marca-com-alfa.js`](runtime/marca-com-alfa.js). **Nenhum byte
+dos oficiais foi alterado** — a extração roda em memória, e os sha256 do MANIFESTO
+continuam conferindo. Isto **não é desenhar a marca** (regra 14): é a mesma categoria de
+medição com que `docs/10-paleta.md` extraiu a paleta.
+
+### O piso de ruído é medido, não estimado
+
+JPEG deixa lixo no campo escuro. Medido na borda de 40 px dos oficiais de fundo Deep
+Space (09 e 11): p50 = 2–8, p99 = 8–10, **p99.9 = 12, máximo = 12**. O piso ficou em
+12/255 com joelho suave até 20/255.
+
+| Verificação | Resultado |
 |---|---|
-| **Deep Space** (quase preto) — o Céu Vivo real | ✅ A caixa some e a marca passa praticamente intacta |
-| Cortina de aurora acesa | 🟡 A caixa some, mas o gradiente da L **desbota** |
-| **Papel branco** (papel-mãe) | ❌ A marca **desaparece** — `screen` sobre branco dá branco |
+| Alfa do campo depois da extração | **0 exato** |
+| Erro de ida-e-volta sobre preto puro | **máximo 12/255** — o pior pixel é `(0,0,12) → (0,0,0)` |
+| Campo branco de 01/02 (chave inversa) | ruído **zero** medido; alfa vai a 0 exato |
 
-**O que continua bloqueado:** o cabeçalho do papel-mãe (§70.5/§71.5, "a L canônica em
-destaque"). Em fundo claro nenhum modo de mistura recupera a transparência — só um arquivo
-com alfa ou um vetor resolve. `documentos-com-alma.css` mantém a área **reservada e vazia**.
+Ou seja: só se perde o ruído que se queria remover. A arte sai intacta.
 
-**Pergunta que resta, agora mais estreita:** o Fundador consegue obter do produtor **um único
-arquivo** — a L canônica com alfa, ou em vetor? É o que falta para os Documentos com Alma
-saírem do papel reservado.
+### A tabela da escalação anterior, refeita
+
+| Fundo | Antes (`mix-blend-mode: screen`) | Agora (alfa recuperado) |
+|---|---|---|
+| **Deep Space** — o Céu Vivo real | ✅ passa | ✅ passa |
+| Cortina de aurora acesa | 🟡 a caixa some, mas o gradiente **desbota** | ✅ **não desbota mais** |
+| **Papel branco** (papel-mãe) | ❌ a marca **desaparece** | ✅ **compõe íntegra** |
+
+O cabeçalho do papel-mãe **deixou de ser área reservada e vazia**: `.lum-doc-marca`
+agora recebe a L canônica. Os três elementos que §70.5 pede para o papel-mãe estão os
+três em pé.
+
+### A regra de recorte é computada, não uma coordenada escrita à mão
+
+1. o **maior componente conexo** é a marca-base (a L);
+2. entram também os componentes **contidos na caixa dela** — é assim que a bolha-ponto
+   entra, sendo ela elemento opcional da L (`docs/11-l-canonica.md`);
+3. o wordmark fica de fora porque está abaixo, nunca contido.
+
+Medido em 11: L = 48 494 px em (369,198)–(655,562); bolha = 10 862 px em
+(519,241)–(635,358), contida; letras do wordmark começam em y = 619. Em 09 a mesma regra
+devolve a L com os anéis orbitais, que ali fazem parte do símbolo — generaliza sem
+exceção escrita.
+
+### O que **não** foi resolvido, e por que não tem conserto por este caminho
+
+O wordmark "LUMORA" é **branco**. Sobre papel branco ele some — e isso não é perda de
+informação nem defeito da extração: é o resultado fisicamente correto de luz branca sobre
+papel branco. Para wordmark sobre fundo claro continua faltando **uma versão em tinta
+escura**, que só o produtor entrega.
+
+Isso **não bloqueia nada hoje**: §70.5/§71.5 pedem *"a L canônica em destaque"*, e a L é
+cromática — sobrevive ao papel. Se algum dia se quiser o wordmark impresso sobre claro, aí
+sim é pedido ao produtor.
+
+> **(DEFAULT DO AGENTE — método técnico e reversível, sob autorização do Fundador.**
+> Se a decisão for esperar um arquivo com alfa do produtor, basta apontar
+> `data-lum-marca` para ele: o resto do runtime não muda.)
 
 ---
 
@@ -181,11 +239,10 @@ chegarem, o texto **não sai** — vira a legenda que a própria §45 exige (*"s
 
 ---
 
-## §7 — As três paletas de alto contraste — ✅ RESOLVIDA em 05/09/2026
+## §7 — As três paletas de alto contraste — ✅ RESOLVIDA em 05/09/2026 (QA incluído)
 
-**Autorização do Fundador (05/09/2026):** *"pode resolver os problemas que deu tranquilamente"*.
-A escalação original já oferecia esta saída: *"o Fundador define os valores, ou autoriza este
-agente a propor uma matriz medida com contraste verificado"*.
+**Autorização do Fundador (05/09/2026):** *"pode resolver os problemas que deu
+tranquilamente"* e, depois, *"pode decidir. Eu deixo você tomar controle de tudo"*.
 
 **As seis paletas estão implementadas** em `runtime/acessibilidade-bonita.css`:
 
@@ -198,18 +255,55 @@ agente a propor uma matriz medida com contraste verificado"*.
 | **Aurora Noite** | §70.6 | `#01100E` | 10,12:1 — AAA |
 | **Aurora Dia** | §70.6 | `#F4FBF8` | 6,62:1 — AA |
 
-Todos os valores têm **contraste calculado, não estimado** (WCAG 2.2, luminância relativa
-sRGB). "Aurora Dia" é a única paleta clara da identidade e foi construída para responder à
-§71.6 — *"contraste total para quem precisa sem virar tela branca sem identidade"*: o papel é
-levemente esverdeado e os acentos são aurora escurecida, não cinza genérico.
-
-**As duas listas foram tratadas como uma só feature de seis paletas:** a §35 garante o mínimo
-funcional, a §70.6 acrescenta as três com identidade. Isso resolve a divergência de
+**As duas listas foram tratadas como uma só feature de seis paletas:** a §35 garante o
+mínimo funcional, a §70.6 acrescenta as três com identidade. Isso resolve a divergência de
 nomenclatura que a escalação apontava.
 
-> **(DEFAULT DO AGENTE — os valores são deste agente, sob autorização do Fundador.
-> Pendentes de conferência dele.)** Falta ainda o teste em simulador de daltonismo
-> (Coblis, Stark) que a §35 exige — é etapa de QA, não de token.
+### O teste em simulador de daltonismo deixou de ser pendência
+
+Era o que faltava. Em vez de rodar uma ferramenta externa (Coblis, Stark) e relatar o
+resultado — que ninguém depois consegue repetir e obter o mesmo número — a simulação virou
+código no repositório: [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py).
+
+Método: Viénot, Brettel & Mollon (1999). As cores são lidas **do CSS que é realmente
+servido**, com `var()` resolvido, então a ferramenta não pode divergir do runtime. O script
+**se autovalida antes de reportar** (ΔE2000 conferido contra os vetores publicados por
+Sharma, Wu & Dalal; eixo neutro preservado; cada tipo colapsa exatamente a dimensão do seu
+cone ausente, e não mais que isso). Se um invariante falhar, ele não reporta número nenhum.
+
+**Resultado:** o texto fica **acima de AA (4,5:1) nas seis paletas e nos três tipos de
+dicromacia** — o menor valor medido é 6,21:1 (Aurora Dia, `--lum-texto-3`, protanopia).
+
+### Dois achados, e o que foi feito com cada um
+
+**1. A paleta daltonismo já estava no ótimo — e o ótimo é 8,6, não 11.**
+Sob tritanopia, `--lum-atencao` e `--lum-critico` ficam a ΔE00 = 8,6. Busca exaustiva: das
+7 cores Okabe-Ito, 6 passam em AA sobre o Deep Space (o azul `#0072B2` mede 3,95:1 e sai —
+esses tokens são usados como `color:` de texto). Das **15 combinações de 4 dessas 6, todas
+empatam em 8,6** sob tritanopia. Não há atribuição melhor dentro de Okabe-Ito.
+
+Isso não é defeito da paleta: Okabe-Ito foi construída para o eixo vermelho-verde
+(protanopia e deuteranopia), não para o azul-amarelo. **Nada foi trocado** — trocar
+pioraria o eixo que a paleta existe para resolver, ou obrigaria a inventar cores fora de
+uma referência publicada. O limiar da ferramenta ficou em 8,0 para tritanopia, o que ainda
+pega regressão, com a justificativa registrada no próprio código.
+
+**2. Um nível de urgência dependia só da cor — isso sim foi corrigido.**
+A busca encontrou um defeito real de acessibilidade que o teste de paletas revelou: a
+urgência **"alta"** das Notificações Vivas se distinguia de "normal" apenas pela cor âmbar.
+O ritmo (respiração de 1,5 s) seria o canal de reserva, mas `prefers-reduced-motion` o
+desliga; e na variante de faixa (tema Aurora) "alta" era só um brilho âmbar, sem ritmo
+próprio nenhum. Com `--lum-atencao` e `--lum-critico` a ΔE00 = 8,6 sob tritanopia, a cor
+sozinha não sustentava a hierarquia.
+
+Corrigido em `runtime/notificacoes-vivas.css`: "alta" ganhou **forma própria** (losango —
+terceira forma, distinta do círculo de "normal" e do quadrado de "crítica") e **sufixo de
+texto** (`" · prioridade"`), nas duas variantes. Texto sobrevive a movimento reduzido, a
+dicromacia e a impressão sem cor. O comentário do arquivo, que prometia "cor E ritmo E
+ícone", foi corrigido para descrever o que o código faz de fato.
+
+> **(DEFAULT DO AGENTE — os valores das paletas e o microtexto `" · prioridade"` são deste
+> agente, sob autorização do Fundador. Pendentes de conferência dele.)**
 
 ---
 

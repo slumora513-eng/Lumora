@@ -79,11 +79,40 @@ O Fundador confirmou **qual** L é canônica. Três pontos adjacentes continuam 
 - **Status das duas divergentes.** São variantes autorizadas para algum contexto, versões
   antigas a aposentar, ou ficam apenas arquivadas? Hoje: preservadas, sem função atribuída.
 - **Quando a bolha-ponto entra.** Presente em 5 dos 9 portadores, sem regra registrada.
-- **Uso prático da L canônica sobre o Céu Vivo.** Os 9 arquivos portadores são JPEG sem canal
-  alfa ([`../ESCALACOES.md`](../ESCALACOES.md) §3, ainda aberta). Enquanto não houver versão
-  com alfa ou vetor, a L canônica só compõe sobre fundo sólido — o que afeta diretamente
-  Documentos com Alma e o cabeçalho de documento fiscal.
+*(O terceiro ponto desta lista — o uso prático sobre fundo claro — saiu daqui em 05/09/2026;
+virou a seção abaixo.)*
 
-> **Consequência registrada no runtime:** `runtime/documentos-com-alma.css` **reserva** a área
-> da L canônica no cabeçalho do papel-mãe, mas **não a desenha** — a área fica vazia até que um
-> arquivo com alfa ou vetor exista. Nenhum substituto foi criado.
+---
+
+## Uso prático: resolvido em 05/09/2026
+
+Os 9 arquivos portadores são JPEG sem canal alfa, e por isso a L só compunha sobre fundo
+sólido escuro. **Deixou de ser assim.** `runtime/marca-com-alfa.js` **recupera** o alfa do
+próprio arquivo oficial, despremultiplicando a luz aditiva que o JPEG achatou sobre preto —
+medição, não desenho, então a regra 14 continua valendo e nenhum byte foi alterado. Detalhe
+do método e das medições em [`../ESCALACOES.md`](../ESCALACOES.md) §3.
+
+| Fundo | Antes | Agora |
+|---|---|---|
+| Deep Space (Céu Vivo) | ✅ com `mix-blend-mode: screen` | ✅ com alfa real |
+| Cortina de aurora acesa | 🟡 gradiente desbotava | ✅ não desbota |
+| **Papel branco** (papel-mãe) | ❌ marca sumia | ✅ compõe íntegra |
+
+**A fonte da L é o arquivo 11** — esta seção já o nomeava como "referência mais limpa da
+forma isolada", e é por isso que ele é o padrão de `marca-com-alfa.js`.
+
+O recorte não usa coordenada escrita à mão: o **maior componente conexo** é a L, e entram
+com ela os componentes **contidos na caixa dela** — que é exatamente como a bolha-ponto,
+elemento solto e opcional, é capturada sem precisar de regra própria.
+
+> **Consequência no runtime:** `runtime/documentos-com-alma.css` **não reserva mais área
+> vazia** — o cabeçalho do papel-mãe recebe a L canônica. Se a extração falhar (oficial
+> ausente, canvas indisponível), a área volta ao estado anterior: reservada e vazia.
+> **Nenhum substituto é desenhado em nenhuma hipótese.**
+
+### O que continua faltando do produtor
+
+O wordmark "LUMORA" é branco, e sobre papel branco ele some — resultado fisicamente
+correto, não falha da extração. Wordmark sobre fundo claro exige **versão em tinta escura**,
+que só o produtor entrega. Não bloqueia nada hoje: §70.5/§71.5 pedem *a L canônica* em
+destaque, e a L é cromática.

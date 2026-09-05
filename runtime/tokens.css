@@ -143,6 +143,16 @@
 @supports (mix-blend-mode: screen) {
   .lum-marca-ceu { display: block; }
 }
+
+/* Quando marca-com-alfa.js preenche a marca, o alfa é VERDADEIRO e o truque
+   deixa de ser necessário: a mistura sai. Isso conserta de quebra o defeito
+   que a ESCALACOES.md §3 registrou no `screen` — sobre cortina de aurora
+   acesa o gradiente da L desbotava. Com alfa real ele para de desbotar, e a
+   marca passa a aparecer mesmo sem suporte a blend. */
+.lum-marca-ceu[data-lum-marca-estado="pronta"] {
+  mix-blend-mode: normal;
+  display: block;
+}
 /* Nas paletas de alto contraste o blend sai: elas trocam o fundo e a mistura
    deixa de ser previsível. */
 :root[data-lum-paleta="preto-branco"] .lum-marca-ceu,

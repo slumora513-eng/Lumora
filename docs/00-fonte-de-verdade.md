@@ -57,8 +57,10 @@ Este repositório segue essa regra.
 
 ## Decisões do Fundador em 05/09/2026
 
-Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da hierarquia
-(decisões explícitas e mais recentes do Fundador):
+Decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da hierarquia
+(decisões explícitas e mais recentes do Fundador). As que **delegam** ao agente produzem
+resultados marcados como **DEFAULT DO AGENTE**, nunca como decisão de marca do Fundador
+(regra 22):
 
 | Decisão | Efeito | Registro |
 |---|---|---|
@@ -69,6 +71,7 @@ Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da h
 | *"pode resolver os problemas que deu tranquilamente"* + *"tenta fazer algo mais 3D"* | Autoriza resolver as escalações abertas e manda as aberturas para **WebGL 3D** — a metade da §65.5 que faltava. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
 | *"nem precisa fazer esses áudios, só coloca o texto da fala"* | Descarta a produção de áudio e põe a **fala em texto** nas aberturas que têm fala. Mantém §48 intacta e §64.2 congelada. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
 | *"a animação do RotaCerta poderia ser melhor (...) ficou meio confuso"* | Reprova a primeira versão da cena e manda refazer. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
+| *"sobre aquelas duas decisões que ficou de fora, você pode decidir. Eu deixo você tomar controle de tudo (...) pode continuar o código todinho"* | Autoriza fechar as **duas últimas escalações**: §3 (falta de alfa no papel) e §7 (o teste em simulador de daltonismo). | [`../ESCALACOES.md`](../ESCALACOES.md) |
 
 ---
 
@@ -99,6 +102,19 @@ Com isso saíram do bloqueio, além dos seis passos da §71:
   §65.1 que ainda não existia em código.
 - **Navegação em Bolhas (§65.3) e em Ondas (§66)**.
 - **O restante da Interface Viva (§67/§68)** e a identidade sonora da §72.1 item 3.
+
+### A extensão final de 05/09/2026 — as duas escalações que restavam
+
+*"sobre aquelas duas decisões que ficou de fora (...) você pode decidir."*
+
+- **§3 — falta de alfa.** Resolvida por medição, não por arquivo novo: `marca-com-alfa.js`
+  recupera o alfa despremultiplicando a luz aditiva. O cabeçalho do papel-mãe deixou de ser
+  área reservada e vazia, e os três elementos que §70.5 pede estão os três em pé.
+- **§7 — paletas de alto contraste.** O teste em simulador virou código verificável
+  (`ferramentas/verificar_daltonismo.py`). Ao virar código, encontrou um defeito real: a
+  urgência "alta" das Notificações Vivas dependia só da cor. Corrigido com forma e texto.
+
+Nenhuma das duas alterou um byte dos arquivos oficiais.
 
 ### A distinção que continua valendo: código procedural × arquivo de mídia
 

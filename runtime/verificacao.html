@@ -25,6 +25,10 @@
   h2 { font-size: 15px; margin: 28px 0 10px; color: var(--lum-texto-2);
        text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
   p  { color: var(--lum-texto-2); line-height: 1.55; }
+  /* O papel-mãe tem tinta própria (--doc-tinta, 17,4:1). A regra de <p> desta
+     página é para o fundo escuro e não pode invadir o documento: invadindo,
+     a página de verificação mostraria um contraste que o runtime não tem. */
+  .lum-doc p { color: inherit; }
   .aviso { color: var(--lum-texto-3); font-size: 13px; }
   .linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .grade { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
@@ -115,7 +119,9 @@
   <h2>5 · Documentos com Alma <span class="aviso">§70.5 / §71.5</span></h2>
   <div class="lum-doc">
     <header class="lum-doc-cabecalho">
-      <div class="lum-doc-marca" title="Área reservada da L canônica — aguarda arquivo com alfa (ESCALACOES.md §3)"></div>
+      <div class="lum-doc-marca" data-lum-marca
+           data-lum-marca-alt="Lumora — a L canônica"
+           title="A L canônica, com alfa recuperado do oficial 11 (ESCALACOES.md §3)"></div>
       <div>
         <h3 class="lum-doc-titulo">Comprovante de entrega</h3>
         <p class="lum-doc-subtitulo">Documento de exemplo — dados fictícios</p>
@@ -132,6 +138,24 @@
       <span>Constelação derivada dos dados deste documento.</span>
       <span data-lum-constelacao="NF-e 000.123.456 serie 1 entregue"></span>
     </footer>
+  </div>
+
+  <h2>5b · A L canônica com alfa <span class="aviso">ESCALACOES.md §3</span></h2>
+  <p class="aviso">
+    A mesma extração sobre os três fundos que a §3 listou como problema. Nenhum byte
+    do oficial foi alterado: o alfa é <strong>recuperado</strong> despremultiplicando a
+    luz aditiva que o JPEG achatou sobre preto.
+  </p>
+  <div class="linha" id="marcas">
+    <div style="background:#fff;padding:10px;border-radius:10px">
+      <div class="lum-doc-marca" data-lum-marca style="outline:none"></div>
+    </div>
+    <div style="background:var(--lum-deep-space);padding:10px;border-radius:10px">
+      <div class="lum-doc-marca" data-lum-marca style="outline:none"></div>
+    </div>
+    <div style="background:linear-gradient(120deg,#2BCF92,#8541FA);padding:10px;border-radius:10px">
+      <div class="lum-doc-marca" data-lum-marca style="outline:none"></div>
+    </div>
   </div>
 
   <h2>6 · Acessibilidade Bonita <span class="aviso">§35 item 7 / §70.6</span></h2>

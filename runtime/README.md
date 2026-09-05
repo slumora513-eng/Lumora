@@ -113,7 +113,7 @@ python3 -m http.server 8765          # na raiz do repositório
 
 `verificacao.html` é bancada de teste local — **não é produto nem asset de marca**.
 
-Conferido em Chromium, **50 checagens automatizadas**, todas passando:
+Conferido em Chromium, **118 checagens automatizadas**, todas passando:
 
 | Suíte | Checagens |
 |---|---|
@@ -121,8 +121,19 @@ Conferido em Chromium, **50 checagens automatizadas**, todas passando:
 | Animações, notificações, navegação, Interface Viva | 24 |
 | Movimento reduzido — Fase 3A | 6 |
 | Movimento reduzido — módulos novos | 7 |
+| Aberturas em WebGL 3D | 11 |
+| Camada de texto das aberturas | 21 |
+| Atlas Estelar | 22 |
+| **Marca com alfa** | **14** |
 
 **0 pedidos de rede externos** (custo zero, §65.5).
+
+Fora do navegador, dois verificadores em Python:
+
+```bash
+python3 ferramentas/verificar_assets.py        # integridade dos oficiais (sha256, formato, fundo)
+python3 ferramentas/verificar_daltonismo.py --tudo   # as seis paletas sob dicromacia
+```
 
 ---
 
@@ -283,6 +294,53 @@ runtime entrega a navegação e a narração; o resto é do produto.
 
 ---
 
+## A marca com alfa (§3 das escalações)
+
+Os 13 oficiais são JPEG: **sem transparência**. Sobre papel branco nenhum modo de
+mistura resolve (`screen` sobre branco dá branco), e por isso o cabeçalho do
+papel-mãe ficava com a área reservada e vazia.
+
+`marca-com-alfa.js` resolve **sem tocar num byte** dos oficiais. A arte é luz
+aditiva sobre preto, e achatar luz aditiva sobre preto é inversível:
+
+```
+observado  C = A·K        recupera  A = max(C)/255      K = C · 255/max(C)
+```
+
+Isso **não é desenhar a marca** (regra 14): é medir o que o arquivo já contém — a
+mesma categoria de operação com que `docs/10-paleta.md` extraiu a paleta.
+
+**O piso de ruído é medido.** Na borda de 40 px dos oficiais de fundo escuro o
+ruído JPEG tem p99.9 = 12 e **máximo = 12** (de 255). O piso ficou em 12/255 com
+joelho suave até 20/255. Verificado: alfa do campo = **0 exato**, e o erro de
+ida-e-volta sobre preto puro tem **máximo de 12/255** — o pior pixel é
+`(0,0,12) → (0,0,0)`, isto é, só se perde o ruído que se queria remover.
+
+**O recorte é computado, não uma coordenada escrita à mão:** o maior componente
+conexo é a L, e entram com ela os componentes contidos na caixa dela — que é como
+a bolha-ponto é capturada sem precisar de regra própria.
+
+```html
+<div class="lum-doc-marca" data-lum-marca data-lum-marca-alt="Lumora"></div>
+```
+
+Vazio usa a L canônica (oficial 11, que `docs/11-l-canonica.md` nomeia como a
+referência mais limpa da forma isolada). Os dois oficiais de fundo branco (01, 02)
+usam a chave inversa automaticamente.
+
+**Em falha nada é desenhado.** Oficial ausente, canvas indisponível: o elemento
+recebe `data-lum-marca-estado="indisponivel"` e a área volta a ficar reservada e
+vazia. Inventar um substituto é que seria proibido.
+
+Custo: ~110 ms uma vez por documento (inclui decodificar o JPEG de 1024×1024),
+com cache por URL. Nenhum pedido externo.
+
+**O que continua faltando do produtor:** o wordmark "LUMORA" é branco e sobre
+papel branco some — resultado fisicamente correto, não falha da extração. Para
+wordmark sobre fundo claro é preciso uma versão em tinta escura.
+
+---
+
 ## Defaults do agente neste runtime
 
 Conforme a regra 22. Nenhum é decisão do Fundador.
@@ -299,8 +357,11 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   para não depender de asset externo nem simular o wordmark oficial.
 - **(DEFAULT DO AGENTE — a paleta daltonismo precisava de valores para a §35
   item 7 existir.)** Base Okabe-Ito, contraste calculado sobre Deep Space
-  (8,89:1 / 9,10:1 / 5,30:1 / 15,50:1). O teste em simulador (Coblis, Stark)
-  que a §35 exige é etapa de QA, ainda não feita.
+  (8,89:1 / 9,10:1 / 5,30:1 / 15,50:1). O teste em simulador que a §35 exige
+  **foi feito** — em código, para ser reproduzível:
+  `ferramentas/verificar_daltonismo.py`. Menor ΔE00 entre os quatro estados:
+  21,7 (normal), 15,3 (protanopia), 11,7 (deuteranopia), 8,6 (tritanopia) — e
+  os 8,6 são o teto do Okabe-Ito ali, não um descuido.
 - **(DEFAULT DO AGENTE — o Guia dá o briefing de cada abertura, mas não a
   encenação quadro a quadro.)** Tempos, ordem dos trechos e composição de cada
   uma das 11 cenas são decisão deste agente; os briefings em si vêm da §18/§49.1,
@@ -318,6 +379,22 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   véu de leitura sob o texto também é escolha deste agente — existe porque a cena
   tem momentos claros (cortina de aurora, farol âmbar) onde branco puro perderia
   contraste. **As falas em si não são default: são textuais da §1.**
+- **(DEFAULT DO AGENTE — a §35 item 3 exige que a cor nunca seja canal único, mas
+  não fixa o texto de cada nível.)** A urgência **"alta"** das Notificações Vivas
+  distinguia-se de "normal" apenas pela cor âmbar: o ritmo que serviria de reserva
+  é desligado por `prefers-reduced-motion`, e na variante de faixa não havia ritmo
+  próprio. Ganhou forma (losango, terceira forma além do círculo de "normal" e do
+  quadrado de "crítica") e o microtexto **`" · prioridade"`**, espelhando o
+  `" · exige ação"` que "crítica" já tinha. A necessidade foi medida:
+  `--lum-atencao` e `--lum-critico` ficam a ΔE00 = 8,6 sob tritanopia.
+
+- **(DEFAULT DO AGENTE — o piso de ruído para extrair o alfa não vem do Guia; vem
+  de medir os arquivos.)** 12/255, com joelho suave até 20/255, em
+  `marca-com-alfa.js`. É o máximo de ruído JPEG observado no campo escuro dos
+  oficiais. E a regra de recorte — maior componente conexo mais o que estiver
+  contido na caixa dele — também é escolha deste agente, feita para não escrever
+  coordenada de recorte à mão.
+
 - **(DEFAULT DO AGENTE — §72.1 item 3 aprovou "notas procedurais WebAudio
   (fiscal/pedido/sistema)" sem fixar as notas.)** As frequências de
   `IdentidadeSonora` foram escolhidas por este agente.
