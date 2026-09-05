@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Lumora — Tokens
+   Fase 3A, base compartilhada. Liberada pelo "pode ir" do Fundador (05/09/2026).
+
+   PROVENIÊNCIA DAS CORES
+   O Guia não fixa nenhum valor hexadecimal em 59 páginas. Todos os valores de
+   cor abaixo foram MEDIDOS por amostragem dos 13 assets oficiais, não
+   escolhidos — ver docs/10-paleta.md.
+   (DEFAULT DO AGENTE — medir os assets é a única forma de obter valores sem
+   inventar identidade. Pendente de aprovação do Fundador.)
+
+   Contraste verificado: python3 ferramentas/verificar_assets.py --contraste
+   ========================================================================== */
+
+:root {
+  /* --- Deep Space (§60.1) — medido nos cantos dos 11 assets de fundo escuro */
+  --lum-deep-space:            #00040F;
+  --lum-deep-space-puro:       #000006;
+  --lum-deep-space-nebulosa:   #00080F;
+
+  /* --- L canônica (docs/11-l-canonica.md) — gradiente medido em 4 assets
+         independentes que convergem. Confirmada pelo Fundador em 05/09/2026. */
+  --lum-violeta:               #B01DFF;
+  --lum-azul:                  #0072FF;
+  --lum-gradiente:             linear-gradient(160deg, var(--lum-violeta), var(--lum-azul));
+
+  /* --- Aurora (§65.2: "rios de luz verdes/teal/violeta") — medido em 05 */
+  --lum-aurora-verde:          #2BCF92;
+  --lum-aurora-teal:           #1D8FC5;
+  --lum-aurora-violeta:        #8541FA;
+
+  /* --- Cores-âncora por sistema (§65.1) */
+  --lum-business-verde:        #16E793;   /* medido em 02 */
+  --lum-rotacerta-ambar:       #FFA238;   /* medido em 03 */
+  /* Hub: §65.1 nomeia "violeta/ciano". Não existe asset oficial do Hub para
+     medir — os valores abaixo são a tradução literal do texto, não medição. */
+  --lum-hub-violeta:           var(--lum-aurora-violeta);
+  --lum-hub-ciano:             var(--lum-aurora-teal);
+
+  /* --- Texto (DEFAULT DO AGENTE — não medido; escolhido para atender §35) */
+  --lum-texto-1:               #FFFFFF;   /* 20,50:1 sobre Deep Space — AAA */
+  --lum-texto-2:               #C8D2E8;   /* 13,51:1 — AAA */
+  --lum-texto-3:               #8FA0BF;   /*  7,76:1 — AAA */
+
+  /* --- Liquid Glass — superfície e borda (§70.4: CSS só para superfícies) */
+  --lum-vidro:                 rgba(10, 21, 38, 0.55);
+  --lum-vidro-solido:          #0A1526;   /* fallback sem backdrop-filter */
+  --lum-vidro-borda:           #5A6B8C;   /* 3,82:1 — limite de UI (3:1) */
+  --lum-vidro-brilho:          rgba(255, 255, 255, 0.10);
+  --lum-vidro-blur:            18px;
+
+  /* --- Estado (§35 item 3: cor NUNCA carrega informação sozinha —
+         sempre acompanhada de ícone e texto) */
+  --lum-ok:                    var(--lum-business-verde);
+  --lum-atencao:               var(--lum-rotacerta-ambar);
+  --lum-erro:                  #FF6B6B;
+  --lum-critico:               #FF8A5B;
+
+  /* --- Foco (§35 item 2: contraste >= 3:1 em 100% dos interativos) */
+  --lum-foco:                  #7FE7FF;   /* 11,9:1 sobre Deep Space */
+  --lum-foco-espessura:        3px;
+  --lum-foco-deslocamento:     2px;
+
+  /* --- Alvo de toque (§35 item 4) */
+  --lum-alvo-min:              44px;
+
+  /* --- Raio e espaço */
+  --lum-raio-bolha:            50%;
+  --lum-raio-superficie:       18px;
+  --lum-raio-campo:            10px;      /* §65.3: campos permanecem geométricos */
+  --lum-espaco:                8px;
+
+  /* --- Movimento (§65.5: alvo 60fps; §66.2: easing registrado) */
+  --lum-ease:                  cubic-bezier(.22, 1, .36, 1);
+  --lum-dur-micro:             160ms;
+  --lum-dur-curta:             320ms;
+  --lum-dur-onda:              800ms;     /* §66.2: varredura da onda */
+  --lum-dur-bolha-nasce:       400ms;     /* §69.1 */
+  --lum-dur-bolha-estoura:     500ms;     /* §69.1 */
+  --lum-dur-bolido:            2300ms;    /* §67.5: 2,3s */
+  --lum-dur-viagem:            900ms;
+
+  /* --- Respiração (§69.1: escala 1 <-> 1,03, ciclo ~3s).
+         Mantida MUITO abaixo de 3Hz por causa da §35 item 8
+         (nada pisca mais de 3 vezes por segundo). */
+  --lum-respiracao-ciclo:      3s;
+  --lum-respiracao-escala:     1.03;
+
+  /* --- Tipografia
+         (DEFAULT DO AGENTE — o Guia não nomeia nenhuma família tipográfica em
+         59 páginas e nenhum arquivo de fonte foi entregue. A pilha abaixo é
+         de sistema, para não depender de asset externo nem simular o wordmark
+         oficial. Ver ESCALACOES.md §2.) */
+  --lum-fonte: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+               Arial, sans-serif;
+  --lum-fonte-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* --------------------------------------------------------------------------
+   Nível de otimização adaptativa (§36) — aplicado em <html data-lum-nivel>.
+   O bootstrap mede fps localmente (telemetria local, §72.1 item 4, sem
+   analytics externo) e rebaixa o nível sozinho.
+   -------------------------------------------------------------------------- */
+:root[data-lum-nivel="economico"] {
+  --lum-vidro:      var(--lum-vidro-solido);   /* sem backdrop-filter */
+  --lum-vidro-blur: 0px;
+}
+:root[data-lum-nivel="basico"] {
+  --lum-vidro:      var(--lum-vidro-solido);
+  --lum-vidro-blur: 0px;
+  --lum-dur-onda:   0ms;
+  --lum-dur-viagem: 0ms;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+.lum-raiz {
+  background: var(--lum-deep-space);
+  color: var(--lum-texto-1);
+  font-family: var(--lum-fonte);
+  /* O Céu Vivo desenha ATRÁS de tudo; o conteúdo empilha acima. */
+  position: relative;
+  isolation: isolate;
+}
+
+/* Foco visível em 100% dos interativos (§35 item 2). Nunca removido. */
+.lum-raiz :focus-visible {
+  outline: var(--lum-foco-espessura) solid var(--lum-foco);
+  outline-offset: var(--lum-foco-deslocamento);
+  border-radius: var(--lum-raio-campo);
+}
+
+/* Alvos de toque (§35 item 4) */
+.lum-raiz button,
+.lum-raiz [role="button"],
+.lum-raiz a.lum-acao,
+.lum-raiz input[type="checkbox"],
+.lum-raiz input[type="radio"] {
+  min-inline-size: var(--lum-alvo-min);
+  min-block-size: var(--lum-alvo-min);
+}
+
+/* Superfície Liquid Glass — CSS só para superfície (§65.5/§70.4).
+   backdrop-filter é progressivo: sem suporte, cai no sólido. */
+.lum-vidro {
+  background: var(--lum-vidro-solido);
+  border: 1px solid var(--lum-vidro-borda);
+  border-radius: var(--lum-raio-superficie);
+}
+@supports (backdrop-filter: blur(1px)) {
+  :root:not([data-lum-nivel="basico"]):not([data-lum-nivel="economico"]) .lum-vidro {
+    background: var(--lum-vidro);
+    backdrop-filter: blur(var(--lum-vidro-blur)) saturate(1.2);
+    box-shadow: inset 0 1px 0 var(--lum-vidro-brilho);
+  }
+}
+
+/* §65.3 — a regra do geométrico x bolha:
+   "o que precisa ser forma geométrica é; o que não precisa, é bolha".
+   Campos, tabelas e inputs NUNCA viram bolha. */
+.lum-campo,
+.lum-raiz input:not([type="checkbox"]):not([type="radio"]),
+.lum-raiz select,
+.lum-raiz textarea,
+.lum-raiz table {
+  border-radius: var(--lum-raio-campo);
+}
+
+.lum-bolha { border-radius: var(--lum-raio-bolha); }
+
+/* Texto de marca: o gradiente NUNCA é cor de texto corrido.
+   --lum-violeta mede 4,36:1 e reprova AA (docs/06-acessibilidade.md).
+   Esta classe existe só para display curto, com fallback sólido legível. */
+.lum-texto-marca {
+  color: var(--lum-texto-1);
+}
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .lum-texto-marca {
+    background: var(--lum-gradiente);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

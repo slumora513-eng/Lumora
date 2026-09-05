@@ -26,6 +26,9 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`docs/08-impressao-e-documentos.md`](docs/08-impressao-e-documentos.md) | Documentos com Alma, regras de impressão |
 | [`docs/09-producao-de-assets.md`](docs/09-producao-de-assets.md) | O que a plataforma **não** produz; slots §49 |
 | [`docs/10-paleta.md`](docs/10-paleta.md) | Paleta **medida** nos assets oficiais + contraste WCAG |
+| [`docs/11-l-canonica.md`](docs/11-l-canonica.md) | **A L canônica** — confirmada pelo Fundador em 05/09/2026 |
+| [`runtime/`](runtime/) | **Fase 3A em código** — Céu Vivo, Formas que Sentem, Viagem Cósmica… |
+| [`runtime/README.md`](runtime/README.md) | Uso, verificação e limites do runtime |
 | [`assets/oficiais/`](assets/oficiais/) | 13 arquivos oficiais preservados byte-a-byte |
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
@@ -59,7 +62,7 @@ container — proibido sem autorização:
 |---|---|---|
 | 1 | **Todos os 13 são JPEG, não PNG.** A extensão `.png` não corresponde ao conteúdo (magic `FF D8`, JFIF, baseline, 3 canais, ICC RGB). | **Sem canal alfa.** Glyphs e wordmarks não têm transparência — não há como sobrepor ao Céu Vivo sem moldura opaca. |
 | 2 | **`01_lumora_glass_orb` e `02_lumora_neon_coins` têm fundo branco puro** (`#FFFFFF` nos 4 cantos). Os outros 11 têm fundo Deep Space (`#000000`–`#00080F`). | Sobre a interface escura, esses dois renderizam como caixa branca. |
-| 3 | **Três anatomias diferentes de "L"** convivem na biblioteca (ver [`ESCALACOES.md`](ESCALACOES.md) §1). O Guia cita "a L canônica" (§70.5/§51.5) mas nunca a define. | A L canônica não pode ser declarada por este agente. |
+| 3 | **Três anatomias diferentes de "L"** convivem na biblioteca. | ✅ **Resolvido pelo Fundador em 05/09/2026:** a L canônica é a dominante (9 de 13 arquivos) — ver [`docs/11-l-canonica.md`](docs/11-l-canonica.md). |
 
 Detalhe completo por arquivo: [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md).
 Reverificação a qualquer momento: `python3 ferramentas/verificar_assets.py`.
@@ -83,9 +86,14 @@ Registrados conforme a regra 22 do prompt operacional. Nenhum destes é decisão
 
 - **(DEFAULT DO AGENTE — o Guia não define estrutura de repositório de marca; a separação
   espelha a regra 21 do prompt, "assets oficiais × estética procedural".)**
-  `assets/` guarda apenas arquivos canônicos do operador; `docs/` guarda apenas
-  especificação da estética procedural. Nenhuma imagem foi criada para representar
-  céu, partículas, bolhas, aurora, ondas ou rastros.
+  `assets/` guarda apenas arquivos canônicos do operador; `docs/` guarda a especificação;
+  `runtime/` guarda a estética procedural **como código**, nunca como imagem. Nenhuma imagem
+  foi criada para representar céu, partículas, bolhas, aurora, ondas ou rastros — §65.1 exige
+  que essa camada seja "procedural (canvas/WebGL), **nunca imagem estática**".
+
+- Os defaults internos ao runtime (horários das fases do céu, microtextos não registrados no
+  Guia, pilha tipográfica de sistema, valores da paleta daltonismo) estão listados em
+  [`runtime/README.md`](runtime/README.md).
 
 - **(DEFAULT DO AGENTE — nomenclatura dos documentos e ordem do índice; puramente editorial,
   sem efeito sobre identidade.)**
@@ -99,10 +107,10 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 - **Nenhum asset novo de imagem, vídeo ou áudio.** §48: as animações finais são produção de
   profissional contratado; assets gerados por IA são referência provisória e "nenhuma nova
   geração de imagem, vídeo ou áudio será feita pela plataforma". §64.2 congela o assunto.
-- **Nenhum código de runtime do Céu Vivo, Interface Viva ou Notificações Vivas.** §71, última
-  linha: *"Código permanece bloqueado até o 'pode ir' final do fundador."* §69.7 e §72.1
-  repetem: design fechado, código na rodada que o Fundador priorizar. O que existe aqui é a
-  especificação executável desse código — não o código.
+- **Nenhuma implementação das Notificações Vivas (§69), da Navegação em Bolhas/Ondas
+  (§65.3/§66) ou do resto da Interface Viva (§67/§68).** §69.7 registra
+  *"PRIORIZAÇÃO EM ABERTO"* — o design está fechado, mas o Fundador ainda não disse por qual
+  item começar. Nada disso está na lista da §71, que é o que o "pode ir" liberou.
 - **Nenhum wordmark, símbolo ou logo desenhado por este agente.** Regra 14. Quando existe PNG
   oficial, ele é a fonte canônica; quando não existe, a ausência está registrada.
 - **Nenhum wallpaper por país, região ou locale.** §60.1/§60.2: revogados. O ambiente é o Céu
@@ -115,18 +123,22 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
 ## Escalações abertas
 
-Sete dúvidas de identidade não podem ser resolvidas por default porque exigem decisão de
-marca — todas em [`ESCALACOES.md`](ESCALACOES.md):
+**Uma resolvida** em 05/09/2026: a **L canônica é a dominante** (§1), registrada em
+[`docs/11-l-canonica.md`](docs/11-l-canonica.md).
 
-1. Qual das três anatomias de "L" é a **L canônica** citada em §70.5.
-2. O **"A" do wordmark LUMORA** aparece com e sem travessão em arquivos oficiais diferentes —
-   e nenhuma família tipográfica é nomeada em 59 páginas.
-3. Como suprir a **falta de alfa** nos 13 arquivos sem violar a regra de não alterar pixels.
-4. **RotaCerta**: §65.1 pede "teal + âmbar"; o asset oficial traz violeta/azul + âmbar.
-5. A **abertura do Lumora Business** ficou sem briefing após a revogação da aquarela.
-6. **Assets citados no Guia que não foram entregues** (áudios §45, protótipos v1–v4, amostras
-   conceituais) — registrados como ausentes, não recriados.
-7. As três **paletas de alto contraste** (§70.6) são nomeadas, mas sem nenhum valor definido.
+**Seis continuam abertas** — exigem decisão de marca e não foram resolvidas por default
+([`ESCALACOES.md`](ESCALACOES.md)):
+
+1. O **"A" do wordmark LUMORA** aparece com e sem travessão em arquivos oficiais diferentes —
+   e nenhuma família tipográfica é nomeada em 59 páginas. *(§2)*
+2. Como suprir a **falta de alfa** nos 13 arquivos sem violar a regra de não alterar pixels.
+   **Agora bloqueia a L canônica no papel-mãe.** *(§3)*
+3. **RotaCerta**: §65.1 pede "teal + âmbar"; o asset oficial traz violeta/azul + âmbar. *(§4)*
+4. A **abertura do Lumora Business** ficou sem briefing após a revogação da aquarela. *(§5)*
+5. **Assets citados no Guia que não foram entregues** (áudios §45, protótipos v1–v4, amostras
+   conceituais) — registrados como ausentes, não recriados. *(§6)*
+6. As três **paletas de alto contraste** (§70.6) são nomeadas, mas sem nenhum valor definido.
+   **Agora bloqueia o passo 6 da Fase 3A.** *(§7)*
 
 Itens congelados (§64 — caridade e animações 3D) **não** aparecem como pendência, conforme
 §64.3 determina.

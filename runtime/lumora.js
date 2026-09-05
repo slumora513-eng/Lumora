@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Lumora — Fase 3A: bootstrap
+   Amarra os cinco módulos liberados pelo "pode ir" do Fundador (05/09/2026)
+   e aplica as regras transversais que valem para todos eles.
+
+   Ordem de implementação decidida em §71 e seguida aqui:
+     1. ✨ Formas que Sentem   -> formas-que-sentem.css + o respingo daqui
+     2. 🌌 Céu Vivo            -> ceu-vivo.js
+     3. 💬 Sotaque Cósmico     -> sotaque-cosmico.js
+     4. 🚀 Viagem Cósmica      -> viagem-cosmica.js
+     5. 📜 Documentos com Alma -> documentos-com-alma.{css,js}
+     6. 🌈 Acessibilidade Bonita -> acessibilidade-bonita.css (2 paletas pendentes)
+
+   REGRAS TRANSVERSAIS APLICADAS AQUI, NÃO DELEGADAS À DISCIPLINA DE QUEM USA:
+     - prefers-reduced-motion desliga gesto, nunca informação (§35 item 8)
+     - som nunca é canal único (§45/§68.5/§69.5)
+     - telemetria de desempenho é local, sem analytics externo (§72.1 item 4)
+     - custo zero: nenhuma rede, nenhuma dependência (§65.5, §71)
+   ========================================================================== */
+
+'use strict';
+
+import { CeuVivo } from './ceu-vivo.js';
+import { SotaqueCosmico } from './sotaque-cosmico.js';
+import { ViagemCosmica } from './viagem-cosmica.js';
+import { aplicarConstelacoes } from './documentos-com-alma.js';
+
+const PALETAS_VALIDAS = new Set([
+  'padrao', 'preto-branco', 'daltonismo',
+  // Declaradas em §70.6, sem valores definidos — aceitas para que a troca
+  // funcione, mas hoje não mudam nada. Ver ESCALACOES.md §7.
+  'fogo-de-nebulosa', 'aurora-dia', 'aurora-noite',
+]);
+
+export class Lumora {
+  /**
+   * @param {object} [opcoes]
+   * @param {HTMLCanvasElement} [opcoes.canvasCeu]  canvas do Céu Vivo
+   * @param {HTMLElement} [opcoes.raiz=document.body]
+   * @param {string} [opcoes.idioma='pt-BR']
+   * @param {boolean} [opcoes.sotaque=true]  personalidade ligada (§21)
+   */
+  constructor(opcoes = {}) {
+    this.raiz = opcoes.raiz || document.body;
+    this.movimentoReduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.nivel = this._detectarNivel();
+    document.documentElement.dataset.lumNivel = this.nivel;
+
+    this.sotaque = new SotaqueCosmico({
+      idioma: opcoes.idioma,
+      ligado: opcoes.sotaque !== false,
+    });
+    this.viagem = new ViagemCosmica({ nivel: this.nivel });
+
+    this.ceu = opcoes.canvasCeu
+      ? new CeuVivo(opcoes.canvasCeu, { nivel: this.nivel })
+      : null;
+
+    this._ligarRespingo();
+    this._ligarMudancaDePreferencia();
+    this.sotaque.aplicar(this.raiz);
+    aplicarConstelacoes(this.raiz);
+    if (this.ceu) this.ceu.iniciar();
+  }
+
+  /* -------------------------------------------------------- API pública */
+
+  /** Acende uma estrela por ação real do negócio (§70.1).
+   *  @param {object} dados venda, entrega, pedido, lançamento… */
+  acenderEstrela(dados) {
+    return this.ceu ? this.ceu.acenderEstrela(dados) : null;
+  }
+
+  /** Desenha a Constelação do Dia (§71.1). */
+  constelacaoDoDia() {
+    return this.ceu ? this.ceu.constelacaoDoDia() : null;
+  }
+
+  /** Modo Foco / Respiração do Céu (§13 + §67.3).
+   *  Além de desacelerar as estrelas, marca o documento para que as
+   *  notificações saibam que estão em não-perturbe (§69.5). */
+  modoFoco(ligado = true) {
+    document.documentElement.dataset.lumFoco = ligado ? 'true' : 'false';
+    if (this.ceu) this.ceu.respiracaoDoCeu(ligado);
+    return this;
+  }
+
+  /** Viagem Cósmica entre telas ou sistemas (§70.2). */
+  viajar(origem, destino, opcoes) {
+    return this.viagem.viajar(origem, destino, opcoes);
+  }
+
+  /** Troca a paleta de alto contraste (§35 item 7 / §70.6). */
+  definirPaleta(nome) {
+    if (!PALETAS_VALIDAS.has(nome)) {
+      throw new RangeError(`Paleta desconhecida: ${nome}`);
+    }
+    document.documentElement.dataset.lumPaleta = nome;
+    try { localStorage.setItem('lum:paleta', nome); } catch { /* modo privado */ }
+    return this;
+  }
+
+  /** Idioma da interface — o tom é recriado, não traduzido (§71.3). */
+  definirIdioma(idioma) {
+    this.sotaque.definirIdioma(idioma);
+    this.sotaque.aplicar(this.raiz);
+    document.documentElement.lang = idioma;
+    return this;
+  }
+
+  destruir() {
+    this.raiz.removeEventListener('pointerdown', this._onRespingo);
+    if (this._mqMovimento) {
+      this._mqMovimento.removeEventListener('change', this._onPreferencia);
+    }
+    if (this.ceu) this.ceu.destruir();
+  }
+
+  /* ------------------------------------------------------------ interno */
+
+  /** Nível inicial da otimização adaptativa (§36).
+   *  Só pistas locais do aparelho — nada sai daqui (LGPD, §72.1 item 4).
+   *  O Céu Vivo rebaixa sozinho depois, se o fps medido não sustentar. */
+  _detectarNivel() {
+    const nucleos = navigator.hardwareConcurrency || 4;
+    const memoria = navigator.deviceMemory || 4;
+    const conexao = navigator.connection?.saveData;
+    if (conexao || nucleos <= 2 || memoria <= 2) return 'basico';
+    if (nucleos <= 4 || memoria <= 4) return 'economico';
+    return 'pleno';
+  }
+
+  /** Respingo de vidro líquido no clique (§70.4, passo 1 da Fase 3A).
+   *  Delegado na raiz: funciona para botões criados depois. */
+  _ligarRespingo() {
+    this._onRespingo = (ev) => {
+      if (this.movimentoReduzido || this.nivel === 'basico') return;
+      const botao = ev.target.closest?.('.lum-botao');
+      if (!botao) return;
+
+      const r = botao.getBoundingClientRect();
+      const tam = Math.max(r.width, r.height) * 2;
+      const gota = document.createElement('span');
+      gota.className = 'lum-respingo';
+      gota.setAttribute('aria-hidden', 'true');
+      gota.style.setProperty('--lum-respingo-tam', `${tam}px`);
+      gota.style.insetInlineStart = `${ev.clientX - r.left}px`;
+      gota.style.insetBlockStart = `${ev.clientY - r.top}px`;
+      botao.appendChild(gota);
+      gota.addEventListener('animationend', () => gota.remove(), { once: true });
+    };
+    this.raiz.addEventListener('pointerdown', this._onRespingo, { passive: true });
+  }
+
+  /** A preferência de movimento pode mudar com o sistema rodando.
+   *  §35 item 8 não admite "só vale se recarregar". */
+  _ligarMudancaDePreferencia() {
+    this._mqMovimento = matchMedia('(prefers-reduced-motion: reduce)');
+    this._onPreferencia = (ev) => {
+      this.movimentoReduzido = ev.matches;
+      this.viagem.movimentoReduzido = ev.matches;
+      if (this.ceu) {
+        this.ceu.movimentoReduzido = ev.matches;
+        if (ev.matches) { this.ceu.parar(); this.ceu._quadro(0); }
+        else this.ceu.iniciar();
+      }
+    };
+    this._mqMovimento.addEventListener('change', this._onPreferencia);
+  }
+}
+
+/**
+ * Anuncia uma mensagem a leitores de tela.
+ * §69.5: aria-live "polite" no normal, "assertive" no crítico.
+ * §45/§68.5: o som nunca é canal único — por isso este canal de texto existe
+ * separado, e é ele que carrega a informação.
+ *
+ * @param {string} texto
+ * @param {'polite'|'assertive'} [urgencia='polite']
+ */
+export function anunciar(texto, urgencia = 'polite') {
+  const id = `lum-vivo-${urgencia}`;
+  let regiao = document.getElementById(id);
+  if (!regiao) {
+    regiao = document.createElement('div');
+    regiao.id = id;
+    regiao.setAttribute('aria-live', urgencia);
+    regiao.setAttribute('aria-atomic', 'true');
+    // Fora da tela, mas nunca display:none — leitor de tela ignora o que
+    // está escondido de verdade.
+    Object.assign(regiao.style, {
+      position: 'absolute', inlineSize: '1px', blockSize: '1px',
+      overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap',
+    });
+    document.body.appendChild(regiao);
+  }
+  regiao.textContent = '';
+  requestAnimationFrame(() => { regiao.textContent = texto; });
+}
+
+/** Restaura a paleta que o usuário escolheu antes de sair. */
+export function restaurarPaleta() {
+  try {
+    const p = localStorage.getItem('lum:paleta');
+    if (p && PALETAS_VALIDAS.has(p)) document.documentElement.dataset.lumPaleta = p;
+  } catch { /* modo privado: segue no padrão */ }
+}
+
+export { CeuVivo, SotaqueCosmico, ViagemCosmica, PALETAS_VALIDAS };

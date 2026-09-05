@@ -55,26 +55,47 @@ Este repositório segue essa regra.
 
 ---
 
-## Código bloqueado
+## Decisões do Fundador em 05/09/2026
 
-§71, encerramento da ordem de implementação da Fase 3A:
+Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da hierarquia
+(decisões explícitas e mais recentes do Fundador):
+
+| Decisão | Efeito | Registro |
+|---|---|---|
+| *"a L canônica é a dominante, confirma e registra"* | Resolve a escalação §1. A L canônica é a variante dominante, em 9 dos 13 arquivos oficiais. | [`11-l-canonica.md`](11-l-canonica.md) |
+| *"eu te dou o meu pode ir"* | É o **"pode ir" da §71**. A Fase 3A sai do bloqueio. | [`../runtime/`](../runtime/) |
+
+---
+
+## Código: a Fase 3A saiu do bloqueio
+
+§71 encerrava a ordem de implementação com:
 
 > "Código permanece bloqueado até o **'pode ir' final do fundador**."
 
-Reforçado em §69.7 (Notificações Vivas: "design fechado; prototipagem e código entram na
-rodada seguinte, pelos itens que o fundador priorizar primeiro — **PRIORIZAÇÃO EM ABERTO**")
-e em §72.1 (as 6 candidatas aprovadas: "APROVADO — **código na rodada a agendar**").
+**Esse sinal foi dado em 05/09/2026.** A ordem já estava decidida pelo próprio Fundador (§71,
+delegada à IA em 01/09/2026) e foi seguida:
 
-**Consequência prática para este repositório:** a estética procedural (Céu Vivo, Interface
-Viva, Notificações Vivas, Formas que Sentem) está especificada em detalhe executável, mas
-**não implementada**. A ordem de implementação já decidida, quando o sinal vier (§71):
+1. ✨ Formas que Sentem (base tátil) — `runtime/formas-que-sentem.css`
+2. 🌌 Céu Vivo (ambiente) — `runtime/ceu-vivo.js`
+3. 💬 Sotaque Cósmico (textos) — `runtime/sotaque-cosmico.js`
+4. 🚀 Viagem Cósmica (transições) — `runtime/viagem-cosmica.js`
+5. 📜 Documentos com Alma (PDF) — `runtime/documentos-com-alma.{css,js}`
+6. 🌈 Acessibilidade Bonita — `runtime/acessibilidade-bonita.css`
 
-1. ✨ Formas que Sentem (base tátil)
-2. 🌌 Céu Vivo (ambiente)
-3. 💬 Sotaque Cósmico (textos)
-4. 🚀 Viagem Cósmica (transições)
-5. 📜 Documentos com Alma (PDF)
-6. 🌈 Acessibilidade Bonita (alto contraste com alma)
+### O que o "pode ir" NÃO liberou
+
+O sinal da §71 vale para a Fase 3A. Três coisas continuam onde estavam:
+
+- **§48 e §64.2 — produção de assets** (animações, vídeo, áudio, 3D) seguem sendo do
+  profissional contratado e **congeladas**. São decisões separadas, com autoridade separada;
+  o "pode ir" da §71 não as toca.
+- **§69.7 — Notificações Vivas:** design fechado, mas *"PRIORIZAÇÃO EM ABERTO"*. O Fundador
+  ainda não disse por qual item começar.
+- **§72.1 — as 6 candidatas aprovadas:** "código na rodada a agendar". Rodada ainda não
+  agendada.
+
+Nada disso está na lista de seis passos da §71.
 
 ---
 

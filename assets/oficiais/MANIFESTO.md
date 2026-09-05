@@ -115,15 +115,17 @@ Magic bytes `FF D8 FF E0` (JFIF), não `89 50 4E 47` (PNG). Consequências:
 Deep Space, esses dois renderizam como **caixa branca**. Sem alfa, não há recorte possível sem
 editar pixels.
 
-### 3. Três anatomias de "L" na mesma biblioteca
+### 3. Três anatomias de "L" na mesma biblioteca — ✅ RESOLVIDO em 05/09/2026
 
 - **Dominante (9 arquivos** — 05, 06, 07, 08, 09, 10, 11, 12, 13**)**: ombro arredondado,
   espinha interna curva, gradiente violeta→azul, frequentemente com bolha-ponto à direita.
+  **→ Confirmada pelo Fundador em 05/09/2026 como a L CANÔNICA.**
 - **Divergente A (01)**: L geométrica chapada, cantos vivos, sem ombro arredondado, sem bolha.
 - **Divergente B (04)**: L de traço uniforme arredondado ("candy"), mais espessa.
 
-O Guia cita **"a L canônica"** (§70.5, §71.5) sem nunca defini-la.
-→ [`../../ESCALACOES.md`](../../ESCALACOES.md) §1.
+As duas divergentes permanecem **preservadas como arquivos oficiais**, mas não são a L canônica
+e não servem onde o Guia pede "a L canônica em destaque" (§70.5/§71.5).
+→ [`../../docs/11-l-canonica.md`](../../docs/11-l-canonica.md).
 
 ### 4. Inconsistência no "A" do wordmark
 

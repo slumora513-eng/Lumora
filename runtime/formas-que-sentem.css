@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Lumora — Fase 3A, passo 1: ✨ FORMAS QUE SENTEM (base tátil)
+   §70.4 / §71.4. Primeiro item da ordem de implementação da §71.
+
+   §70.4 é explícito quanto ao meio:
+     "Implementação com Web Animations API/CSS apenas, sem bibliotecas."
+
+   Os quatro gestos registrados no Guia:
+     - campos acendem com halo de estrela ao focar
+     - botões têm respingo de vidro líquido no clique
+     - toggles derretem entre estados
+     - cards flutuam suavemente no hover
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Campo que acende com halo de estrela ao focar
+   -------------------------------------------------------------------------- */
+.lum-campo {
+  background: var(--lum-vidro-solido);
+  border: 1px solid var(--lum-vidro-borda);
+  color: var(--lum-texto-1);
+  font: inherit;
+  padding: 12px 14px;
+  min-block-size: var(--lum-alvo-min);
+  transition:
+    border-color var(--lum-dur-micro) var(--lum-ease),
+    box-shadow   var(--lum-dur-curta) var(--lum-ease);
+}
+
+.lum-campo::placeholder { color: var(--lum-texto-3); }
+
+/* O halo: anéis concêntricos de luz, como uma estrela acendendo.
+   O outline de foco (tokens.css) continua por cima — o halo é estética,
+   o outline é acessibilidade (§35 item 2) e nunca é substituído por ele. */
+.lum-campo:focus-visible {
+  border-color: var(--lum-foco);
+  box-shadow:
+    0 0 0 1px var(--lum-foco),
+    0 0 12px -2px var(--lum-foco),
+    0 0 28px -6px var(--lum-violeta);
+}
+
+/* As pontas da estrela — cruz de luz, só decorativa. */
+.lum-campo-halo { position: relative; display: block; }
+.lum-campo-halo::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 12px;
+  inset-block-start: 50%;
+  inline-size: 14px;
+  block-size: 14px;
+  translate: 0 -50%;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,  transparent 46%, var(--lum-foco) 50%, transparent 54%),
+    linear-gradient(to bottom, transparent 46%, var(--lum-foco) 50%, transparent 54%);
+  transition: opacity var(--lum-dur-curta) var(--lum-ease),
+              rotate  var(--lum-dur-curta) var(--lum-ease);
+}
+.lum-campo-halo:focus-within::after { opacity: 1; rotate: 45deg; }
+
+/* --------------------------------------------------------------------------
+   2. Botão com respingo de vidro líquido no clique
+   O elemento .lum-respingo é criado por lumora.js no ponto do clique.
+   -------------------------------------------------------------------------- */
+.lum-botao {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--lum-vidro-borda);
+  border-radius: var(--lum-raio-superficie);
+  background: var(--lum-vidro-solido);
+  color: var(--lum-texto-1);
+  font: inherit;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: transform var(--lum-dur-micro) var(--lum-ease),
+              border-color var(--lum-dur-micro) var(--lum-ease);
+}
+.lum-botao:hover { border-color: var(--lum-foco); }
+.lum-botao:active { transform: scale(0.98); }
+
+.lum-botao--primario {
+  background: var(--lum-gradiente);
+  border-color: transparent;
+  /* Texto branco sobre o gradiente: o violeta puro reprova AA como fundo de
+     texto pequeno, então o peso sobe e o tamanho tem piso. */
+  font-weight: 600;
+}
+
+.lum-respingo {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  translate: -50% -50%;
+  /* Vidro líquido: claro no centro, refração violeta na borda. */
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(176, 29, 255, 0.30) 45%,
+    transparent 70%
+  );
+  animation: lum-respingo var(--lum-dur-curta) var(--lum-ease) forwards;
+}
+
+@keyframes lum-respingo {
+  from { inline-size: 0; block-size: 0; opacity: 0.9; }
+  to   { inline-size: var(--lum-respingo-tam, 240px);
+         block-size: var(--lum-respingo-tam, 240px);
+         opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   3. Toggle que derrete entre estados
+   -------------------------------------------------------------------------- */
+.lum-toggle {
+  /* Alvo de toque completo (§35 item 4), mesmo com a trilha menor. */
+  min-inline-size: var(--lum-alvo-min);
+  min-block-size: var(--lum-alvo-min);
+  display: inline-grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lum-toggle-trilha {
+  position: relative;
+  inline-size: 52px;
+  block-size: 28px;
+  border-radius: 999px;
+  background: var(--lum-vidro-solido);
+  border: 1px solid var(--lum-vidro-borda);
+  transition: background var(--lum-dur-curta) var(--lum-ease);
+}
+
+.lum-toggle-gota {
+  position: absolute;
+  inset-block-start: 3px;
+  inset-inline-start: 3px;
+  inline-size: 20px;
+  block-size: 20px;
+  border-radius: 50%;
+  background: var(--lum-texto-2);
+  /* O "derreter": a gota estica antes de assentar do outro lado. */
+  transition:
+    translate   var(--lum-dur-curta) var(--lum-ease),
+    scale       var(--lum-dur-curta) var(--lum-ease),
+    background  var(--lum-dur-curta) var(--lum-ease),
+    border-radius var(--lum-dur-curta) var(--lum-ease);
+}
+
+.lum-toggle[aria-pressed="true"] .lum-toggle-trilha { background: var(--lum-gradiente); }
+.lum-toggle[aria-pressed="true"] .lum-toggle-gota {
+  translate: 24px 0;
+  background: var(--lum-texto-1);
+}
+/* No meio do caminho a gota se alonga — a "derretida". */
+.lum-toggle:active .lum-toggle-gota {
+  scale: 1.35 0.85;
+  border-radius: 40%;
+}
+
+/* §35 item 3 — o estado nunca é só a cor: o rótulo textual acompanha. */
+.lum-toggle-rotulo { color: var(--lum-texto-2); margin-inline-start: 8px; }
+
+/* --------------------------------------------------------------------------
+   4. Card que flutua ao pairar
+   -------------------------------------------------------------------------- */
+.lum-card {
+  border-radius: var(--lum-raio-superficie);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  padding: 20px;
+  /* Só transform e opacity animam — nada de layout (§66.2), para 60fps. */
+  transition: translate var(--lum-dur-curta) var(--lum-ease),
+              box-shadow var(--lum-dur-curta) var(--lum-ease);
+}
+.lum-card:hover,
+.lum-card:focus-within {
+  translate: 0 -4px;
+  box-shadow: 0 12px 32px -12px var(--lum-violeta);
+}
+
+/* --------------------------------------------------------------------------
+   MOVIMENTO REDUZIDO (§35 item 8 / §36)
+   O gesto some; o estado permanece legível. Nada de informação se perde.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .lum-campo,
+  .lum-botao,
+  .lum-card,
+  .lum-toggle-gota,
+  .lum-toggle-trilha,
+  .lum-campo-halo::after {
+    transition-duration: 1ms;
+  }
+  .lum-respingo { display: none; }          /* respingo é puro gesto */
+  .lum-card:hover, .lum-card:focus-within { translate: none; }
+  .lum-botao:active { transform: none; }
+  .lum-toggle:active .lum-toggle-gota { scale: 1; border-radius: 50%; }
+}
+
+/* Nível básico da otimização adaptativa (§36): mesmo corte, por hardware. */
+:root[data-lum-nivel="basico"] .lum-respingo { display: none; }
+:root[data-lum-nivel="basico"] .lum-card:hover { translate: none; }

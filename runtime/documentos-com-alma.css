@@ -1,0 +1,190 @@
+/* ==========================================================================
+   Lumora — Fase 3A, passo 5: 📜 DOCUMENTOS COM ALMA (papel-mãe)
+   §70.5 / §71.5. Liberado pelo "pode ir" do Fundador (05/09/2026).
+
+   REGRA-MÃE (§70.5): "Impressão e PDF mantêm contraste e legibilidade —
+   funcional primeiro, estética depois."
+
+   Os três elementos que o Guia define para o papel-mãe:
+     1. fundo cosmos sutil
+     2. a L canônica em destaque
+     3. no rodapé, uma constelação gerada pelos dados do próprio documento
+
+   TRÊS COISAS QUE ESTE ARQUIVO NÃO FAZ, DE PROPÓSITO:
+
+   - Não usa backdrop-filter em lugar nenhum. Liquid Glass dependente de
+     backdrop-filter não existe em PDF nem em impressora; um documento cuja
+     legibilidade dependesse dele quebraria ao imprimir.
+
+   - Não desenha a L canônica. Ela é confirmada (docs/11-l-canonica.md) mas os
+     9 arquivos que a portam são JPEG sem canal alfa (ESCALACOES.md §3, ainda
+     aberta). A área fica RESERVADA e vazia. Desenhar um substituto seria
+     inventar versão de marca oficial — proibido pela regra 14.
+
+   - Não colore texto de corpo. Em papel branco o verde do Business mede
+     1,63:1 e o âmbar do RotaCerta 2,00:1 — ilegíveis
+     (docs/08-impressao-e-documentos.md).
+   ========================================================================== */
+
+.lum-doc {
+  --doc-tinta:      #101418;   /* 17,4:1 sobre branco — AAA */
+  --doc-tinta-2:    #3C444E;   /*  9,4:1 — AAA */
+  --doc-tinta-3:    #5E6873;   /*  5,4:1 — AA, só para legenda */
+  --doc-papel:      #FFFFFF;
+  --doc-filete:     #C9CFD6;
+  --doc-margem:     18mm;
+
+  background: var(--doc-papel);
+  color: var(--doc-tinta);
+  font-family: var(--lum-fonte, system-ui, sans-serif);
+  font-size: 10.5pt;
+  line-height: 1.45;
+  padding: var(--doc-margem);
+  max-inline-size: 210mm;
+  margin-inline: auto;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   1. Fundo cosmos SUTIL
+   Sutil de verdade: pontos rarefeitos, quase brancos. Um fundo cheio
+   consumiria toner, borraria em térmica e reduziria o contraste do texto.
+   Fica atrás de tudo e nunca atrás de bloco fiscal (ver .lum-doc-fiscal).
+   -------------------------------------------------------------------------- */
+.lum-doc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(16, 20, 24, 0.07) 0.6px, transparent 0.7px),
+    radial-gradient(circle at 76% 9%,  rgba(16, 20, 24, 0.05) 0.5px, transparent 0.6px),
+    radial-gradient(circle at 43% 61%, rgba(16, 20, 24, 0.05) 0.6px, transparent 0.7px),
+    radial-gradient(circle at 88% 74%, rgba(16, 20, 24, 0.06) 0.5px, transparent 0.6px),
+    radial-gradient(circle at 24% 88%, rgba(16, 20, 24, 0.04) 0.5px, transparent 0.6px);
+  background-size: 180px 180px, 240px 240px, 200px 200px, 300px 300px, 260px 260px;
+}
+
+.lum-doc > * { position: relative; z-index: 1; }
+
+/* --------------------------------------------------------------------------
+   2. Cabeçalho — a L canônica em destaque (ÁREA RESERVADA, VAZIA)
+   -------------------------------------------------------------------------- */
+.lum-doc-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  gap: 12mm;
+  padding-block-end: 6mm;
+  border-block-end: 1px solid var(--doc-filete);
+}
+
+/* A área da L. Sem imagem: aguarda arquivo com alfa ou vetor
+   (ESCALACOES.md §3). O contorno tracejado aparece só na tela, para o
+   operador ver que o lugar existe — some na impressão. */
+.lum-doc-marca {
+  inline-size: 22mm;
+  block-size: 22mm;
+  flex: 0 0 auto;
+  outline: 1px dashed var(--doc-filete);
+  outline-offset: 2px;
+}
+
+.lum-doc-titulo { margin: 0; font-size: 16pt; font-weight: 600; letter-spacing: 0.01em; }
+.lum-doc-subtitulo { margin: 2mm 0 0; color: var(--doc-tinta-2); font-size: 10pt; }
+
+/* --------------------------------------------------------------------------
+   Corpo e blocos fiscais
+   -------------------------------------------------------------------------- */
+.lum-doc-corpo { padding-block: 6mm; }
+
+.lum-doc table { inline-size: 100%; border-collapse: collapse; font-size: 9.5pt; }
+.lum-doc th {
+  text-align: start;
+  font-weight: 600;
+  border-block-end: 1px solid var(--doc-filete);
+  padding: 2mm 1.5mm;
+}
+.lum-doc td { padding: 2mm 1.5mm; border-block-end: 1px solid #EDF0F3; }
+
+/* Bloco fiscal: nada de fundo cosmos por trás, nada de decoração.
+   §22 — a estética não pode interferir na leitura de campos obrigatórios,
+   código de barras ou chave de acesso. */
+.lum-doc-fiscal {
+  background: var(--doc-papel);
+  border: 1px solid var(--doc-tinta-2);
+  padding: 4mm;
+  margin-block: 4mm;
+  font-variant-numeric: tabular-nums;
+}
+.lum-doc-fiscal .lum-doc-chave {
+  font-family: var(--lum-fonte-mono, ui-monospace, monospace);
+  font-size: 9pt;
+  letter-spacing: 0.06em;
+  word-break: break-all;
+}
+
+/* §35 item 3 — o status nunca é só a cor: ícone e texto acompanham sempre.
+   Em impressão preto e branco a cor some por completo, e a informação fica. */
+.lum-doc-status { display: inline-flex; align-items: center; gap: 1.5mm; font-weight: 600; }
+.lum-doc-status::before { font-size: 11pt; line-height: 1; }
+.lum-doc-status[data-estado="ok"]::before      { content: "✓"; }
+.lum-doc-status[data-estado="atencao"]::before { content: "!"; }
+.lum-doc-status[data-estado="erro"]::before    { content: "✕"; }
+
+/* --------------------------------------------------------------------------
+   3. Rodapé — a constelação gerada pelos dados do documento
+   O SVG é montado por documentos-com-alma.js a partir do conteúdo real.
+   -------------------------------------------------------------------------- */
+.lum-doc-rodape {
+  border-block-start: 1px solid var(--doc-filete);
+  padding-block-start: 4mm;
+  margin-block-start: 6mm;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8mm;
+  color: var(--doc-tinta-3);
+  font-size: 8pt;
+}
+
+.lum-doc-constelacao { inline-size: 46mm; block-size: 16mm; flex: 0 0 auto; }
+.lum-doc-constelacao line   { stroke: var(--doc-tinta-3); stroke-width: 0.4; }
+.lum-doc-constelacao circle { fill: var(--doc-tinta-2); }
+
+/* --------------------------------------------------------------------------
+   IMPRESSÃO
+   -------------------------------------------------------------------------- */
+@media print {
+  .lum-doc {
+    padding: 0;
+    max-inline-size: none;
+    font-size: 10pt;
+    color: #000;
+  }
+  /* O contorno da área da marca é auxílio de tela — não vai para o papel. */
+  .lum-doc-marca { outline: none; }
+
+  .lum-doc-cabecalho { break-after: avoid; }
+  .lum-doc-fiscal    { break-inside: avoid; }
+  .lum-doc-rodape    { break-before: avoid; }
+  .lum-doc table     { break-inside: auto; }
+  .lum-doc tr        { break-inside: avoid; }
+  .lum-doc thead     { display: table-header-group; }
+
+  a[href]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #000; }
+  .lum-doc-sem-impressao { display: none !important; }
+}
+
+/* Modo econômico de impressão: preto e branco puro, sem fundo cosmos.
+   §35 item 3 garante que nada se perde — a cor nunca carregava informação. */
+@media print {
+  .lum-doc[data-economico="true"]::before { display: none; }
+  .lum-doc[data-economico="true"] .lum-doc-constelacao { display: none; }
+}
+
+/* Alto contraste também vale no papel. */
+@media print and (prefers-contrast: more) {
+  .lum-doc::before { display: none; }
+  .lum-doc { --doc-tinta-2: #000; --doc-tinta-3: #000; --doc-filete: #000; }
+}

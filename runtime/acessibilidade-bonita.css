@@ -1,0 +1,183 @@
+/* ==========================================================================
+   Lumora — Fase 3A, passo 6: 🌈 ACESSIBILIDADE BONITA (alto contraste com alma)
+   §35 item 7 · §70.6 / §71.6. Liberado pelo "pode ir" do Fundador (05/09/2026).
+
+   §71.6: "Alto contraste com alma — contraste total para quem precisa sem
+   virar tela branca sem identidade."
+
+   ---------------------------------------------------------------------------
+   ESTADO: MECANISMO COMPLETO, DUAS DAS SEIS PALETAS PENDENTES
+   ---------------------------------------------------------------------------
+   O Guia descreve DUAS listas de paletas que não coincidem:
+
+     §35 item 7  -> "Modo Alto Contraste com 3 paletas
+                     (padrão, preto/branco, daltonismo)"
+     §70.6/§71.6 -> "Fogo de Nebulosa" (vermelho-laranja profundo),
+                     "Aurora Dia", "Aurora Noite"
+
+   As três da §35 são requisito funcional com conteúdo determinado, e estão
+   IMPLEMENTADAS abaixo. As três da §70.6 são nomeadas sem nenhum valor
+   definido em 59 páginas: seus blocos existem, vazios, aguardando decisão.
+   Inventá-las seria criar identidade que o Guia não sustenta.
+
+   Se as duas listas são a mesma feature ou duas diferentes também está aberto.
+   -> ESCALACOES.md §7.
+
+   Troca em <html data-lum-paleta="...">. Sem paleta declarada, vale o padrão.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   PALETA 1 — padrão (§35 item 7)
+   A identidade normal já nasce acima do mínimo: os tokens de texto medem
+   20,50:1 / 13,51:1 / 7,76:1 sobre Deep Space, todos AAA.
+   Definida em tokens.css; aqui só o reforço do foco.
+   -------------------------------------------------------------------------- */
+:root[data-lum-paleta="padrao"],
+:root:not([data-lum-paleta]) {
+  --lum-foco-espessura: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   PALETA 2 — preto/branco (§35 item 7)
+   Contraste máximo. A "alma" que sobra é a forma, não a cor: as bolhas
+   continuam bolhas, o céu continua desenhando — em branco sobre preto.
+   -------------------------------------------------------------------------- */
+:root[data-lum-paleta="preto-branco"] {
+  --lum-deep-space:          #000000;
+  --lum-deep-space-puro:     #000000;
+  --lum-deep-space-nebulosa: #000000;
+
+  --lum-texto-1:             #FFFFFF;   /* 21,00:1 */
+  --lum-texto-2:             #FFFFFF;
+  --lum-texto-3:             #FFFFFF;
+
+  --lum-vidro:               #000000;
+  --lum-vidro-solido:        #000000;
+  --lum-vidro-borda:         #FFFFFF;   /* 21,00:1 */
+  --lum-vidro-brilho:        transparent;
+  --lum-vidro-blur:          0px;
+
+  --lum-violeta:             #FFFFFF;
+  --lum-azul:                #FFFFFF;
+  --lum-gradiente:           none;
+
+  --lum-ok:                  #FFFFFF;
+  --lum-atencao:             #FFFFFF;
+  --lum-erro:                #FFFFFF;
+  --lum-critico:             #FFFFFF;
+
+  --lum-foco:                #FFFF00;   /* 19,56:1 — destaca do branco */
+  --lum-foco-espessura:      4px;
+}
+
+/* Sem cor para diferenciar, a forma e o texto carregam tudo (§35 item 3).
+   Bordas ficam mais grossas para o estado ser lido pelo contorno. */
+:root[data-lum-paleta="preto-branco"] .lum-vidro,
+:root[data-lum-paleta="preto-branco"] .lum-card,
+:root[data-lum-paleta="preto-branco"] .lum-campo,
+:root[data-lum-paleta="preto-branco"] .lum-botao {
+  border-width: 2px;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-lum-paleta="preto-branco"] .lum-botao--primario {
+  background: #FFFFFF;
+  color: #000000;
+}
+:root[data-lum-paleta="preto-branco"] .lum-texto-marca {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--lum-texto-1);
+}
+
+/* --------------------------------------------------------------------------
+   PALETA 3 — daltonismo (§35 item 7)
+   Base Okabe-Ito, distinguível em protanopia, deuteranopia e tritanopia.
+   §35 exige paletas "testadas em simuladores (Coblis, Stark)" — este é o
+   ponto de partida verificado por contraste; o teste em simulador é etapa de
+   QA, não de token.
+   Contraste sobre Deep Space (calculado): azul-céu 8,89:1 · laranja 9,10:1 ·
+   vermelhão 5,30:1 · amarelo 15,50:1 — todos >= AA, três deles AAA.
+   -------------------------------------------------------------------------- */
+:root[data-lum-paleta="daltonismo"] {
+  --lum-ok:            #56B4E9;   /* azul-céu no lugar do verde */
+  --lum-atencao:       #E69F00;   /* laranja */
+  --lum-erro:          #D55E00;   /* vermelhão */
+  --lum-critico:       #F0E442;   /* amarelo — o mais luminoso da escala */
+
+  --lum-violeta:       #CC79A7;   /* roxo-rosa, 6,70:1 */
+  --lum-azul:          #56B4E9;
+  --lum-gradiente:     linear-gradient(160deg, #CC79A7, #56B4E9);
+
+  --lum-aurora-verde:  #56B4E9;
+  --lum-aurora-teal:   #56B4E9;
+  --lum-aurora-violeta:#CC79A7;
+
+  --lum-business-verde:  #56B4E9;
+  --lum-rotacerta-ambar: #E69F00;
+
+  --lum-foco:          #F0E442;   /* 15,50:1 */
+  --lum-foco-espessura: 4px;
+}
+
+/* O eixo vermelho/verde some da estética também, não só dos estados:
+   a aurora do céu passa a variar em luminosidade e no eixo azul/laranja. */
+:root[data-lum-paleta="daltonismo"] .lum-card:hover {
+  box-shadow: 0 12px 32px -12px #CC79A7;
+}
+
+/* --------------------------------------------------------------------------
+   PALETAS 4–6 — §70.6 / §71.6: VALORES PENDENTES DE DECISÃO DO FUNDADOR
+   Os seletores existem e funcionam. Nenhum valor foi inventado.
+   Preenchê-los é a resposta à ESCALACOES.md §7.
+   -------------------------------------------------------------------------- */
+
+/* "Fogo de Nebulosa" — o Guia descreve apenas "vermelho-laranja profundo".
+   Nenhum valor definido. NÃO INVENTADO. */
+:root[data-lum-paleta="fogo-de-nebulosa"] {
+  /* aguardando decisão do Fundador (ESCALACOES.md §7) */
+}
+
+/* "Aurora Dia" — nomeada em §70.6, sem descrição e sem valores.
+   NÃO INVENTADA. */
+:root[data-lum-paleta="aurora-dia"] {
+  /* aguardando decisão do Fundador (ESCALACOES.md §7) */
+}
+
+/* "Aurora Noite" — nomeada em §70.6, sem descrição e sem valores.
+   NÃO INVENTADA. */
+:root[data-lum-paleta="aurora-noite"] {
+  /* aguardando decisão do Fundador (ESCALACOES.md §7) */
+}
+
+/* --------------------------------------------------------------------------
+   Preferência do sistema operacional
+   Quem já pede mais contraste no SO recebe reforço sem precisar escolher
+   paleta — mas uma escolha explícita do usuário sempre vence.
+   -------------------------------------------------------------------------- */
+@media (prefers-contrast: more) {
+  :root:not([data-lum-paleta]) {
+    --lum-texto-2:      #FFFFFF;
+    --lum-texto-3:      #E4EAF5;
+    --lum-vidro-borda:  #A8B6D0;   /* sobe de 3,82:1 para ~10:1 */
+    --lum-vidro:        var(--lum-vidro-solido);
+    --lum-vidro-blur:   0px;
+    --lum-foco-espessura: 4px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Regra transversal que nenhuma paleta pode quebrar (§35 item 3)
+   Informação nunca depende só da cor. O ícone acompanha o estado sempre —
+   inclusive no preto/branco, onde a cor deixou de existir.
+   -------------------------------------------------------------------------- */
+.lum-estado { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.lum-estado::before { font-size: 1.1em; line-height: 1; }
+.lum-estado[data-estado="ok"]       { color: var(--lum-ok); }
+.lum-estado[data-estado="ok"]::before { content: "✓"; }
+.lum-estado[data-estado="atencao"]  { color: var(--lum-atencao); }
+.lum-estado[data-estado="atencao"]::before { content: "!"; }
+.lum-estado[data-estado="erro"]     { color: var(--lum-erro); }
+.lum-estado[data-estado="erro"]::before { content: "✕"; }
+.lum-estado[data-estado="critico"]  { color: var(--lum-critico); }
+.lum-estado[data-estado="critico"]::before { content: "▲"; }

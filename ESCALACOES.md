@@ -11,25 +11,24 @@ Itens **congelados** (§64 — caridade e animações 3D) **não aparecem nesta 
 
 ---
 
-## §1 — Qual "L" é a L canônica?
+## ~~§1 — Qual "L" é a L canônica?~~ — ✅ RESOLVIDA pelo Fundador em 05/09/2026
 
-**Bloqueia:** Documentos com Alma (§70.5/§71.5 pedem "a L canônica em destaque"), favicon,
-ícone de PWA, marca-d'água, cabeçalho de documento fiscal.
+**Decisão do Fundador (05/09/2026):** *"a L canônica é a dominante, confirma e registra"*.
 
-O Guia cita **"a L canônica"** duas vezes (§70.5 e §71.5) e **nunca a define**. A biblioteca
-oficial contém **três anatomias diferentes**:
+A **L canônica** é a variante **dominante** — ombro arredondado, espinha interna curva,
+gradiente violeta→azul, presente em **9 dos 13 arquivos oficiais** (05, 06, 07, 08, 09, 10,
+11, 12, 13).
 
-| Variante | Arquivos | Descrição |
-|---|---|---|
-| **Dominante** (9 de 13) | 05, 06, 07, 08, 09, 10, 11, 12, 13 | Ombro arredondado, espinha interna curva, gradiente violeta→azul, bolha-ponto à direita em várias |
-| **Divergente A** | 01 | L geométrica chapada, cantos vivos, sem ombro arredondado, sem bolha |
-| **Divergente B** | 04 | L de traço uniforme arredondado ("candy"), mais espessa |
+Registrada em [`docs/11-l-canonica.md`](docs/11-l-canonica.md), com anatomia, arquivos
+portadores, variantes divergentes e regras de uso.
 
-**Não declarado por este agente.** Regra 14 proíbe inventar versões de marcas oficiais, e
-"9 de 13" é evidência estatística, não aprovação do Fundador.
+As duas variantes divergentes (**01** geométrica chapada, **04** traço "candy") permanecem na
+biblioteca como **arquivos oficiais preservados**, mas **não são a L canônica** e não podem ser
+usadas onde o Guia pede "a L canônica em destaque" (§70.5/§71.5).
 
-**Pergunta:** qual variante é a L canônica? As outras duas são variantes autorizadas, versões
-antigas, ou saem da biblioteca?
+> **Aberto dentro desta decisão:** o Fundador confirmou *qual* L é canônica, não o *status* das
+> duas divergentes. Elas continuam preservadas e sem função atribuída — ver
+> [`docs/11-l-canonica.md`](docs/11-l-canonica.md), seção "O que ficou em aberto".
 
 ---
 
