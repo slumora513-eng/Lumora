@@ -123,6 +123,32 @@
 [hidden] { display: none !important; }
 
 /* --------------------------------------------------------------------------
+   Marca sobre o Céu Vivo — contorno da falta de alfa (ESCALACOES §3)
+   Os 13 arquivos oficiais são JPEG, sem transparência: colados sobre o céu,
+   viram um retângulo. Mas a arte é LUZ ADITIVA sobre preto, e para esse caso
+   existe o operador certo — `screen` faz o preto virar neutro sem tocar num
+   único pixel do arquivo.
+
+   LIMITE, medido e não suposto: `screen` só é fiel sobre fundo ESCURO. Sobre
+   o Deep Space (quase preto) a marca passa praticamente intacta; sobre uma
+   cortina de aurora acesa ela desbota; sobre PAPEL BRANCO ela desaparece.
+   Por isso o papel-mãe continua com a área da L reservada e vazia.
+   -------------------------------------------------------------------------- */
+.lum-marca-ceu {
+  mix-blend-mode: screen;
+  /* Sem suporte a blend o retângulo volta — melhor não exibir a marca do que
+     exibir uma caixa preta cortando o céu. */
+  display: none;
+}
+@supports (mix-blend-mode: screen) {
+  .lum-marca-ceu { display: block; }
+}
+/* Nas paletas de alto contraste o blend sai: elas trocam o fundo e a mistura
+   deixa de ser previsível. */
+:root[data-lum-paleta="preto-branco"] .lum-marca-ceu,
+:root[data-lum-paleta="aurora-dia"] .lum-marca-ceu { mix-blend-mode: normal; }
+
+/* --------------------------------------------------------------------------
    Base
    -------------------------------------------------------------------------- */
 .lum-raiz {

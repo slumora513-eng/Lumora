@@ -16,8 +16,8 @@ Estética procedural da Lumora em código. **Zero asset, zero rede, zero depend�
 | 2 | 🌌 **Céu Vivo** (ambiente) | `ceu-vivo.js` | ✅ completo (Canvas 2D) |
 | 3 | 💬 **Sotaque Cósmico** (textos) | `sotaque-cosmico.js` | ✅ completo |
 | 4 | 🚀 **Viagem Cósmica** (transições) | `viagem-cosmica.js` | ✅ completo |
-| 5 | 📜 **Documentos com Alma** (PDF) | `documentos-com-alma.{css,js}` | ⚠️ área da L reservada e vazia |
-| 6 | 🌈 **Acessibilidade Bonita** | `acessibilidade-bonita.css` | ⚠️ 3 de 6 paletas |
+| 5 | 📜 **Documentos com Alma** (PDF) | `documentos-com-alma.{css,js}` | ⚠️ área da L reservada (falta arquivo com alfa) |
+| 6 | 🌈 **Acessibilidade Bonita** | `acessibilidade-bonita.css` | ✅ **6 de 6 paletas** |
 
 ## Extensão de 05/09/2026 — "pode fazer tudo"
 
@@ -25,7 +25,7 @@ O Fundador estendeu o "pode ir" às animações. Saíram do bloqueio:
 
 | Módulo | Arquivos | Guia |
 |---|---|---|
-| **Animações dos slots** — 6 aberturas + 5 carregamentos, em Canvas 2D | `animacoes.js` + `animations.manifest.json` | §18 / §49 |
+| **Animações dos slots** — 6 aberturas em **WebGL 3D** + 5 carregamentos em Canvas 2D | `animacoes-3d.js` · `animacoes.js` · `animations.manifest.json` | §18 / §49 / §65.5 |
 | **Notificações Vivas** — bolha (Elio), faixa-onda (Aurora), Bólido, hierarquia de urgência, identidade sonora WebAudio | `notificacoes-vivas.{js,css}` | §69 · §67.5 · §72.1(3) |
 | **Navegação em Bolhas e em Ondas** | `navegacao.{js,css}` | §65.3 · §66 |
 | **Interface Viva** — Nebulosa de Ações, Rastro de Aurora, Sismógrafo Vivo, Poeira de Interação, Fio de Ariadne, Estrelinha, Comandos de Voz, Estrela do Usuário, Clima do Dia | `interface-viva.{js,css}` | §67 · §68 |
@@ -134,19 +134,39 @@ Conferido em Chromium, **50 checagens automatizadas**, todas passando:
 - **Não substitui o profissional contratado.** §64.2 (cronograma, fornecedor,
   execução) segue congelada. As cenas procedurais preenchem o slot até os
   vídeos finais chegarem, e viram fallback depois.
-- **Não define "Fogo de Nebulosa", "Aurora Dia" nem "Aurora Noite".** Nomeadas
-  em §70.6 sem nenhum valor no Guia. Os seletores existem e estão **vazios** —
-  ver [`../ESCALACOES.md`](../ESCALACOES.md) §7.
+- **Não compõe a L canônica sobre papel claro.** Sobre o Céu Vivo a marca já
+  funciona com `.lum-marca-ceu` (`mix-blend-mode: screen`, sem tocar num pixel);
+  sobre papel branco nenhum modo de mistura recupera a transparência. O
+  papel-mãe mantém a área reservada — [`../ESCALACOES.md`](../ESCALACOES.md) §3.
 
 ---
 
-## Camada WebGL
+## Camada WebGL — as aberturas em 3D
 
-§65.5 decide **"Canvas 2D + WebGL (shaders)"**. Esta entrega é a camada
-**Canvas 2D**, completa e sem dependências. A camada de shaders para a aurora é
-o refinamento seguinte — e o Canvas 2D permanece como o caminho garantido para
-hardware básico, que a §36 exige de qualquer forma. Não é atalho: é a metade
-que roda em todo aparelho.
+§65.5 decide **"Canvas 2D + WebGL (shaders)"**. As duas metades estão entregues.
+
+As **6 aberturas** rodam em WebGL (`animacoes-3d.js`) — profundidade real, não
+desenho chapado:
+
+| Cena | O que é 3D de verdade |
+|---|---|
+| `abertura.elio` | Intersecção raio-esfera analítica, normal real, Fresnel e **refração**: o céu é reamostrado pelo raio que atravessa a bolha, com parede fina de bolha de sabão. É isso que dá volume. |
+| `abertura.aurora` | **Volume raymarchado** — a cortina tem espessura e o raio acumula densidade atravessando ela. |
+| `abertura.rotacerta` | Plano de chão em perspectiva, veículos em **SDF de caixa**, câmera que afasta de verdade. A malha de rotas é **teal** ligando waypoints **âmbar** (§65.1). |
+| `abertura.business` | Campo estelar por direção do raio, com **paralaxe real** de três camadas de profundidade. |
+| `abertura.ecossistema` | Órbitas 3D em perspectiva; os sistemas são recolhidos por uma bolha de vidro. |
+| `abertura.hub` | Núcleo de vidro e conexões neurais como **segmentos 3D** com distância raio↔segmento. |
+
+WebGL1 cru: um triângulo de tela cheia e um fragment shader por cena.
+**Sem bibliotecas**, como a §65.5 exige.
+
+Os **5 carregamentos** ficam em Canvas 2D de propósito — são estados utilitários
+de ~2,5 s, e a §36 pede leveza onde a cena não é a peça de apresentação.
+
+**Cadeia de fallback (§36/§49.3):** WebGL indisponível, nível Básico, shader que
+não compila ou contexto perdido → as cenas Canvas 2D assumem, num canvas novo
+(um `<canvas>` só entrega um tipo de contexto na vida). Com
+`prefers-reduced-motion` → pôster estático. O usuário nunca vê tela quebrada.
 
 ---
 

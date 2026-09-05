@@ -247,7 +247,12 @@ export class CeuVivo {
     const p = PALETA[this.fase];
     const area = this.largura * this.altura;
     const fator = { pleno: 1, economico: 0.55, basico: 0.3 }[this.nivel] ?? 1;
-    const alvo = Math.round((area / 9000) * p.densidade * fator *
+    // Divisor calibrado por leitura, não por chute: com 9000 uma tela de
+    // 1280x900 em nível econômico ganhava ~84 estrelas — pontos soltos, não
+    // um céu. A fase "noite" (§70.1, "constelações acesas") é justamente a
+    // que mais depende de densidade, porque não tem aurora nem partículas
+    // preenchendo o quadro.
+    const alvo = Math.round((area / 4500) * p.densidade * fator *
                             (this.opcoes.densidade ?? 1));
 
     this.estrelas = Array.from({ length: alvo }, () => ({

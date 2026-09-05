@@ -6,7 +6,7 @@
    virar tela branca sem identidade."
 
    ---------------------------------------------------------------------------
-   ESTADO: MECANISMO COMPLETO, DUAS DAS SEIS PALETAS PENDENTES
+   ESTADO: AS SEIS PALETAS IMPLEMENTADAS
    ---------------------------------------------------------------------------
    O Guia descreve DUAS listas de paletas que não coincidem:
 
@@ -15,13 +15,15 @@
      §70.6/§71.6 -> "Fogo de Nebulosa" (vermelho-laranja profundo),
                      "Aurora Dia", "Aurora Noite"
 
-   As três da §35 são requisito funcional com conteúdo determinado, e estão
-   IMPLEMENTADAS abaixo. As três da §70.6 são nomeadas sem nenhum valor
-   definido em 59 páginas: seus blocos existem, vazios, aguardando decisão.
-   Inventá-las seria criar identidade que o Guia não sustenta.
+   As três da §35 são requisito funcional com conteúdo determinado. As três da
+   §70.6 são nomeadas sem nenhum valor em 59 páginas — o Fundador autorizou
+   defini-las em 05/09/2026 ("pode resolver os problemas tranquilamente"), e
+   os valores abaixo são DEFAULT DO AGENTE com contraste calculado, não
+   estimado. Ficam pendentes de conferência dele.
 
-   Se as duas listas são a mesma feature ou duas diferentes também está aberto.
-   -> ESCALACOES.md §7.
+   As duas listas são tratadas como uma só feature de seis paletas: a §35
+   garante o mínimo funcional (padrão, preto/branco, daltonismo) e a §70.6
+   acrescenta as três com identidade. -> ESCALACOES.md §7.
 
    Troca em <html data-lum-paleta="...">. Sem paleta declarada, vale o padrão.
    ========================================================================== */
@@ -132,23 +134,109 @@
    Preenchê-los é a resposta à ESCALACOES.md §7.
    -------------------------------------------------------------------------- */
 
-/* "Fogo de Nebulosa" — o Guia descreve apenas "vermelho-laranja profundo".
-   Nenhum valor definido. NÃO INVENTADO. */
+/* "Fogo de Nebulosa" — §70.6 descreve apenas "vermelho-laranja profundo".
+   (DEFAULT DO AGENTE — o Guia nomeia as três paletas e não define nenhum
+   valor. O Fundador autorizou resolver em 05/09/2026. Contraste calculado,
+   não estimado: todos os tokens de texto acima de 7:1 = AAA.) */
 :root[data-lum-paleta="fogo-de-nebulosa"] {
-  /* aguardando decisão do Fundador (ESCALACOES.md §7) */
+  --lum-deep-space:          #1A0603;   /* vermelho-laranja profundo */
+  --lum-deep-space-puro:     #120402;
+  --lum-deep-space-nebulosa: #240904;
+
+  --lum-texto-1:             #FFF3EC;   /* 18,00:1 */
+  --lum-texto-2:             #FFD9C2;   /* 14,89:1 */
+  --lum-texto-3:             #F5A97F;   /* 10,14:1 */
+
+  --lum-vidro:               #240904;
+  --lum-vidro-solido:        #240904;
+  --lum-vidro-borda:         #C4643C;   /*  4,89:1 */
+  --lum-vidro-blur:          0px;
+
+  --lum-violeta:             #FF9E4D;
+  --lum-azul:                #FFC46B;
+  --lum-gradiente:           linear-gradient(160deg, #FF9E4D, #FFE08A);
+
+  --lum-ok:                  #FFC46B;   /* 12,47:1 */
+  --lum-atencao:             #FF9E4D;   /*  9,57:1 */
+  --lum-erro:                #FF7A5C;   /*  7,65:1 */
+  --lum-critico:             #FFE08A;   /* 15,20:1 */
+
+  --lum-foco:                #FFD166;   /* 13,59:1 */
+  --lum-foco-espessura:      4px;
 }
 
-/* "Aurora Dia" — nomeada em §70.6, sem descrição e sem valores.
-   NÃO INVENTADA. */
-:root[data-lum-paleta="aurora-dia"] {
-  /* aguardando decisão do Fundador (ESCALACOES.md §7) */
-}
-
-/* "Aurora Noite" — nomeada em §70.6, sem descrição e sem valores.
-   NÃO INVENTADA. */
+/* "Aurora Noite" — a identidade Aurora em alto contraste, sobre o escuro.
+   (DEFAULT DO AGENTE, mesma autorização.) */
 :root[data-lum-paleta="aurora-noite"] {
-  /* aguardando decisão do Fundador (ESCALACOES.md §7) */
+  --lum-deep-space:          #01100E;
+  --lum-deep-space-puro:     #000A09;
+  --lum-deep-space-nebulosa: #032019;
+
+  --lum-texto-1:             #EFFFFA;   /* 18,82:1 */
+  --lum-texto-2:             #B8E8DA;   /* 14,41:1 */
+  --lum-texto-3:             #7FC9B8;   /* 10,12:1 */
+
+  --lum-vidro:               #032019;
+  --lum-vidro-solido:        #032019;
+  --lum-vidro-borda:         #3E7E71;   /*  4,09:1 — limite de UI */
+  --lum-vidro-blur:          0px;
+
+  --lum-violeta:             #8CF0DA;
+  --lum-azul:                #5FE3B0;
+  --lum-gradiente:           linear-gradient(160deg, #8CF0DA, #5FE3B0);
+  --lum-aurora-verde:        #5FE3B0;
+  --lum-aurora-teal:         #8CF0DA;
+  --lum-aurora-violeta:      #B8E8DA;
+
+  --lum-ok:                  #5FE3B0;   /* 12,11:1 */
+  --lum-atencao:             #FFC46B;   /* 12,35:1 */
+  --lum-erro:                #FF8A8A;   /*  8,56:1 */
+  --lum-critico:             #FFE08A;   /* 15,05:1 */
+
+  --lum-foco:                #8CF0DA;   /* 14,41:1 */
+  --lum-foco-espessura:      4px;
 }
+
+/* "Aurora Dia" — a única paleta CLARA da identidade. É a resposta para quem
+   precisa de fundo claro sem cair na "tela branca sem identidade" que a §71.6
+   rejeita: o papel é levemente esverdeado, os acentos são aurora escurecida.
+   (DEFAULT DO AGENTE, mesma autorização.) */
+:root[data-lum-paleta="aurora-dia"] {
+  --lum-deep-space:          #F4FBF8;
+  --lum-deep-space-puro:     #FFFFFF;
+  --lum-deep-space-nebulosa: #E6F4EE;
+
+  --lum-texto-1:             #06231D;   /* 15,80:1 */
+  --lum-texto-2:             #0E4038;   /* 11,06:1 */
+  --lum-texto-3:             #2A6357;   /*  6,62:1 */
+
+  --lum-vidro:               #E6F4EE;
+  --lum-vidro-solido:        #E6F4EE;
+  --lum-vidro-borda:         #3E7E71;   /*  4,52:1 */
+  --lum-vidro-brilho:        transparent;
+  --lum-vidro-blur:          0px;
+
+  --lum-violeta:             #0B6B4F;
+  --lum-azul:                #0E4038;
+  --lum-gradiente:           linear-gradient(160deg, #0B6B4F, #0E4038);
+
+  --lum-ok:                  #0B6B4F;   /*  6,19:1 */
+  --lum-atencao:             #8A4B00;   /*  6,48:1 */
+  --lum-erro:                #A11A2B;   /*  7,41:1 */
+  --lum-critico:             #6B3A00;   /*  8,97:1 */
+
+  --lum-foco:                #0B6B4F;   /*  6,19:1 */
+  --lum-foco-espessura:      4px;
+}
+
+/* Numa paleta clara o Céu Vivo não pode continuar desenhando estrelas claras
+   sobre papel claro: o canvas some. Quem integra deve trocar o céu pelo modo
+   reduzido — o runtime expõe o estado em <html data-lum-paleta>. */
+:root[data-lum-paleta="aurora-dia"] .lum-vidro,
+:root[data-lum-paleta="aurora-dia"] .lum-card,
+:root[data-lum-paleta="aurora-dia"] .lum-campo,
+:root[data-lum-paleta="aurora-dia"] .lum-botao { backdrop-filter: none; }
+:root[data-lum-paleta="aurora-dia"] .lum-botao--primario { color: #FFFFFF; }
 
 /* --------------------------------------------------------------------------
    Preferência do sistema operacional

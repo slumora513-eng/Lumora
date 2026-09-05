@@ -3,9 +3,13 @@
 > Regra 24 do prompt operacional: *"Quando houver dúvida crítica de identidade, não improvisar:
 > registrar a dúvida e escalar ao Fundador."*
 
-Sete itens registrados; **duas resolvidas pelo Fundador em 05/09/2026** (§1 e §5), cinco
-abertas. Nenhuma foi resolvida por default — todas exigem decisão de identidade que o Guia não
-sustenta. Nada aqui é pendência de execução: são perguntas.
+Sete itens registrados. Em 05/09/2026, **seis foram resolvidos**: dois por decisão direta do
+Fundador (§1, §5) e quatro sob a autorização *"pode resolver os problemas que deu
+tranquilamente"* (§2, §3 parcial, §4, §7). **Um continua aberto** (§6) e **um resta parcial**
+(§3, só para o papel).
+
+Tudo que foi resolvido sob autorização está marcado como **DEFAULT DO AGENTE** — nenhum deles
+é registrado como decisão do Fundador, conforme a regra 22.
 
 Itens **congelados** (§64 — caridade e animações 3D) **não aparecem nesta lista**, conforme
 §64.3: aparecem apenas como "congelado (ver §64)", sem status de pendência.
@@ -33,67 +37,76 @@ usadas onde o Guia pede "a L canônica em destaque" (§70.5/§71.5).
 
 ---
 
-## §2 — O "A" do wordmark LUMORA tem travessão ou não?
+## §2 — O "A" do wordmark LUMORA — ✅ RESOLVIDA em 05/09/2026 (por evidência)
 
-**Bloqueia:** qualquer uso do wordmark; escolha ou licenciamento de fonte; consistência entre
-os cinco lockups oficiais.
+**Autorização do Fundador (05/09/2026):** *"pode resolver os problemas que deu
+tranquilamente"*.
 
 | Arquivo | Forma do "A" |
 |---|---|
 | 09 `comunidade`, 10 `aurora`, 11 `elio`, 12 `migralumora` | **Sem travessão** — `Λ` |
-| 13 `ecossistema` | **Com travessão** — `A` convencional (no wordmark **e** no descritor `ECOSSISTEMA`) |
+| 13 `ecossistema` | Com travessão — `A` convencional |
 
-Quatro contra um. Mas o wordmark é o ativo mais sensível da marca e a regra 14 é explícita:
-*"Não reconstruir wordmarks manualmente"* e *"Quando houver um PNG oficial, ele é a fonte
-canônica"* — aqui há **cinco PNGs oficiais que discordam entre si**.
+**Decisão registrada:** o "A" oficial do wordmark é o **sem travessão (`Λ`)** — presente em
+**4 dos 5** lockups oficiais. O `13_lumora_ecossistema_wordmark` é o desvio.
 
-**Agravante:** nenhuma família tipográfica é nomeada em nenhuma das 59 páginas do Guia, e nenhum
-arquivo de fonte foi entregue. Sem isso, o wordmark só pode ser usado como imagem — e a imagem
-disponível é JPEG 1024×1024 com perda, sem vetor.
+> **(DEFAULT DO AGENTE — resolvido por evidência majoritária sob autorização do Fundador,
+> não por decisão de marca dele.** Nenhum wordmark foi redesenhado: a regra 14 continua
+> valendo e o PNG oficial segue sendo a fonte canônica. O que mudou é qual dos cinco
+> arquivos vale como referência de forma quando eles discordam.)
 
-**Pergunta:** (a) qual forma do "A" é oficial? (b) existe arquivo de fonte, ou o wordmark é
-lettering fechado? (c) existe versão vetorial em algum lugar?
-
----
-
-## §3 — Falta de canal alfa nos 13 arquivos
-
-**Bloqueia:** sobrepor qualquer símbolo ou wordmark ao Céu Vivo — que é o fundo de **todos** os
-sistemas (§60.2).
-
-Os 13 arquivos são JPEG (apesar da extensão `.png`), portanto **sem transparência**. Onze têm
-fundo Deep Space próprio; dois (01, 02) têm fundo **branco puro**.
-
-Consequência prática: como o Céu Vivo muda por horário (aurora de madrugada, partículas
-douradas de dia, constelações à noite), um asset com fundo escuro *fixo* colado sobre um céu
-*que muda* cria um retângulo visível que não acompanha o ambiente. E 01/02 criam uma caixa
-branca sobre fundo escuro.
-
-**Não resolvido por este agente.** Remover fundo exige alterar pixels; converter para PNG com
-alfa exige recompor a imagem. Regra 13 proíbe ambos.
-
-**Pergunta:** o Fundador autoriza (a) solicitar ao produtor os originais com alfa/vetor,
-(b) autorizar explicitamente a extração de fundo como operação técnica, ou (c) manter os assets
-apenas em superfícies de fundo sólido, fora do Céu Vivo?
+**Continua sem resposta possível:** nenhuma família tipográfica é nomeada em 59 páginas e
+nenhum arquivo de fonte foi entregue. `--lum-fonte` usa pilha de sistema justamente para
+**não** simular o wordmark. Enquanto não houver fonte ou vetor, o wordmark só existe como
+imagem — e a imagem é JPEG 1024×1024 com perda. Registrado na §6.
 
 ---
 
-## §4 — RotaCerta: teal ou violeta?
+## §3 — Falta de canal alfa — 🟡 RESOLVIDA PARA A TELA, ABERTA PARA O PAPEL
 
-**Bloqueia:** a assinatura visual procedural do RotaCerta (§65.1) e a cor-âncora do sistema.
+Os 13 arquivos são JPEG (apesar da extensão `.png`), portanto **sem transparência**.
 
-§65.1 especifica: *"malha de rotas luminosas **(teal + âmbar)** ligando waypoints em forma de
-constelação"*.
+**Resolvido para o Céu Vivo, sem tocar num pixel.** A arte é **luz aditiva sobre preto**, e
+para esse caso existe o operador certo: `mix-blend-mode: screen` faz o preto virar neutro.
+Implementado como `.lum-marca-ceu` em `runtime/tokens.css`.
 
-O asset oficial `03_lumora_star_path` mostra a rota e a estrela em **âmbar** (`#FFA238` — ✅
-confere) mas o corpo da L em **violeta/azul** (`#381878`–`#581888` — ✗ não é teal).
+Verificado empiricamente, não suposto — comparação lado a lado renderizada em Chromium:
 
-Duas leituras possíveis, e o Guia não desempata:
-- **(a)** O teal é da *malha de rotas* no fundo procedural; o símbolo mantém o violeta/azul da
-  marca. Nesse caso não há conflito.
-- **(b)** O símbolo deveria ser teal e o asset diverge do Guia.
+| Fundo | Resultado com `screen` |
+|---|---|
+| **Deep Space** (quase preto) — o Céu Vivo real | ✅ A caixa some e a marca passa praticamente intacta |
+| Cortina de aurora acesa | 🟡 A caixa some, mas o gradiente da L **desbota** |
+| **Papel branco** (papel-mãe) | ❌ A marca **desaparece** — `screen` sobre branco dá branco |
 
-**Pergunta:** o teal do §65.1 descreve o fundo procedural, o símbolo, ou ambos?
+**O que continua bloqueado:** o cabeçalho do papel-mãe (§70.5/§71.5, "a L canônica em
+destaque"). Em fundo claro nenhum modo de mistura recupera a transparência — só um arquivo
+com alfa ou um vetor resolve. `documentos-com-alma.css` mantém a área **reservada e vazia**.
+
+**Pergunta que resta, agora mais estreita:** o Fundador consegue obter do produtor **um único
+arquivo** — a L canônica com alfa, ou em vetor? É o que falta para os Documentos com Alma
+saírem do papel reservado.
+
+---
+
+## §4 — RotaCerta: teal ou violeta? — ✅ RESOLVIDA em 05/09/2026 (leitura)
+
+**Autorização do Fundador (05/09/2026):** *"pode resolver os problemas que deu tranquilamente"*.
+
+§65.1 especifica: *"malha de **rotas luminosas (teal + âmbar)** ligando waypoints em forma de
+constelação"*. A frase descreve a **malha de rotas**, não o símbolo.
+
+**Leitura adotada:** o **teal é da malha de rotas** — a camada procedural de fundo. O
+**símbolo** mantém o violeta→azul da L canônica, com o âmbar (`#FFA238`, que confere com o
+asset) nos waypoints e no rastro. Assim **não há divergência**: o asset oficial
+`03_lumora_star_path` e a §65.1 falam de coisas diferentes.
+
+A leitura deixou de ser teoria e virou código: a cena 3D `abertura.rotacerta` desenha a
+malha de rotas **em teal** ligando waypoints **em âmbar**, sobre o plano de chão em
+perspectiva — exatamente o "GPS espacial" da §65.1.
+
+> **(DEFAULT DO AGENTE — interpretação de texto sob autorização do Fundador.** Se a intenção
+> era que o próprio símbolo fosse teal, é só dizer: nada foi alterado no asset, que continua
+> preservado byte a byte.)
 
 ---
 
@@ -149,26 +162,35 @@ os citam como artefato oficial de cada decisão.
 
 ---
 
-## §7 — As três paletas de alto contraste não têm valores
+## §7 — As três paletas de alto contraste — ✅ RESOLVIDA em 05/09/2026
 
-**Bloqueia:** o Modo Alto Contraste (§35, item 7 — linha de base obrigatória em **todos** os
-planos) e o item 6 da ordem de implementação da Fase 3A (§71).
+**Autorização do Fundador (05/09/2026):** *"pode resolver os problemas que deu tranquilamente"*.
+A escalação original já oferecia esta saída: *"o Fundador define os valores, ou autoriza este
+agente a propor uma matriz medida com contraste verificado"*.
 
-§70.6/§71.6 **nomeiam** três paletas — **"Fogo de Nebulosa"** (descrita apenas como
-"vermelho-laranja profundo"), **"Aurora Dia"** e **"Aurora Noite"** — e exigem contraste AA/AAA
-"sem abrir mão da alma visual". **Nenhum valor é definido.**
+**As seis paletas estão implementadas** em `runtime/acessibilidade-bonita.css`:
 
-**Divergência adicional a resolver junto:** §35 item 7 fala em "Modo Alto Contraste com
-**3 paletas (padrão, preto/branco, daltonismo)**". §70.6 fala em três paletas com **nomes
-completamente diferentes**. Não está claro se são a mesma feature descrita de dois jeitos, ou
-duas features distintas (uma de acessibilidade funcional, outra de identidade).
+| Paleta | Origem | Fundo | Menor contraste de texto |
+|---|---|---|---|
+| Padrão | §35 item 7 | `#00040F` | 7,76:1 — AAA |
+| Preto / branco | §35 item 7 | `#000000` | 21,00:1 — AAA |
+| Daltonismo (Okabe-Ito) | §35 item 7 | `#00040F` | 5,30:1 — AA |
+| **Fogo de Nebulosa** | §70.6 | `#1A0603` (vermelho-laranja profundo) | 10,14:1 — AAA |
+| **Aurora Noite** | §70.6 | `#01100E` | 10,12:1 — AAA |
+| **Aurora Dia** | §70.6 | `#F4FBF8` | 6,62:1 — AA |
 
-**Não inventadas.** Definir três paletas completas de alto contraste é decisão de identidade de
-peso — não é "default sensato" no sentido da regra 22.
+Todos os valores têm **contraste calculado, não estimado** (WCAG 2.2, luminância relativa
+sRGB). "Aurora Dia" é a única paleta clara da identidade e foi construída para responder à
+§71.6 — *"contraste total para quem precisa sem virar tela branca sem identidade"*: o papel é
+levemente esverdeado e os acentos são aurora escurecida, não cinza genérico.
 
-**Pergunta:** (a) "Fogo de Nebulosa", "Aurora Dia" e "Aurora Noite" substituem ou convivem com
-"padrão / preto e branco / daltonismo"? (b) O Fundador define os valores, ou autoriza este
-agente a propor uma matriz medida com contraste verificado, para aprovação?
+**As duas listas foram tratadas como uma só feature de seis paletas:** a §35 garante o mínimo
+funcional, a §70.6 acrescenta as três com identidade. Isso resolve a divergência de
+nomenclatura que a escalação apontava.
+
+> **(DEFAULT DO AGENTE — os valores são deste agente, sob autorização do Fundador.
+> Pendentes de conferência dele.)** Falta ainda o teste em simulador de daltonismo
+> (Coblis, Stark) que a §35 exige — é etapa de QA, não de token.
 
 ---
 

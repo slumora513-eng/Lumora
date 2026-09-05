@@ -123,12 +123,17 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
 ## Escalações abertas
 
-**Duas resolvidas** em 05/09/2026: a **L canônica é a dominante** (§1, em
-[`docs/11-l-canonica.md`](docs/11-l-canonica.md)) e o **briefing da abertura do Business**
-é o céu estrelado puro (§5).
+**Seis resolvidas** em 05/09/2026 — duas por decisão direta do Fundador (**§1** a L canônica
+é a dominante, **§5** o briefing do Business é o céu estrelado puro) e quatro sob a
+autorização *"pode resolver os problemas que deu tranquilamente"*: **§2** o "A" do wordmark é
+o sem travessão, **§3** a marca compõe sobre o Céu Vivo com `mix-blend-mode: screen`,
+**§4** o teal da §65.1 é da malha de rotas e não do símbolo, **§7** as seis paletas de alto
+contraste estão definidas com contraste calculado.
 
-**Cinco continuam abertas** — exigem decisão de marca e não foram resolvidas por default
-([`ESCALACOES.md`](ESCALACOES.md)):
+Tudo que veio da autorização está marcado como **DEFAULT DO AGENTE**, nunca como decisão
+do Fundador (regra 22).
+
+**Continua aberto** ([`ESCALACOES.md`](ESCALACOES.md)):
 
 1. O **"A" do wordmark LUMORA** aparece com e sem travessão em arquivos oficiais diferentes —
    e nenhuma família tipográfica é nomeada em 59 páginas. *(§2)*

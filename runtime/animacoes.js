@@ -45,6 +45,8 @@
 
 'use strict';
 
+import { Motor3D } from './animacoes-3d.js';
+
 const TAU = Math.PI * 2;
 const ease = (t) => 1 - Math.pow(1 - t, 3);            // cubic-out
 const easeInOut = (t) => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
@@ -849,6 +851,30 @@ export class Animacoes {
       matchMedia('(prefers-reduced-motion: reduce)').matches;
     this._raf = 0;
     this._cancelar = null;
+    this._motor3d = null;
+    this._canvas3d = null;
+    // Desligar o 3D é uma escolha legítima de quem integra (§36); o padrão é
+    // usá-lo quando o aparelho aguenta.
+    this.usar3D = opcoes.usar3D !== false;
+  }
+
+  /** As 6 aberturas têm cena 3D; os 5 carregamentos são Canvas 2D de
+   *  propósito — são estados utilitários de ~2,5s, e a §36 pede leveza onde
+   *  a cena não é a peça de apresentação. */
+  tem3D(slot) {
+    return this.usar3D && Motor3D.suportado() && Motor3D.slots.includes(slot);
+  }
+
+  /** Reaproveita o motor 3D entre cenas; recria se o canvas mudou ou se o
+   *  contexto WebGL foi perdido. */
+  _obterMotor3D(canvas) {
+    if (this._motor3d && this._canvas3d === canvas && !this._motor3d.perdido) {
+      return this._motor3d;
+    }
+    if (this._motor3d) { try { this._motor3d.destruir(); } catch { /* ignora */ } }
+    this._motor3d = new Motor3D(canvas, { nivel: this.nivel });
+    this._canvas3d = canvas;
+    return this._motor3d;
   }
 
   /** Carrega o manifest de animações (§49.2). Falha não quebra nada: sem
@@ -890,7 +916,40 @@ export class Animacoes {
 
     this.parar();
 
+    const dur = opcoes.duracao ?? DURACOES[slot] ?? 4000;
+
+    // --- Caminho 3D (§65.5: "Canvas 2D + WebGL (shaders)")
+    // Qualquer falha — WebGL ausente, shader que não compila, contexto
+    // perdido — cai no Canvas 2D sem que o usuário veja tela quebrada,
+    // que é o fallback obrigatório da §49.3.
+    if (!this.movimentoReduzido && this.nivel !== 'basico' && this.tem3D(slot)) {
+      try {
+        const m = this._obterMotor3D(canvas);
+        return m.tocar(slot, dur).catch(() => this._tocar2D(slot, canvas, opcoes));
+      } catch (erro) {
+        this.ultimoErro3D = erro;
+        // um canvas já usado por WebGL não aceita contexto 2D: precisa de outro
+        canvas = this._trocarCanvas(canvas);
+      }
+    }
+    return this._tocar2D(slot, canvas, opcoes);
+  }
+
+  /** Um <canvas> só entrega um tipo de contexto na vida. Se o 3D falhou
+   *  depois de pegar o contexto WebGL, o 2D precisa de um canvas novo no
+   *  mesmo lugar — senão o fallback não desenha nada. */
+  _trocarCanvas(canvas) {
+    if (!canvas.parentNode) return canvas;
+    const novo = canvas.cloneNode(false);
+    canvas.parentNode.replaceChild(novo, canvas);
+    if (this._canvas3d === canvas) { this._motor3d = null; this._canvas3d = null; }
+    return novo;
+  }
+
+  _tocar2D(slot, canvas, opcoes = {}) {
+    const cena = CENAS[slot];
     const ctx = canvas.getContext('2d');
+    if (!ctx) return Promise.resolve();
     const dpr = Math.min(devicePixelRatio || 1, this.nivel === 'basico' ? 1 : 2);
     const r = canvas.getBoundingClientRect();
     const L = Math.max(1, Math.round(r.width || canvas.width));
@@ -921,12 +980,17 @@ export class Animacoes {
     });
   }
 
-  /** Desenha só o pôster (quadro final) — usado pelo nível Básico da §36
-   *  e como fallback de qualquer falha. */
+  /** Desenha só o pôster (quadro final) — usado pelo nível Básico da §36,
+   *  pelo caminho de movimento reduzido (§49.3) e como fallback de falha. */
   poster(slot, canvas) {
     const cena = CENAS[slot];
     if (!cena) return;
+    if (this.nivel !== 'basico' && this.tem3D(slot)) {
+      try { this._obterMotor3D(canvas).poster(slot); return; }
+      catch (erro) { this.ultimoErro3D = erro; canvas = this._trocarCanvas(canvas); }
+    }
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const r = canvas.getBoundingClientRect();
     const L = Math.max(1, Math.round(r.width || canvas.width));
@@ -941,9 +1005,19 @@ export class Animacoes {
     if (this._raf) cancelAnimationFrame(this._raf);
     this._raf = 0;
     if (this._cancelar) { this._cancelar(); this._cancelar = null; }
+    this._motor3d?.parar();
+  }
+
+  destruir() {
+    this.parar();
+    if (this._motor3d) { try { this._motor3d.destruir(); } catch { /* ignora */ } }
+    this._motor3d = null;
+    this._canvas3d = null;
   }
 
   static get slots() { return Object.keys(CENAS); }
+  /** Os slots que têm cena 3D (as 6 aberturas). */
+  static get slots3D() { return Motor3D.slots; }
 }
 
 export { CENAS };

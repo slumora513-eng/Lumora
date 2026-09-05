@@ -1,6 +1,6 @@
 {
   "apiVersion": "lumora.animations/v1",
-  "_nota": "Registro oficial de slots da §49. A versão 1 de cada slot é a cena PROCEDURAL (Canvas 2D, runtime/animacoes.js) — nenhum arquivo de mídia foi gerado, o que mantém §48. Quando o profissional contratado entregar os vídeos finais (§48/§64.2), eles entram como versão 2 com fonte 'profissional-contratado' e viram ativos SEM mudar código (§49.3, troca sem deploy). A versão 1 permanece como o fallback obrigatório que a §49.3 exige. Limite de 5 versões por slot; mais antigas são arquivadas, não apagadas.",
+  "_nota": "Registro oficial de slots da §49. A versão 1 de cada slot é a cena PROCEDURAL. As 6 ABERTURAS rodam em WebGL 3D (runtime/animacoes-3d.js): raymarching, refração real e perspectiva, conforme a stack decidida na §65.5 (Canvas 2D + WebGL). Os 5 CARREGAMENTOS ficam em Canvas 2D de propósito — são estados utilitários de ~2,5s e a §36 pede leveza onde a cena não é peça de apresentação. Sem WebGL, nível básico ou movimento reduzido, tudo cai no Canvas 2D (runtime/animacoes.js) — nenhum arquivo de mídia foi gerado, o que mantém §48. Quando o profissional contratado entregar os vídeos finais (§48/§64.2), eles entram como versão 2 com fonte 'profissional-contratado' e viram ativos SEM mudar código (§49.3, troca sem deploy). A versão 1 permanece como o fallback obrigatório que a §49.3 exige. Limite de 5 versões por slot; mais antigas são arquivadas, não apagadas.",
   "_regras": {
     "troca_sem_deploy": "upload no Hub -> pré-visualização -> aprovação -> ativação (§49.3)",
     "fallback_obrigatorio": "toda versão nova convive com a anterior; falha cai para a anterior",
@@ -20,7 +20,7 @@
         "1": {
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.elio'",
-          "formatos": { "procedural": "CENAS['abertura.elio']" },
+          "formatos": { "procedural_3d": "CENAS_GL['abertura.elio'] (WebGL)", "procedural_2d": "CENAS['abertura.elio'] (Canvas 2D, fallback §49.3)" },
           "audio": { "abertura": "elio_abertura_som.mp3", "voz": "elio_boas_vindas.mp3" },
           "audio_status": "NÃO ENTREGUE — §45 lista o arquivo, o repositório não o tem (ESCALACOES §6)",
           "duracao_alvo_s": 4.2,
@@ -39,7 +39,7 @@
         "1": {
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.aurora'",
-          "formatos": { "procedural": "CENAS['abertura.aurora']" },
+          "formatos": { "procedural_3d": "CENAS_GL['abertura.aurora'] (WebGL)", "procedural_2d": "CENAS['abertura.aurora'] (Canvas 2D, fallback §49.3)" },
           "audio": { "abertura": "aurora_abertura_som.mp3", "voz": "aurora_boas_vindas.mp3" },
           "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
           "duracao_alvo_s": 5.0,
@@ -58,7 +58,7 @@
         "1": {
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.rotacerta'",
-          "formatos": { "procedural": "CENAS['abertura.rotacerta']" },
+          "formatos": { "procedural_3d": "CENAS_GL['abertura.rotacerta'] (WebGL)", "procedural_2d": "CENAS['abertura.rotacerta'] (Canvas 2D, fallback §49.3)" },
           "audio": { "abertura": "rotacerta_abertura_som.mp3", "voz": "rotacerta_boas_vindas.mp3" },
           "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
           "duracao_alvo_s": 4.0,
@@ -78,7 +78,7 @@
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.business'",
           "_nota": "Nada converge nem se monta: um movimento de montagem seria o \"motivo extra\" que a §65.1 exclui. As estrelas acendem onde estão (§70.1) e a constelação se desenha entre elas (§71.1). Fixa, sem variação por horário (§44).",
-          "formatos": { "procedural": "CENAS['abertura.business']" },
+          "formatos": { "procedural_3d": "CENAS_GL['abertura.business'] (WebGL)", "procedural_2d": "CENAS['abertura.business'] (Canvas 2D, fallback §49.3)" },
           "audio": { "abertura": "business_abertura_som.mp3", "voz": "business_boas_vindas.mp3" },
           "audio_status": "NÃO ENTREGUE. O arquivo da §45 acompanhava a gota de aquarela e está marcado [REVOGADO] — com o briefing novo, precisa ser refeito (ESCALACOES §6).",
           "duracao_alvo_s": 4.0,
@@ -97,7 +97,7 @@
         "1": {
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.ecossistema'",
-          "formatos": { "procedural": "CENAS['abertura.ecossistema']" },
+          "formatos": { "procedural_3d": "CENAS_GL['abertura.ecossistema'] (WebGL)", "procedural_2d": "CENAS['abertura.ecossistema'] (Canvas 2D, fallback §49.3)" },
           "audio": { "abertura": "ecossistema_abertura_som.mp3", "voz": "ecossistema_boas_vindas.mp3" },
           "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
           "duracao_alvo_s": 6.0,
@@ -116,7 +116,7 @@
         "1": {
           "fonte": "procedural-lumora",
           "autor": "runtime/animacoes.js — cena 'abertura.hub'",
-          "formatos": { "procedural": "CENAS['abertura.hub']" },
+          "formatos": { "procedural_3d": "CENAS_GL['abertura.hub'] (WebGL)", "procedural_2d": "CENAS['abertura.hub'] (Canvas 2D, fallback §49.3)" },
           "audio": { "abertura": "hub_abertura_som.mp3", "voz": "hub_boas_vindas.mp3" },
           "audio_status": "NÃO ENTREGUE (ESCALACOES §6)",
           "duracao_alvo_s": 4.0,

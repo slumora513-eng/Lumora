@@ -66,6 +66,7 @@ Duas decisões diretas, fora do Guia v3, com a mesma autoridade do nível 1 da h
 | *"eu te dou o meu pode ir"* | É o **"pode ir" da §71**. A Fase 3A sai do bloqueio. | [`../runtime/`](../runtime/) |
 | *"o pode ir vale pras animações também, pode fazer tudo"* | Estende o sinal às **animações dos slots §18/§49** e ao restante da Interface Viva. | [`../runtime/animacoes.js`](../runtime/animacoes.js) |
 | *"usa o céu estrelado puro como briefing oficial"* | Resolve a escalação §5. Define o briefing de `abertura.business`, órfão desde a revogação da aquarela. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
+| *"pode resolver os problemas que deu tranquilamente"* + *"tenta fazer algo mais 3D"* | Autoriza resolver as escalações abertas e manda as aberturas para **WebGL 3D** — a metade da §65.5 que faltava. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
 
 ---
 
