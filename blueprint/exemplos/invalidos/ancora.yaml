@@ -1,0 +1,9 @@
+# §50.3: âncora e alias fazem o mesmo arquivo render árvores diferentes.
+apiVersion: blueprint.lumora/v1
+metadata: &meta
+  nome: "Teste"
+  tenant_id: "t_666666"
+  plano: business-p1
+stack:
+  destino: render
+  regiao: oregon

@@ -1,0 +1,40 @@
+# Ecossistema no topo, no servidor do próprio cliente (§50.2, destino docker).
+# Self-host não tem região de nuvem — declarar `regiao` aqui é erro, não enfeite.
+#
+# Repare que não há um único segredo aqui — nem chave de API, nem certificado
+# A1/A3, nem senha de banco. É a §50.3 literal: segredos vivem no Vault/KMS
+# (§37) e o Blueprint os cita por nome (`secret: familia/nome`), nunca por
+# valor. O `provedores` diz QUAL provedor, jamais COM QUE credencial.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Distribuidora Serra Azul"
+  tenant_id: "t_c10d55"
+  plano: ecossistema-p3         # §27 · Supernova
+  addons:
+    filial_extra: 4
+    armazenamento_extra: 3      # +10 GB por bloco (§47)
+    recarga_aurora: 1
+  moeda: BRL
+  idioma: pt-BR
+  comunidade: false
+stack:
+  destino: docker
+  tamanho: large
+provedores:
+  ia-assistente: claude
+  tts: elevenlabs
+  pagamentos: stripe
+  boleto-pix: asaas
+  fiscal: [sefaz-mg, sefaz-sp]
+  open-finance: pendente
+recursos:
+  app_replicas: 4
+  postgres: { tier: "16-8gb", storage_gb: 200 }
+  redis: { tier: "2gb" }
+  storage_gb: 50
+  workers_assistente: 4
+seguranca:
+  mfa: true
+  criptografia_repouso: true
+  backup_imutavel: true
+  logs_auditoria: append-only

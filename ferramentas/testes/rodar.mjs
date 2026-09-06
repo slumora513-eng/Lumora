@@ -19,6 +19,7 @@ const SUITES = [
   ['tatlas',   'Atlas Estelar'],
   ['tmarca',   'Marca com alfa'],
   ['tcamada',  'Camada de sistema (§65.1)'],
+  ['tblueprint', 'Blueprint Universal (§50) — formato e validador'],
 ];
 
 try {

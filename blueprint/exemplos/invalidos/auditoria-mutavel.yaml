@@ -1,0 +1,11 @@
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  tenant_id: "t_000001"
+  plano: business-p1
+  comunidade: false
+stack:
+  destino: render
+  regiao: oregon
+seguranca:
+  logs_auditoria: rotativo      # §37/§50.3: auditoria é append-only

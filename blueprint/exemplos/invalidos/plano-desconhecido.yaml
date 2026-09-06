@@ -1,0 +1,10 @@
+# §27: a matriz de planos é fechada; "premium" não existe nela.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  tenant_id: "t_777777"
+  plano: premium
+  comunidade: false
+stack:
+  destino: render
+  regiao: oregon

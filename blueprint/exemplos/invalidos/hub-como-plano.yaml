@@ -1,0 +1,10 @@
+# §17/§34: o Hub é interno da equipe Lumora e nunca é plano de cliente.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Equipe Lumora"
+  tenant_id: "t_111111"
+  plano: hub-p2
+  comunidade: false
+stack:
+  destino: aws
+  regiao: sa-east-1

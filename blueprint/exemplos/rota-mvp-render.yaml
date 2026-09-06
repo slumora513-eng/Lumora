@@ -1,0 +1,26 @@
+# RotaCerta no plano de entrada, publicado em Render.
+# Render é "deploy rápido, bom para MVP" (§50.2) — o mesmo papel que o
+# infra/render.yaml deste repositório cumpre para a identidade visual.
+#
+# Repare no que NÃO está aqui: `recursos` e `seguranca` foram omitidos.
+# Isso é válido e é o caso comum: §50.3 diz que os recursos são derivados do
+# plano e dos add-ons, e a §37 diz que a segurança nasce ligada. Omitir não
+# afrouxa nada — o compilador preenche com o padrão ligado.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Entregas Nordeste"
+  tenant_id: "t_4b7e02"
+  plano: rotacerta-p1           # §27 · Bússola
+  addons:
+    veiculo_extra: 2            # o caso do Fundador na §47: +2 carros sem trocar de plano
+  moeda: BRL
+  idioma: pt-BR
+  comunidade: true              # opt-in exercido (§16)
+stack:
+  destino: render
+  regiao: oregon
+  tamanho: small
+provedores:
+  ia-assistente: gemini
+  pagamentos: asaas
+  fiscal: [sefaz-pe]

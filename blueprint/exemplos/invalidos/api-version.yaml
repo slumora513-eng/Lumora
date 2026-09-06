@@ -1,0 +1,10 @@
+# §50.1: o formato é versionado, e a versão é conferida antes de tudo.
+apiVersion: blueprint.lumora/v2
+metadata:
+  nome: "Teste"
+  tenant_id: "t_444444"
+  plano: business-p1
+  comunidade: false
+stack:
+  destino: render
+  regiao: oregon

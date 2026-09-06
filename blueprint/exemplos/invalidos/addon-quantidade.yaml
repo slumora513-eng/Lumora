@@ -1,0 +1,11 @@
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  tenant_id: "t_000001"
+  plano: business-p1
+  comunidade: false
+  addons:
+    veiculo_extra: 0
+stack:
+  destino: render
+  regiao: oregon

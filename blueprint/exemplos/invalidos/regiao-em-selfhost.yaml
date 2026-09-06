@@ -1,0 +1,10 @@
+# §50.2: docker roda no servidor do cliente — não existe região de nuvem.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  tenant_id: "t_333333"
+  plano: business-p1
+  comunidade: false
+stack:
+  destino: docker
+  regiao: sa-east-1

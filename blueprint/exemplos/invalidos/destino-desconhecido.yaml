@@ -1,0 +1,10 @@
+# §50.2: a v1 tem cinco destinos, e este não é um deles.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  tenant_id: "t_222222"
+  plano: business-p1
+  comunidade: false
+stack:
+  destino: heroku
+  regiao: us-east

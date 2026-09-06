@@ -1,0 +1,10 @@
+# §50.3: leitura determinística. Duas vezes a mesma chave não tem resposta certa.
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  nome: "Outro"
+  tenant_id: "t_555555"
+  plano: business-p1
+stack:
+  destino: render
+  regiao: oregon

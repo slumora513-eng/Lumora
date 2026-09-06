@@ -1,0 +1,14 @@
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Teste"
+  tenant_id: "t_000001"
+  plano: business-p1
+  comunidade: false
+stack:
+  destino: render
+  regiao: oregon
+seguranca:
+  mfa: false                    # §37: nasce ligada, nunca opcional
+  criptografia_repouso: true
+  backup_imutavel: true
+  logs_auditoria: append-only

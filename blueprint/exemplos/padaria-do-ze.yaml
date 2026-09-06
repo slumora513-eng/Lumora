@@ -1,0 +1,37 @@
+# Exemplo de referência do formato — transcrito da §50.1 do Guia.
+# É o arquivo que a própria especificação usa para descrever o v1.
+# Quem assina não escreve isto: escolhe plano e add-ons na interface,
+# e o sistema gera o YAML sozinho (caixa explicativa da §50.1).
+apiVersion: blueprint.lumora/v1
+metadata:
+  nome: "Padaria do Ze"
+  tenant_id: "t_9f3ac1"
+  plano: business-p2            # §27 — define recursos provisionados
+  addons:                       # §47 — cada add-on vira recurso extra
+    veiculo_extra: 2
+    usuario_extra: 3
+  moeda: BRL
+  idioma: pt-BR
+  comunidade: false             # opt-in, §16
+stack:
+  destino: aws                  # aws | render | docker | digitalocean | gcp (v1)
+  regiao: sa-east-1
+  tamanho: medium               # traduzido conforme plano + add-ons
+provedores:                     # §46 — camada trocável, defaults da tabela do Hub
+  ia-assistente: gemini         # fallback automático: claude
+  tts: minimax                  # fallback: elevenlabs
+  pagamentos: asaas             # fallback: stripe (idempotente, nunca duplica cobrança)
+  fiscal: [sefaz-sp]            # conforme UF do CNPJ do tenant
+  boleto-pix: asaas
+  open-finance: pendente        # só ativa após credenciais mTLS/ICP-Brasil
+recursos:                       # derivados do plano; editáveis pela equipe no Hub
+  app_replicas: 2
+  postgres: { tier: "db.t4g.medium", storage_gb: 50 }
+  redis: { tier: "cache.t4g.micro" }
+  storage_gb: 20                # + 10 por add-on 'armazenamento extra'
+  workers_assistente: 2         # processamento pesado no backend, §0
+seguranca:                      # §37 — nasce ligada, nunca opcional
+  mfa: true
+  criptografia_repouso: true
+  backup_imutavel: true         # RPO 24h / RTO 4h no tier padrão
+  logs_auditoria: append-only
