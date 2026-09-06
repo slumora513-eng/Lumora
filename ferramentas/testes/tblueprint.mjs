@@ -179,7 +179,11 @@ const cli = (args) => {
 checar('CLI: exemplo válido sai com 0', cli(['validar', join(EX, 'padaria-do-ze.yaml')]).codigo === 0);
 checar('CLI: exemplo inválido sai com 1', cli(['validar', join(dirInv, 'hub-como-plano.yaml')]).codigo === 1);
 checar('CLI: sem argumento sai com 2', cli(['validar']).codigo === 2);
-for (const c of ['plan', 'build', 'apply', 'destroy']) {
+// `plan` e `build` deixaram de ser recusados em 06/09/2026, quando os passos 2
+// e 3 da §50.5 foram construídos — ver ferramentas/testes/tcompilador.mjs.
+// `apply` e `destroy` continuam recusados: provisionar exige credencial de
+// nuvem e a aplicação Lumora, que não existe.
+for (const c of ['apply', 'destroy']) {
   const r = cli([c, 'x.yaml']);
   checar(`CLI: "${c}" recusa com motivo e sai com 3`,
     r.codigo === 3 && /não foi construído/.test(r.saida), `código ${r.codigo}`);

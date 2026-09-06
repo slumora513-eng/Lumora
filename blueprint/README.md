@@ -1,4 +1,4 @@
-# Blueprint Universal — §50, passo 1
+# Blueprint Universal — §50
 
 > **Decisão do Fundador em 30/08/2026 (§50):** *"fazer uma blueprint universal, pra AWS,
 > Render e tudo mais"*.
@@ -7,25 +7,43 @@ A §50 define um produto: um arquivo declarativo único que provisiona a pilha i
 **cliente** — banco, serviços, variáveis, integrações e recursos do plano — em qualquer destino
 suportado, *"sem o cliente ver infraestrutura"*.
 
-O roteiro da §50.5 tem seis passos. **Aqui está o passo 1, e só ele:**
+O roteiro da §50.5 tem seis passos. **Três estão construídos:**
 
-> *"Especificação e parser do formato v1 + validador de schema (com exemplos de teste)."*
+| Passo | O que é | Estado |
+|---|---|---|
+| **1** | *"Especificação e parser do formato v1 + validador de schema (com exemplos de teste)"* | ✅ `yaml.mjs` · `esquema.mjs` · `validador.mjs` |
+| **2** | *"Compilador para Render (MVP) com plan/apply/idempotência"* | ✅ `compilador/render.mjs` |
+| **3** | *"Compilador para AWS (produção) com Terraform"* | ✅ `compilador/aws.mjs` |
+| 4 | Saída Docker self-host | ⏳ recusado com o motivo |
+| 5 | Botão "Aplicar Blueprint" no Hub | ⏳ depende do Hub |
+| 6 | DigitalOcean e GCP | ⏳ recusado com o motivo |
+
+```bash
+node blueprint/lumora-blueprint.mjs plan  meu-cliente.yaml --saida ./saida
+node blueprint/lumora-blueprint.mjs build meu-cliente.yaml --saida ./saida --imagem registry/lumora:1.4.2
+```
 
 ---
 
-## Por que só o passo 1
+## O que os passos 2 e 3 fazem, e onde eles param
 
-Os passos 2 a 6 compilam a pilha de uma aplicação Lumora que **ainda não foi construída**.
-Não há serviço para emitir em Terraform, não há migrations para viajar dentro do Blueprint,
-não há estado remoto contra o qual detectar *drift*. Um `build` que emitisse Terraform para
-nada seria pior do que a ausência: daria a impressão de que a §50 está de pé.
+Fazem o que a §50.2 descreve: **"um compilador único lê o YAML e emite a saída nativa de cada
+destino"**, com **"mesma entrada, saídas equivalentes"**.
 
-O passo 1 é diferente. Ele é **sobre o arquivo**, e o arquivo já pode existir por inteiro —
-a §50.1 o publica completo. Por isso ele é construível hoje, e é o único que é.
+| Destino | Saída | Banco |
+|---|---|---|
+| **render** | `render.yaml` nativo — `envVarGroups` + `services` (web, worker, keyvalue, cron) + `databases` | Render PostgreSQL |
+| **aws** | `main.tf.json` — Terraform nativo em sintaxe JSON: RDS, ECS, S3, CloudFront, SQS, WAF, Secrets Manager, AWS Backup | RDS Postgres gerenciado |
 
-`lumora-blueprint` reconhece `plan`, `build`, `apply` e `destroy`, e **recusa cada um com o
-motivo e a seção**, saindo com código 3. Comando que não existe é diferente de comando que
-existe e mente.
+**Onde eles param: `apply` e `destroy`.** Emitir o arquivo é uma coisa; criar recurso numa
+conta de nuvem é outra, e precisa de credencial e de uma aplicação Lumora para subir — que
+ainda não existe. Os dois comandos são reconhecidos e **recusados com o motivo**, saindo com
+código 3. Comando que não existe é diferente de comando que existe e mente.
+
+A mesma honestidade vale para o artefato da aplicação. Ele **não é dado do tenant** — é
+constante da plataforma, e a plataforma não foi construída. Sem `--imagem` (ou `LUMORA_IMAGEM`)
+a saída carrega `LUMORA_IMAGEM_NAO_DEFINIDA` e o `plan` a reporta como **BLOQUEIO**: é um plano
+legítimo e deliberadamente inaplicável, em vez de um arquivo que sobe um contêiner inexistente.
 
 > **Isto não é `infra/`.** [`../infra/`](../infra/) publica *este repositório* — a identidade
 > visual — como site estático em Render e AWS. É outro assunto e outro tamanho. A §50
@@ -132,15 +150,92 @@ caminhos: **pelo nome da chave** (`senha`, `token`, `api_key`, `certificado`, `c
 
 ---
 
+## O compilador: uma tradução, dois emissores
+
+A §50.2 promete **"mesma entrada, saídas equivalentes"**. Isso só é verdade se a derivação de
+recursos acontecer **uma vez**, antes dos emissores — senão "equivalente" vira coincidência
+que um dia deixa de acontecer.
+
+```
+Blueprint  →  validador  →  plano de recursos  →  render.mjs  →  render.yaml
+   .yaml       (§50.1)         (plano.mjs)      └→  aws.mjs    →  main.tf.json
+```
+
+`plano.mjs` **é** a tabela de tradução que a §50.3 descreve: *"plano define o tier base; cada
+add-on do §47 soma recursos"*. Ela mora num arquivo só justamente porque a mesma §47 manda
+mantê-la editável no Hub *"sem novo deploy"* — trocar a tabela não toca em emissor nenhum.
+
+Os três efeitos de add-on que o Guia nomeia estão implementados literalmente: *filial extra →
+schema lógico adicional*, *recarga Aurora → cota de tokens*, *armazenamento extra → +10 GB por
+bloco*. Os add-ons de operação (veículo, entregador, usuário) somam **limite**, não
+infraestrutura — mudam o que o plano permite, não o que a nuvem provisiona.
+
+O único ponto de referência numérico que o Guia publica é o `business-p2` da §50.1 (2 réplicas,
+`db.t4g.medium`/50 GB, `cache.t4g.micro`, 20 GB, 2 workers). A suíte exige que ele resolva
+exatamente nesses números — se a tabela se afastar dele, o teste quebra.
+
+### O que o compilador carrega sem ninguém pedir
+
+Estas não são escolhas do emissor: são decisões do Fundador registradas no **"Status de
+projeto — 01/09/2026"**, e o compilador as emite porque elas já foram tomadas.
+
+| Decisão | O que sai no Terraform |
+|---|---|
+| **3 — região** *"produção em sa-east-1 (São Paulo), dados de clientes no Brasil (LGPD)"* | `provider aws { region = "sa-east-1" }`; outra região vira **aviso** citando LGPD |
+| **1 — borda** *"CloudFront + AWS WAF (regras gerenciadas) + Shield Standard no dia 1"* | `aws_wafv2_web_acl` com 4 grupos gerenciados, escopo `CLOUDFRONT`, ligado à distribuição. Shield Standard não é recurso — vem ligado e sem custo |
+| **2 — segredos** *"rotação (90 dias API, 30 dias banco); IAM roles; **nenhum segredo em variável de ambiente na produção**"* | `aws_secretsmanager_secret_rotation` com 90/30; no ECS, segredo entra em `secrets`/`valueFrom` e **nunca** em `environment` |
+| **6 — backup** *"diário retido 7 dias + semanal retido 30; imutável anti-ransomware; RPO ≤ 24h / RTO ≤ 4h"* | `backup_retention_period = 7`, `aws_backup_plan` com duas regras e `aws_backup_vault_lock_configuration` — o Vault Lock **é** a imutabilidade |
+| **§50.3 — destruição protegida** | `deletion_protection`, `prevent_destroy`, `skip_final_snapshot = false`, `recovery_window_in_days = 30` |
+
+A última linha da decisão 2 é a que mais muda o código emitido, e é a mais fácil de violar sem
+perceber: `environment` e `secrets` são dois campos da mesma definição de contêiner. A suíte
+confere os dois separadamente.
+
+### E o aviso que todo Blueprint de Render recebe
+
+O Render **não tem região na América do Sul**. Isso não cabe junto com a decisão 3 — e é
+exatamente por isso que o mesmo registro de 01/09/2026 diz: *"Render = ambiente de testes
+(staging) (…) dados descartáveis, disco efêmero, **sem dados de cliente**"*. O emissor repete
+isso em todo `render.yaml` que produz, no cabeçalho e no relatório, em vez de deixar alguém
+descobrir depois.
+
+### Idempotência e dry-run (§50.3)
+
+> *"Aplicar o mesmo Blueprint duas vezes não cria nada duplicado."*
+> *"`plan` sempre mostra o que será criado/alterado/destruído ANTES de aplicar."*
+
+- **A saída é determinística.** Mesma entrada → bytes idênticos. Nada de data, hora, aleatório
+  ou ordem de iteração instável; add-ons e segredos saem ordenados, para que a ordem em que
+  alguém escreveu o YAML não mude o resultado.
+- **`plan` não escreve nada.** Compara o estado desejado com `.lumora-blueprint-estado.json`
+  na pasta de saída e lista `+ criar`, `~ alterar`, `- destruir`, recurso a recurso.
+- **Destruir exige confirmação humana.** `build` que apagaria um recurso existente **recusa**
+  sem `--confirmar` — a "confirmação humana" que a §50.3 exige.
+
+> **O limite honesto disto:** o estado comparado é o dos **artefatos**, não o da nuvem.
+> *Drift detection* de verdade exige credencial e `terraform state`, e é trabalho do `apply`,
+> que não existe. O que existe é a metade que dá para fazer sem nuvem — e ela já responde
+> "o que muda se eu compilar isto?" antes de qualquer coisa acontecer.
+
+---
+
 ## Uso
 
 ```bash
 node blueprint/lumora-blueprint.mjs validar blueprint/exemplos/*.yaml
+node blueprint/lumora-blueprint.mjs plan    cliente.yaml --saida ./saida
+node blueprint/lumora-blueprint.mjs build   cliente.yaml --saida ./saida --imagem registry/lumora:1.4.2
 node blueprint/lumora-blueprint.mjs esquema        # planos, destinos e regras
 node blueprint/lumora-blueprint.mjs ajuda
 ```
 
-Códigos de saída: `0` válido · `1` erro de validação · `2` uso incorreto ·
+| Opção | Para quê |
+|---|---|
+| `--saida <dir>` | onde os artefatos e o estado são lidos e escritos |
+| `--imagem <ref>` | o artefato da aplicação Lumora (ou a variável `LUMORA_IMAGEM`) |
+| `--confirmar` | autoriza destruir recurso que existia antes (§50.3) |
+
+Códigos de saída: `0` tudo certo · `1` erro de validação ou compilação · `2` uso incorreto ·
 `3` comando da §50 ainda não construído.
 
 Como biblioteca:
@@ -149,6 +244,10 @@ Como biblioteca:
 import { validar, formatar } from './blueprint/validador.mjs';
 const r = validar(texto);          // { ok, erros[], avisos[] }
 console.log(formatar(r, arquivo)); // cada achado com linha e seção do Guia
+
+import { planejar, emitir } from './blueprint/compilador/index.mjs';
+const p = planejar(texto, { saida: './saida' });   // { delta, bloqueios, arquivos, … }
+emitir(texto, { saida: './saida', imagem: 'registry/lumora:1.4.2' });
 ```
 
 Cada achado é `{ codigo, caminho, linha, mensagem, secao }` — a `secao` existe para que
@@ -163,7 +262,7 @@ subconjunto.
 |---|---|
 | [`exemplos/padaria-do-ze.yaml`](exemplos/padaria-do-ze.yaml) | o exemplo de referência da §50.1, transcrito |
 | [`exemplos/rota-mvp-render.yaml`](exemplos/rota-mvp-render.yaml) | Render como MVP, com `recursos` e `seguranca` **omitidos** |
-| [`exemplos/ecossistema-selfhost.yaml`](exemplos/ecossistema-selfhost.yaml) | `docker` self-host, sem região, com add-ons de §47 |
+| [`exemplos/ecossistema-selfhost.yaml`](exemplos/ecossistema-selfhost.yaml) | `docker` self-host, sem região, com add-ons de §47. **Válido, e não compilável** — o emissor de docker é o passo 4 |
 | [`exemplos/invalidos/`](exemplos/invalidos/) | onze arquivos, um por regra que reprova |
 
 Os inválidos não são enfeite: `ferramentas/testes/tblueprint.mjs` **exige que cada um reprove
@@ -171,16 +270,34 @@ pelo código previsto** e que nenhum arquivo do diretório fique sem expectativa
 validador que só é testado com arquivos bons não é testado.
 
 ```bash
-node ferramentas/testes/tblueprint.mjs      # sozinha, sem navegador
+node ferramentas/testes/tblueprint.mjs      # formato e validador — 62 checagens
+node ferramentas/testes/tcompilador.mjs     # compilador — 74 checagens
 node ferramentas/testes/rodar.mjs           # junto das demais suítes
 ```
 
+As duas rodam **sem navegador e sem servidor**: o Blueprint é arquivo entrando e arquivo
+saindo. `tcompilador.mjs` compila de verdade em diretório temporário e confere o que saiu —
+que `plan` não escreve nada, que a segunda emissão produz bytes idênticos, que tirar um
+provedor aparece como `destruir` e que o `build` recusa isso sem `--confirmar`.
+
 ---
 
-## O que este passo NÃO faz
+## O que ainda NÃO existe
 
-Além dos passos 2–6 da §50.5, os limites explícitos da §50.4 continuam valendo e o validador
-os repete como aviso quando encontra o campo correspondente:
+**`apply` e `destroy`.** Provisionar de verdade exige credencial de nuvem e uma aplicação
+Lumora para subir. Com eles ficam de fora as regras da §50.3 que só existem em execução:
+rollback em falha, auditoria append-only de cada `plan`/`apply`/`destroy`, e a dupla
+confirmação do `destroy`. Ficam registradas aqui para que quem construir o passo seguinte não
+precise redescobri-las.
+
+**Os passos 4, 5 e 6.** Docker self-host, o botão no Hub e DigitalOcean/GCP. Os destinos são
+reconhecidos pelo formato e o compilador **recusa nomeando o passo** — um Blueprint com
+`destino: docker` não emite "quase certo", ele para e diz que o emissor é o passo 4.
+
+**O artefato da aplicação.** Sem `--imagem`, a saída sai marcada e o `plan` reporta bloqueio.
+
+Os limites explícitos da §50.4 continuam valendo, e o validador os repete como aviso quando
+encontra o campo correspondente:
 
 - **não substitui a homologação SEFAZ (§22) nem as credenciais Open Finance (§25)** — quando
   essas pendências forem resolvidas, o Blueprint passa a incluí-las automaticamente;
@@ -189,10 +306,6 @@ os repete como aviso quando encontra o campo correspondente:
   do slot `loading.otimizar` (§49), que existe em [`../runtime/animacoes.js`](../runtime/animacoes.js);
 - **não cobra nada** — é funcionalidade interna, não add-on vendável na v1.
 
-E as regras de execução da §50.3 que dependem de um compilador — idempotência, `plan`
-obrigatório antes de `apply`, confirmação humana, rollback em falha, auditoria append-only de
-cada execução, destruição protegida com retenção de 30 dias — **não existem ainda**, porque
-não existe execução. Elas estão registradas aqui para que o passo 2 não precise redescobri-las.
 
 ---
 
@@ -212,6 +325,28 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   esses catálogos sejam editáveis no Hub sem novo deploy.
 - **(DEFAULT DO AGENTE — a §50.5 não diz o que o CLI faz com os comandos ainda não
   construídos.)** Recusar com motivo e sair com 3, em vez de omitir o comando.
+
+- **(DEFAULT DO AGENTE — a §50.1 publica UM ponto de referência de recursos, o `business-p2`.)**
+  As outras nove linhas de `RECURSOS_POR_PLANO` são extrapolação deste agente, ancoradas nos
+  limites de usuários e veículos que a §27 registra por plano. **A linha `business-p2` não é
+  default:** ela é a da §50.1, verbatim, e a suíte a trava.
+
+- **(DEFAULT DO AGENTE — a §50.2 diz "render.yaml nativo" e "Terraform", sem mapear tamanho
+  para plano de instância.)** As escalas `starter/standard/pro/pro plus` (Render) e
+  `db.t4g.small…db.r7g.xlarge` (RDS) são deste agente. Os dois valores do `business-p2` —
+  `db.t4g.medium` e `cache.t4g.micro` — vêm da §50.1.
+
+- **(DEFAULT DO AGENTE — a §50.2 pede "cron" na saída do Render e não diz qual.)** O cron
+  emitido é a verificação diária de backup, que existe porque a política de 01/09/2026 exige
+  backup diário com RPO ≤ 24h. Não é rotina de produto.
+
+- **(DEFAULT DO AGENTE — o Guia não define como referenciar um segredo por nome além do
+  exemplo `secret: payments/asaas`.)** Os nomes derivados seguem `familia/provedor`, e o banco
+  ganha `banco/<tenant_id>`. **A regra não é default:** segredo nunca por valor é §50.3.
+
+- **(DEFAULT DO AGENTE — o Guia não diz o que fazer sem o artefato da aplicação.)** Emitir o
+  sentinela `LUMORA_IMAGEM_NAO_DEFINIDA` e reportar bloqueio, em vez de inventar uma imagem ou
+  de recusar a compilação inteira.
 
 ---
 

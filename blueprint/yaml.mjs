@@ -196,11 +196,22 @@ function mapeamento(linhas, i, recuo, caminho, mapa) {
     mapa.set(sub, n);
     i += 1;
 
-    const temFilho = i < linhas.length && linhas[i].recuo > recuo;
+    const proxima = linhas[i];
+    const temFilho = proxima && proxima.recuo > recuo;
+    // Uma lista pode vir no MESMO recuo da chave — é a forma mais comum de
+    // escrever sequência em YAML à mão, e recusá-la seria recusar um arquivo
+    // válido que a §50.1 promete "legível por humano".
+    const listaRente = proxima && proxima.recuo === recuo
+      && (proxima.texto.startsWith('- ') || proxima.texto === '-');
+
     if (resto !== undefined && resto.trim() !== '') {
       if (temFilho) throw new ErroDeSintaxe(`"${chave}" tem valor na mesma linha e bloco recuado abaixo`, n);
       fora[chave] = escalar(resto, n);
       registrarFilhos(fora[chave], sub, n, mapa);
+    } else if (listaRente) {
+      const [v, prox] = sequencia(linhas, i, recuo, sub, mapa, true);
+      fora[chave] = v;
+      i = prox;
     } else if (temFilho) {
       const [v, prox] = bloco(linhas, i, linhas[i].recuo, sub, mapa);
       fora[chave] = v;
@@ -215,11 +226,17 @@ function mapeamento(linhas, i, recuo, caminho, mapa) {
   return [fora, i];
 }
 
-function sequencia(linhas, i, recuo, caminho, mapa) {
+/**
+ * @param {boolean} [rente=false]  a lista está no MESMO recuo da chave que a
+ *   nomeia. Nesse caso a primeira linha que não é item encerra a lista — é a
+ *   próxima chave do mapa de cima. Numa lista recuada, a mesma linha é erro.
+ */
+function sequencia(linhas, i, recuo, caminho, mapa, rente = false) {
   const fora = [];
   while (i < linhas.length && linhas[i].recuo === recuo) {
     const { texto, n } = linhas[i];
     if (!texto.startsWith('- ') && texto !== '-') {
+      if (rente && fora.length) break;
       throw new ErroDeSintaxe('"chave: valor" onde se esperava item de lista', n);
     }
     const conteudo = texto === '-' ? '' : texto.slice(2).trim();
@@ -247,6 +264,87 @@ function sequencia(linhas, i, recuo, caminho, mapa) {
     registrarFilhos(fora[fora.length - 1], sub, n, mapa);
   }
   return [fora, i];
+}
+
+/* ==========================================================================
+   ESCRITA — o caminho de volta, para o compilador da §50.2 emitir
+   `render.yaml` nativo.
+
+   Determinístico por construção: a ordem das chaves é a ordem em que elas
+   estão no objeto, nada é reordenado por acaso, e não existe data, hora nem
+   aleatório na saída. É isso que faz "aplicar o mesmo Blueprint duas vezes"
+   produzir bytes idênticos, como a §50.3 exige.
+
+   Escreve o mesmo subconjunto que `analisar` lê — e é por isso que dá para
+   conferir a ida e a volta num teste: emitir, reler e comparar as árvores.
+   ========================================================================== */
+
+const CHAVE_SIMPLES = /^[A-Za-z_][A-Za-z0-9_.-]*$/;
+const PRECISA_ASPAS = /^$|^[\s]|[\s]$|^[-?:,[\]{}#&*!|>'"%@`]|[*&]|:\s|\s#|^(?:true|false|null|~)$|^-?\d+(?:\.\d+)?$/;
+
+function escalarParaYaml(v) {
+  if (v === null || v === undefined) return 'null';
+  if (typeof v === 'boolean') return v ? 'true' : 'false';
+  if (typeof v === 'number') {
+    if (!Number.isFinite(v)) throw new TypeError('número não finito não tem representação YAML');
+    return String(v);
+  }
+  const s = String(v);
+  return PRECISA_ASPAS.test(s) ? `"${s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"` : s;
+}
+
+const ehFolha = (v) => v === null || v === undefined || typeof v !== 'object';
+
+/**
+ * Serializa um objeto no subconjunto que `analisar` lê.
+ * @param {object} valor
+ * @param {object} [opcoes]
+ * @param {string[]} [opcoes.cabecalho]  linhas de comentário no topo
+ * @returns {string} texto YAML terminado em nova linha
+ */
+export function serializar(valor, opcoes = {}) {
+  const linhas = [];
+  for (const c of opcoes.cabecalho || []) linhas.push(c ? `# ${c}` : '#');
+  escreverMapa(valor, 0, linhas);
+  return `${linhas.join('\n')}\n`;
+}
+
+function escreverMapa(obj, recuo, linhas) {
+  const pad = ' '.repeat(recuo);
+  for (const chave of Object.keys(obj)) {
+    const v = obj[chave];
+    if (v === undefined) continue;
+    if (!CHAVE_SIMPLES.test(chave)) throw new TypeError(`chave fora do subconjunto: ${chave}`);
+    if (Array.isArray(v)) {
+      if (!v.length) { linhas.push(`${pad}${chave}: []`); continue; }
+      linhas.push(`${pad}${chave}:`);
+      escreverLista(v, recuo, linhas);
+    } else if (!ehFolha(v)) {
+      if (!Object.keys(v).length) { linhas.push(`${pad}${chave}: {}`); continue; }
+      linhas.push(`${pad}${chave}:`);
+      escreverMapa(v, recuo + 2, linhas);
+    } else {
+      linhas.push(`${pad}${chave}: ${escalarParaYaml(v)}`);
+    }
+  }
+}
+
+function escreverLista(lista, recuo, linhas) {
+  const pad = ' '.repeat(recuo);
+  for (const item of lista) {
+    if (Array.isArray(item)) throw new TypeError('lista dentro de lista sai do subconjunto');
+    if (!ehFolha(item)) {
+      const chaves = Object.keys(item).filter((k) => item[k] !== undefined);
+      if (!chaves.length) { linhas.push(`${pad}- {}`); continue; }
+      // O traço carrega a primeira chave; o resto alinha embaixo dela.
+      const interno = [];
+      escreverMapa(item, recuo + 2, interno);
+      linhas.push(`${pad}- ${interno[0].slice(recuo + 2)}`);
+      for (const l of interno.slice(1)) linhas.push(l);
+    } else {
+      linhas.push(`${pad}- ${escalarParaYaml(item)}`);
+    }
+  }
 }
 
 /** Coleções em linha não têm linha própria por item — herdam a da chave. */

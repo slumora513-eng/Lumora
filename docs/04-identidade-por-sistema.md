@@ -202,4 +202,4 @@ clara em vez de sumir. Ver [`../ESCALACOES.md`](../ESCALACOES.md) §6.
 
 Os quatro protótipos HTML continuam não entregues, e continuam sendo registro histórico das
 decisões de §67.10/§68.8. O que eles eram na prática — *"a única demonstração executável da
-Interface Viva"* — hoje é `runtime/verificacao.html`, com 271 checagens automatizadas por cima.
+Interface Viva"* — hoje é `runtime/verificacao.html`, com 343 checagens automatizadas por cima.

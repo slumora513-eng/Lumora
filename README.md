@@ -33,8 +33,8 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
 | [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py) | As seis paletas sob protanopia, deuteranopia e tritanopia — simulação em código, com autoteste |
-| [`ferramentas/testes/`](ferramentas/testes/) | As **271 checagens** — 207 em Chromium e 64 em Node — `node ferramentas/testes/rodar.mjs` |
-| [`blueprint/README.md`](blueprint/README.md) | **§50 — Blueprint Universal, passo 1:** formato `blueprint.lumora/v1`, parser e validador, com exemplos de teste |
+| [`ferramentas/testes/`](ferramentas/testes/) | As **343 checagens** — 207 em Chromium e 136 em Node — `node ferramentas/testes/rodar.mjs` |
+| [`blueprint/README.md`](blueprint/README.md) | **§50 — Blueprint Universal:** formato `blueprint.lumora/v1`, validador e os compiladores de **Render** (`render.yaml`) e **AWS** (Terraform), com `plan` idempotente |
 | [`infra/README.md`](infra/README.md) | **Publicação** deste repositório — Render (staging) e AWS (produção), com o CSP que impõe o custo zero. Não é a §50 |
 | [`ESCALACOES.md`](ESCALACOES.md) | **Dúvidas críticas de identidade abertas ao Fundador** |
 

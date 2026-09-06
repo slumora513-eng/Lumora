@@ -78,7 +78,8 @@ resultados marcados como **DEFAULT DO AGENTE**, nunca como decisão de marca do 
 
 | Decisão | Efeito | Registro |
 |---|---|---|
-| *"pode fazer tudo o que falta, pode fazer tudinho completamente (…) se quiser dar uma refinada em algumas coisas, pode ficar à vontade"* | Manda executar **tudo o que o Guia aprovou e o repositório ainda não tinha**: o passo 1 da §50, as funções da §72.1 sem código, a infraestrutura da §69.6 — e autoriza refino do que já existia. | [`../blueprint/README.md`](../blueprint/README.md) · [`../runtime/README.md`](../runtime/README.md) |
+| *"pode fazer tudo o que falta, pode fazer tudinho completamente (…) se quiser dar uma refinada em algumas coisas, pode ficar à vontade"* | Manda executar **tudo o que o Guia aprovou e o repositório ainda não tinha**: o passo 1 da §50, as funções da §72.1 sem código, a infraestrutura da §69.6, a Vista de Pátio da §65.4 — e autoriza refino do que já existia. | [`../blueprint/README.md`](../blueprint/README.md) · [`../runtime/README.md`](../runtime/README.md) |
+| *"agora você tem que fazer a Blueprint para o render e para o AWS"* | Manda construir os **compiladores da §50.2** — passos 2 e 3 da §50.5. Não é a publicação deste repositório (que já existia em `infra/`): é o compilador que lê o `blueprint.lumora/v1` de um cliente e emite `render.yaml` e Terraform. | [`../blueprint/compilador/`](../blueprint/compilador/) |
 
 ---
 
@@ -139,7 +140,7 @@ desenha a camada complementar de cada sistema sobre o Céu Vivo. A §65.1 já di
 amostras eram *"direção, não asset final"* — e a direção estava escrita em `04`. Faltava a
 implementação, que existia só como abertura e agora existe como ambiente.
 
-Os **protótipos v1–v4** foram superados por `runtime/verificacao.html`, com 271 checagens
+Os **protótipos v1–v4** foram superados por `runtime/verificacao.html`, com 343 checagens
 automatizadas por cima. Eles seguem valendo como registro histórico das decisões §67.10/§68.8.
 
 O que sobra é uma pergunta de produto, não de arquivo: **"fia alto" e "magos" existem como
@@ -183,31 +184,53 @@ Desempenho-alvo: **60 fps em aparelhos médios**. Níveis de redução da Otimiz
 
 ---
 
-## §50 — Blueprint Universal: passo 1 construído, passos 2–6 impossíveis por ora
+## §50 — Blueprint Universal: passos 1, 2 e 3 construídos
 
 A §50 define um produto: o formato declarativo `blueprint.lumora/v1` e um compilador
 (`lumora-blueprint build`) que provisiona a pilha inteira de um **cliente** — Postgres, Redis,
 réplicas, workers, migrations — com saída **Terraform** para AWS e `render.yaml` nativo para
 Render (§50.2), mais idempotência, dry-run obrigatório e rollback (§50.3).
 
-Do roteiro da §50.5, só o **passo 1** é construível antes da aplicação Lumora existir —
-*"especificação e parser do formato v1 + validador de schema (com exemplos de teste)"* — e ele
-**está construído**, em [`../blueprint/`](../blueprint/): parser de um subconjunto deliberado de
-YAML, validador com 11 regras que reprovam (cada uma citando a seção que a sustenta), três
-exemplos válidos, onze inválidos e 64 checagens.
+Do roteiro da §50.5, **três dos seis passos estão construídos**, em
+[`../blueprint/`](../blueprint/):
 
-**Os passos 2–6 continuam impossíveis**, e não por falta de vontade: compiladores Render e AWS,
-saída Docker, botão no Hub e DigitalOcean/GCP provisionam a **aplicação Lumora**, que ainda não
-foi construída. Não há serviço para emitir em Terraform, não há migrations para viajar dentro
-do Blueprint e não há estado remoto contra o qual detectar *drift*. Por isso o CLI **reconhece**
-`plan`, `build`, `apply` e `destroy` e **recusa cada um com o motivo**, saindo com código 3 —
-comando que não existe é diferente de comando que existe e mente.
+| Passo | O que é | Onde |
+|---|---|---|
+| **1** | formato v1, parser e validador de schema | `yaml.mjs` · `esquema.mjs` · `validador.mjs` |
+| **2** | compilador para Render, com `plan` e idempotência | `compilador/render.mjs` |
+| **3** | compilador para AWS, com Terraform | `compilador/aws.mjs` |
+
+A derivação de recursos acontece **uma vez**, em `compilador/plano.mjs`, antes dos dois
+emissores — é o que faz a promessa da §50.2 ("mesma entrada, saídas equivalentes") ser
+estrutural em vez de coincidência. Essa é a tabela plano→recursos que a §47 manda manter
+editável no Hub *"sem novo deploy"*, e ela mora num arquivo só por isso.
+
+O compilador emite **decisões já tomadas**, não defaults inventados. Do bloco "Status de
+projeto — 01/09/2026" saem, direto para o Terraform: região `sa-east-1` (decisão 3, LGPD),
+CloudFront + WAF com regras gerenciadas (decisão 1), rotação de segredos de 90/30 dias e
+**nenhum segredo em variável de ambiente** (decisão 2), e backup diário de 7 dias + semanal de
+30 com Vault Lock, que é a imutabilidade anti-ransomware (decisão 6).
+
+**O que continua não existindo é `apply` e `destroy`** — provisionar de verdade exige
+credencial de nuvem e uma aplicação Lumora para subir, e ela não foi construída. Os dois são
+reconhecidos e **recusados com o motivo**, saindo com código 3. Pela mesma razão, o artefato da
+aplicação sai como `LUMORA_IMAGEM_NAO_DEFINIDA` quando não é informado, e o `plan` o reporta
+como bloqueio: um plano legítimo e deliberadamente inaplicável é melhor que um arquivo que
+sobe um contêiner inexistente.
+
+Também seguem pendentes o passo 4 (Docker self-host), o 5 (botão no Hub) e o 6
+(DigitalOcean/GCP) — cada um recusado **nomeando o passo**, em vez de emitir "quase certo".
+
+A idempotência da §50.3 é real na metade que dá para fazer sem nuvem: mesma entrada produz
+bytes idênticos, e `plan` lista o que nasce, muda e some antes de qualquer coisa acontecer,
+comparando com o estado gravado na pasta de saída. O que falta — *drift detection* contra a
+nuvem — é do `apply`, e está registrado como tal.
 
 O que existe em [`../infra/`](../infra/) publica *este repositório* (a identidade visual) como
 site estático — outro assunto, outro tamanho, e **não** é a §50.
 
-> Registrado em 06/09/2026, na releitura integral do Guia; passo 1 construído no mesmo dia.
-> Antes disso a §50 não aparecia neste repositório nem como pendência.
+> Registrado em 06/09/2026, na releitura integral do Guia; os passos 1, 2 e 3 construídos no
+> mesmo dia. Antes disso a §50 não aparecia neste repositório nem como pendência.
 
 ---
 

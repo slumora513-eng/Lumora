@@ -144,13 +144,13 @@ Estas não são convenções que alguém possa esquecer — estão no caminho de
 python3 -m http.server 8765          # na raiz do repositório
 # abre http://localhost:8765/runtime/verificacao.html
 
-node ferramentas/testes/rodar.mjs    # as 271 checagens, de uma vez
+node ferramentas/testes/rodar.mjs    # as 343 checagens, de uma vez
 ```
 
 `verificacao.html` é bancada de teste local — **não é produto nem asset de marca**.
 
-**271 checagens automatizadas**, todas passando — 207 em Chromium sobre `verificacao.html` e
-64 em Node puro, porque o Blueprint da §50 é formato de arquivo e não precisa de navegador:
+**343 checagens automatizadas**, todas passando — 207 em Chromium sobre `verificacao.html` e
+136 em Node puro, porque o Blueprint da §50 é formato de arquivo e não precisa de navegador:
 
 | Suíte | Checagens |
 |---|---|
@@ -164,7 +164,8 @@ node ferramentas/testes/rodar.mjs    # as 271 checagens, de uma vez
 | **Marca com alfa** | **14** |
 | **Camada de sistema (§65.1)** | **18** |
 | **Estados vivos, Centro, telemetria, Libras, onboarding e Vista de Pátio** | **71** |
-| **Blueprint Universal (§50) — formato e validador** | **64** |
+| **Blueprint Universal (§50) — formato e validador** | **62** |
+| **Compilador do Blueprint (§50.2) — Render e AWS** | **74** |
 
 **0 pedidos de rede externos** (custo zero, §65.5). As mesmas suítes rodam contra um site
 publicado (`LUM_BASE=https://…`), o que testa o deploy junto com o código — ver

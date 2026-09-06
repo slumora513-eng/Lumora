@@ -21,6 +21,7 @@ const SUITES = [
   ['tcamada',  'Camada de sistema (§65.1)'],
   ['t72',       'Estados vivos, Centro, telemetria, Libras e onboarding (§72.1/§69.6)'],
   ['tblueprint', 'Blueprint Universal (§50) — formato e validador'],
+  ['tcompilador', 'Compilador do Blueprint (§50.2) — Render e AWS'],
 ];
 
 try {

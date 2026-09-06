@@ -5,17 +5,16 @@
 > A §50 define um produto: o formato declarativo `blueprint.lumora/v1` mais um
 > compilador (`lumora-blueprint build`) que provisiona a pilha inteira de um
 > **cliente** — Postgres, Redis, réplicas, workers, migrations — e cuja saída
-> para AWS é **Terraform** (§50.2), não CloudFormation. Nada disso existe neste
-> repositório, e não daria para existir: a §50 provisiona a aplicação Lumora,
-> que ainda não foi construída.
+> para AWS é **Terraform** (§50.2), não CloudFormation.
 >
-> O que está aqui publica **este repositório** — a identidade visual — como site
-> estático. É outro assunto, com outro tamanho.
+> Isso mora em [`../blueprint/`](../blueprint/), e os passos 1, 2 e 3 da §50.5
+> estão construídos: formato, validador, compilador de Render e compilador de
+> AWS. `apply` e `destroy` continuam recusados, porque provisionar de verdade
+> exige credencial de nuvem e a aplicação Lumora, que ainda não existe.
 >
-> O **passo 1 da §50** — especificação do formato, parser e validador (§50.5) — é o
-> único construível antes da aplicação existir, e está em
-> [`../blueprint/`](../blueprint/). Os passos 2–6 continuam impossíveis, e o CLI
-> recusa `plan`/`build`/`apply`/`destroy` com o motivo em vez de simulá-los.
+> **O que está aqui é outra coisa:** publica **este repositório** — a identidade
+> visual — como site estático. Outro assunto, outro tamanho. Um cuida da marca;
+> o outro, da pilha de um cliente pagante.
 
 Dois caminhos, e o Guia já decidiu para que serve cada um. O "Status de projeto"
 registra: **Render = ambiente de testes (staging), AWS = produção** — no Render
@@ -65,7 +64,8 @@ recusa qualquer pedido para fora, tenha o código pedido de propósito ou por ac
 | **sem** o CSP | nenhuma violação registrada | nenhuma | nenhuma |
 
 E as **207 checagens de navegador passam inteiras** sob exatamente estes cabeçalhos. (As
-outras 64 do total de 271 são do validador do Blueprint, §50, que não roda no navegador.)
+outras 136 do total de 343 são do formato e do compilador do Blueprint, §50, que não rodam
+no navegador.)
 
 ### Três detalhes que parecem exagero e não são
 

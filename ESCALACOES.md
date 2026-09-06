@@ -261,7 +261,7 @@ camada.
 A escalação dizia deles: *"são a única demonstração executável da Interface Viva"*. **Deixaram
 de ser.** `runtime/verificacao.html` é uma demonstração executável de todo o sistema — Céu Vivo,
 Interface Viva, navegação em bolhas e em ondas, notificações, Atlas, animações, seis paletas,
-papel-mãe — com **271 checagens automatizadas** rodando por cima
+papel-mãe — com **343 checagens automatizadas** rodando por cima
 (`node ferramentas/testes/rodar.mjs`).
 
 Os protótipos continuam sendo **registro histórico** de quatro decisões (§67.10, §68.8), e como

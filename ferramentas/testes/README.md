@@ -1,7 +1,8 @@
 # Suítes de verificação do runtime
 
-271 checagens: **207 em Chromium** sobre `runtime/verificacao.html` e **64 em Node
-puro**, porque o Blueprint da §50 é formato de arquivo e não precisa de navegador.
+343 checagens: **207 em Chromium** sobre `runtime/verificacao.html` e **136 em Node
+puro**, porque o Blueprint da §50 é arquivo entrando e arquivo saindo, e não precisa
+de navegador.
 Elas existiam antes como arquivos soltos fora do repositório, o que tornava a frase
 "todas passando" impossível de conferir por quem lê. Agora rodam com um comando.
 
@@ -19,7 +20,7 @@ código — cabeçalho errado, MIME quebrado ou arquivo faltando aparecem como f
 LUM_BASE=https://seu-endereco node ferramentas/testes/rodar.mjs
 ```
 
-Saída esperada: `271 verificações, 0 falhas`.
+Saída esperada: `343 verificações, 0 falhas`.
 
 Precisa de Playwright (`npm i -D playwright-core`) e de um Chromium. O
 `navegador.mjs` procura os dois sozinho — inclusive em instalação global e em
@@ -45,12 +46,14 @@ Precisa de Playwright (`npm i -D playwright-core`) e de um Chromium. O
 | `tmarca.mjs`   | Marca com alfa (§3) — a matemática, o recorte e o caminho de falha | 14 |
 | `tcamada.mjs`  | Camada de sistema (§65.1) — assinatura de cada sistema, paletas, §36 | 18 |
 | `t72.mjs`      | Estados vivos, Centro de Notificações, snooze, telemetria local, Libras, onboarding e Vista de Pátio (§72.1 · §69.6 · §60.3 · §65.4) | 71 |
-| `tblueprint.mjs` | Blueprint Universal (§50) — parser, validador e os onze inválidos. **Sem navegador** | 64 |
+| `tblueprint.mjs` | Blueprint Universal (§50) — parser, validador e os onze inválidos. **Sem navegador** | 62 |
+| `tcompilador.mjs` | Compilador da §50.2 — plano de recursos, render.yaml, Terraform, idempotência e dry-run. **Sem navegador** | 74 |
 
-`tblueprint.mjs` roda sozinha, sem servidor e sem Chromium:
+As duas suítes do Blueprint rodam sozinhas, sem servidor e sem Chromium:
 
 ```bash
-node ferramentas/testes/tblueprint.mjs
+node ferramentas/testes/tblueprint.mjs    # formato e validador (§50.1/§50.5 passo 1)
+node ferramentas/testes/tcompilador.mjs   # compilador (§50.2/§50.5 passos 2 e 3)
 ```
 
 Fora do navegador, dois verificadores em Python:
