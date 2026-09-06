@@ -34,7 +34,7 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
 | [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py) | As seis paletas sob protanopia, deuteranopia e tritanopia — simulação em código, com autoteste |
 | [`ferramentas/testes/`](ferramentas/testes/) | As **135 checagens** do runtime em Chromium — `node ferramentas/testes/rodar.mjs` |
-| [`infra/README.md`](infra/README.md) | **Publicação** — blueprints para Render e AWS, com o CSP que impõe o custo zero |
+| [`infra/README.md`](infra/README.md) | **Publicação** deste repositório — Render (staging) e AWS (produção), com o CSP que impõe o custo zero. Não é a §50 |
 | [`ESCALACOES.md`](ESCALACOES.md) | **Dúvidas críticas de identidade abertas ao Fundador** |
 
 ---

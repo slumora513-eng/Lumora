@@ -72,7 +72,7 @@ resultados marcados como **DEFAULT DO AGENTE**, nunca como decisão de marca do 
 | *"nem precisa fazer esses áudios, só coloca o texto da fala"* | Descarta a produção de áudio e põe a **fala em texto** nas aberturas que têm fala. Mantém §48 intacta e §64.2 congelada. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
 | *"a animação do RotaCerta poderia ser melhor (...) ficou meio confuso"* | Reprova a primeira versão da cena e manda refazer. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
 | *"sobre aquelas duas decisões que ficou de fora, você pode decidir. Eu deixo você tomar controle de tudo (...) pode continuar o código todinho"* | Autoriza fechar as **duas últimas escalações**: §3 (falta de alfa no papel) e §7 (o teste em simulador de daltonismo). | [`../ESCALACOES.md`](../ESCALACOES.md) |
-| *"tenta resolver a §6 também"* + *"faz a blueprint para o render e o aws"* | Manda auditar a **§6** (assets não entregues) e produzir os **blueprints de publicação**. | [`../ESCALACOES.md`](../ESCALACOES.md) · [`../infra/README.md`](../infra/README.md) |
+| *"tenta resolver a §6 também"* + *"faz a blueprint para o render e o aws"* | Manda auditar a **§6** (assets não entregues) e produzir a **publicação do repositório** em Render e AWS — que **não** é o Blueprint Universal da §50 (ver abaixo). | [`../ESCALACOES.md`](../ESCALACOES.md) · [`../infra/README.md`](../infra/README.md) |
 
 ---
 
@@ -123,8 +123,10 @@ Nenhuma das duas alterou um byte dos arquivos oficiais.
 
 Auditada linha a linha. Nenhum arquivo foi inventado — o que mudou é que **nenhuma das sete
 ausências significa mais alguma coisa**: duas já eram decisão tomada (os áudios, os sons
-antigos do Elio), duas foram revogadas ou perderam função (os wallpapers por região, o ZIP de
-referência provisória), duas foram superadas por código, e a última nunca foi asset.
+antigos do Elio), uma perdeu função (o ZIP de referência provisória) e uma foi
+despromovida a reserva (os wallpapers Global/Américas/Europa — §65.1 os mantém para superfícies
+secundárias; os regionais são pendência aberta em §60.13, **não** revogação), duas foram
+superadas por código, e a última nunca foi asset.
 
 As **amostras conceituais** da §65.6 foram superadas por `runtime/camada-de-sistema.js`, que
 desenha a camada complementar de cada sistema sobre o Céu Vivo. A §65.1 já dizia que essas
@@ -172,6 +174,27 @@ Decisão do Fundador, em resposta direta à preocupação de que a interface par
 Desempenho-alvo: **60 fps em aparelhos médios**. Níveis de redução da Otimização Automática
 (§36) e `prefers-reduced-motion` desligam efeitos em hardware básico.
 **Custo: zero** — tudo procedural, sem assets pesados, sem API externa.
+
+---
+
+## §50 — Blueprint Universal: NÃO INICIADA
+
+A §50 define um produto: o formato declarativo `blueprint.lumora/v1` e um compilador
+(`lumora-blueprint build`) que provisiona a pilha inteira de um **cliente** — Postgres, Redis,
+réplicas, workers, migrations — com saída **Terraform** para AWS e `render.yaml` nativo para
+Render (§50.2), mais idempotência, dry-run obrigatório e rollback (§50.3).
+
+**Nada disso existe neste repositório.** O que existe em [`../infra/`](../infra/) publica *este
+repositório* (a identidade visual) como site estático — outro assunto, outro tamanho. A §50
+provisiona a aplicação Lumora, que ainda não foi construída.
+
+Do roteiro da §50.5, só o **passo 1** é construível antes da aplicação existir: especificação do
+formato v1, parser e validador de schema com exemplos de teste. Os passos 2–6 (compiladores
+Render e AWS, saída Docker, botão no Hub, DigitalOcean/GCP) dependem de haver uma pilha para
+provisionar.
+
+> Registrado em 06/09/2026, na releitura integral do Guia. Antes disso a §50 não aparecia neste
+> repositório nem como pendência.
 
 ---
 

@@ -39,10 +39,12 @@ t(r1.rotacerta.wp >= 3 && r1.rotacerta.aneis === 0,
   `RotaCerta: rotas com ${r1.rotacerta.wp} waypoints, sem anéis (§65.1 "GPS espacial")`);
 t(r1.hub.aneis === 3 && r1.hub.sat > 0 && r1.hub.wp === 0,
   `Hub: núcleo + ${r1.hub.aneis} anéis + ${r1.hub.sat} satélites, sem rotas (§65.1 "Núcleo de Controle")`);
-t(r1.ecossistema.wp > 0 && r1.ecossistema.aneis > 0,
-  'Ecossistema: reúne os elementos dos outros (docs/04)');
+t(r1.ecossistema.tem === false && /não define assinatura/.test(r1.ecossistema.motivo),
+  'Ecossistema: camada VAZIA — a §65.1 só assina Business, RotaCerta e Hub');
+t(r1.ecossistema.aneis === 0 && r1.ecossistema.wp === 0,
+  'Ecossistema: não empresta o núcleo do Hub, que é interno (§17/§34)');
 t(r1.business.tem === false && /céu estrelado puro/.test(r1.business.motivo),
-  'Business: camada VAZIA por decisão do Fundador, e o código diz o motivo');
+  'Business: camada VAZIA pela §65.1, e o código diz o motivo');
 t(r1.comunidade.tem === false && /Atlas Estelar/.test(r1.comunidade.motivo),
   'Comunidade: vazia porque o Atlas Estelar (§16) já é a camada');
 

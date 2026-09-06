@@ -1,11 +1,37 @@
-# Blueprints de publicação
+# Publicação deste repositório
 
-Dois caminhos para pôr este repositório no ar como site estático:
+> ### Isto **não** é o Blueprint Universal da §50
+>
+> A §50 define um produto: o formato declarativo `blueprint.lumora/v1` mais um
+> compilador (`lumora-blueprint build`) que provisiona a pilha inteira de um
+> **cliente** — Postgres, Redis, réplicas, workers, migrations — e cuja saída
+> para AWS é **Terraform** (§50.2), não CloudFormation. Nada disso existe neste
+> repositório, e não daria para existir: a §50 provisiona a aplicação Lumora,
+> que ainda não foi construída.
+>
+> O que está aqui publica **este repositório** — a identidade visual — como site
+> estático. É outro assunto, com outro tamanho. A §50 segue **não iniciada**; o
+> passo 1 dela (especificação do formato + parser + validador, §50.5) é o único
+> construível antes da aplicação existir.
 
-| | Arquivo | Quando faz sentido |
+Dois caminhos, e o Guia já decidiu para que serve cada um. O "Status de projeto"
+registra: **Render = ambiente de testes (staging), AWS = produção** — no Render
+os dados são descartáveis e o disco é efêmero; o sistema real fica na AWS.
+
+| | Arquivo | Papel decidido pelo Guia |
 |---|---|---|
-| **Render** | [`../render.yaml`](../render.yaml) | Um comando, previews por PR, zero infraestrutura para cuidar |
-| **AWS** | [`aws/lumora-site.yaml`](aws/lumora-site.yaml) | Domínio próprio, controle de cache fino, bucket privado, conta da empresa |
+| **Render** | [`../render.yaml`](../render.yaml) | **Staging.** Um comando, previews por PR, zero infraestrutura para cuidar |
+| **AWS** | [`aws/lumora-site.yaml`](aws/lumora-site.yaml) | **Produção.** Implantar em `sa-east-1` (São Paulo), com domínio próprio, bucket privado e cache fino |
+
+Duas decisões do Guia que o template da AWS carrega:
+
+- **`PriceClass_All`**, porque é a única classe do CloudFront com pontos de
+  presença na **América do Sul** — e a §19 define a América do Sul como
+  mercado-alvo, com lançamento pelo Brasil.
+- **WAF como parâmetro** (`WafWebAclArn`). O Guia decide *"CloudFront + AWS WAF
+  (regras gerenciadas) + Shield Standard no dia 1 da produção"*. O Shield
+  Standard já vem ligado e sem custo em qualquer distribuição CloudFront; o WAF
+  é cobrado à parte, então entra como escolha explícita de quem publica.
 
 Os dois servem **o repositório como está**. Não há build porque não há dependência:
 a §65.5 exige *"custo zero — nenhuma rede, nenhuma dependência"*, e o runtime é

@@ -181,12 +181,20 @@ camada complementar de cada sistema sobre o Céu Vivo, em Canvas 2D:
 |---|---|
 | **RotaCerta** | Rotas teal ligando waypoints âmbar em constelação, com o rastro de navegação percorrendo a rota |
 | **Lumora Hub** | Núcleo de luz violeta, anéis orbitais e satélites-bolha correndo sobre eles |
-| **Ecossistema** | Os dois motivos reunidos, em intensidade menor — "reunião dos elementos, sem somar logos" |
-| **Business** | **Nada** — céu estrelado puro, decisão do Fundador |
+| **Ecossistema** | **Nada** — a §65.1 não define assinatura para ele (ver nota abaixo) |
+| **Business** | **Nada** — "céu estrelado puro (Céu Vivo padrão) (...) sem motivo extra" (§65.1) |
 | **Comunidade** | **Nada** — o Atlas Estelar (§16) já *é* a camada |
 
-Os dois vazios são decisão registrada, não implementação faltando: o código expõe o motivo de
+Os três vazios são decisão registrada, não implementação faltando: o código expõe o motivo de
 cada um em `SEM_CAMADA`, e a bancada de verificação mostra esse motivo na tela.
+
+> **Correção de 06/09/2026.** Até esta data o Ecossistema desenhava os motivos do RotaCerta **e
+> do Hub** juntos, em intensidade reduzida. Isso era invenção: a §65.1 lista assinatura para
+> **três** produtos — Business, RotaCerta e Hub — e nenhuma para o Ecossistema. Pior, o motivo do
+> Hub não pode compor produto comercial: a §17/§34 o define como interno da equipe Lumora, e o
+> Ecossistema é RotaCerta + Business (§27), não RotaCerta + Hub. A camada do Ecossistema passou a
+> ser vazia, com o motivo registrado. "Versão épica unindo os sistemas" (§18/§49.1) descreve a
+> **abertura** do Ecossistema, que é outro artefato — e essa continua implementada.
 
 A camada tira as cores dos tokens CSS, então **as seis paletas de alto contraste valem nela
 também**; desliga na paleta preto/branco (que existe para clareza máxima) e reforça na paleta

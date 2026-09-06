@@ -12,8 +12,12 @@ A §3 fechou quando o alfa passou a ser **recuperado** do próprio arquivo ofici
 esperado de um arquivo novo. A §7 fechou quando o teste em simulador de daltonismo virou
 código verificável — e, ao virar código, encontrou e corrigiu um defeito de acessibilidade que
 ninguém tinha visto. A §6 fechou por auditoria: das sete linhas de assets faltantes, duas já
-eram decisão tomada, duas foram revogadas ou perderam função, duas foram superadas por código,
+eram decisão tomada, uma perdeu função e uma foi despromovida a reserva, duas foram superadas por código,
 e a última nunca foi asset — é uma pergunta de produto.
+
+> **Correção de 06/09/2026, após releitura integral do Guia.** Os wallpapers Global/Américas/Europa
+> **não estão revogados**: a §65.1 os mantém como reserva para superfícies secundárias e a §60.13
+> registra os regionais como pendência aberta. A linha correspondente da tabela foi refeita.
 
 **Nenhum arquivo foi inventado em nenhuma das três.**
 
@@ -221,7 +225,7 @@ alguma coisa.** Sete linhas; nenhuma delas bloqueia mais nada.
 | **§65.6** | Amostras conceituais: fundos RotaCerta e Hub, tema Aurora | **Superadas** — ver abaixo |
 | **§65.6, §66.5, §67.10, §68.8** | 4 protótipos HTML (v1–v4) | **Superados** — ver abaixo |
 | **§49.4** | ZIP com assets de referência **provisórios** para os vídeos | **Sem função.** As 11 cenas existem em código; §49.3 já define que o vídeo final do profissional entra como versão superior sem mexer no código. Referência provisória para uma coisa que já está pronta não referencia nada |
-| **§65.1** | Wallpapers padrão Global/Américas/Europa | **Revogados.** §60.1/§60.2 revogaram wallpaper por país/região. Entregar Américas e Europa hoje seria violar uma revogação em vigor. O "Global" é o Céu Vivo, que é procedural |
+| **§65.1** | Wallpapers padrão Global/Américas/Europa | **Despromovidos, não revogados.** §60.1 revogou os wallpapers por país e os padrões antigos **como fundo de sistema** — o fundo passou a ser o Céu Vivo, procedural. §65.1 mantém Global/Américas/Europa como **reserva para superfícies secundárias** (login, documentos), *"a confirmar uso futuro"*. Wallpapers padrão regionais são **trabalho futuro sem data** (§60.2, listado como pendência aberta em §60.13). Seguem não entregues, e nada depende deles |
 | **§49.3, §45** | Slots **"fia alto"** e **"magos"** | **Não são slots.** O próprio Guia os marca como pendentes de definição na §18 |
 
 ### Por que as amostras conceituais foram superadas
@@ -260,10 +264,27 @@ registro histórico eles seguem não entregues. Isso é diferente de bloquear al
 
 ### O que sobrou
 
-Uma pergunta, e ela não é sobre asset: **"fia alto" e "magos" existem como sistema?** O Guia
-os cita em §49.3/§45 e ao mesmo tempo os marca como pendentes de definição na §18. Se forem
+Uma pergunta, e ela não é sobre asset: **"fia alto" e "magos" existem como sistema?** Se forem
 sistemas de verdade, precisam de briefing; se não forem, saem da lista da §45. É decisão de
 produto do Fundador, não arquivo faltando.
+
+**As duas citações, verbatim, com página** — conferidas contra o PDF em 06/09/2026, porque este
+par de nomes já gerou dúvida sobre ser invenção do agente. Não é: está escrito no Guia, e é o
+próprio Guia que os marca como pendentes.
+
+> **§45 — Biblioteca de Áudio (p. 20 de 59), nota ao pé da tabela:**
+> *"Nota: 'Fia alto' e 'magos' NÃO estão registrados como animações no spec-of-record (grep sem
+> ocorrências em \*.md). Proposta: registrar formalmente essas animações na §18 antes de gerar
+> os sons correspondentes."*
+
+> **§49.3 — Regras de funcionamento (p. 27 de 59), último marcador:**
+> *"Slots novos: registrar um slot novo exige entrada neste registro (esta seção) antes de
+> existir no manifest — como já foi cobrado para 'fia alto' e 'magos', que NÃO são slots
+> registrados e seguem pendentes de definição."*
+
+Repare que a nota da §45 diz "grep sem ocorrências em \*.md": quem escreveu o Guia já tinha
+procurado esses nomes no spec e não achou. A pendência é do próprio documento, não deste
+repositório.
 
 > **(DEFAULT DO AGENTE — a camada complementar é implementação de direção já registrada, não
 > assinatura nova: cada motivo vem citado de §65.1 e docs/04. A geometria, as densidades por

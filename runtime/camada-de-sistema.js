@@ -16,7 +16,7 @@
      RotaCerta  "malha de rotas luminosas (teal + âmbar) ligando waypoints em
                  forma de constelação, com leve rastro de navegação"
      Hub        "núcleo de luz + anéis orbitais + satélites-bolha"
-     Business   "nenhuma — céu estrelado puro" (decisão do Fundador, 05/09/2026)
+     Business   "céu estrelado puro (Céu Vivo padrão) (...) sem motivo extra"
 
    Faltava a implementação, não a direção. Até aqui esses motivos existiam
    apenas como ABERTURA (animação de entrada, slot §49), nunca como ambiente
@@ -58,8 +58,14 @@ export const SISTEMAS = ['business', 'rotacerta', 'ecossistema', 'comunidade', '
  * Vazio aqui é decisão registrada, não implementação faltando.
  */
 export const SEM_CAMADA = {
-  business: 'céu estrelado puro, sem motivo extra (decisão do Fundador, 05/09/2026)',
+  business: 'céu estrelado puro, sem motivo extra — a própria §65.1 decide assim',
   comunidade: 'o Atlas Estelar (§16) já É a camada da Comunidade',
+  // A §65.1 lista assinatura para TRÊS produtos: Business, RotaCerta e Hub.
+  // Não há assinatura decidida para o Ecossistema. A versão anterior deste
+  // arquivo desenhava aqui o núcleo do Hub em intensidade reduzida — o que
+  // contraria a §17/§34: o Hub é interno da equipe e nunca compõe produto do
+  // catálogo. E o Ecossistema é RotaCerta + Business (§27), não Hub.
+  ecossistema: 'a §65.1 não define assinatura para o Ecossistema; o núcleo do Hub não entra em produto comercial (§17/§34)',
 };
 
 const DENSIDADE = { pleno: 1, economico: 0.6, basico: 0.35 };
@@ -241,11 +247,11 @@ export class CamadaDeSistema {
     this.satelites = [];
     this.nucleo = null;
 
-    if (this.sistema === 'rotacerta' || this.sistema === 'ecossistema') {
+    if (this.sistema === 'rotacerta') {
       // Waypoints "em forma de constelação": pontos espalhados e depois
       // ligados pelo vizinho mais próximo — a mesma regra da Constelação do
       // Dia e da constelação dos documentos, para que a "letra" seja a mesma.
-      const n = Math.max(3, Math.round((this.sistema === 'rotacerta' ? 9 : 5) * d));
+      const n = Math.max(3, Math.round(9 * d));
       const pontos = [];
       for (let i = 0; i < n; i++) {
         pontos.push({ x: lerp(0.08, 0.92, rnd()) * W, y: lerp(0.12, 0.88, rnd()) * H });
@@ -265,11 +271,11 @@ export class CamadaDeSistema {
       this.waypoints = ordem;
     }
 
-    if (this.sistema === 'hub' || this.sistema === 'ecossistema') {
+    if (this.sistema === 'hub') {
       // Núcleo de luz + anéis orbitais. O núcleo fica fora do centro exato
       // para não brigar com o conteúdo, que costuma ocupar o meio.
       this.nucleo = { x: 0.74 * W, y: 0.30 * H, raio: Math.min(W, H) * 0.16 };
-      const n = this.sistema === 'hub' ? 3 : 1;
+      const n = 3;
       for (let i = 0; i < n; i++) {
         this.aneis.push({
           rx: this.nucleo.raio * (1.7 + i * 0.85),
@@ -278,7 +284,7 @@ export class CamadaDeSistema {
           velocidade: (0.0035 + rnd() * 0.0025) * (i % 2 ? -1 : 1),
         });
       }
-      const sats = Math.max(1, Math.round((this.sistema === 'hub' ? 4 : 2) * d));
+      const sats = Math.max(1, Math.round(4 * d));
       for (let i = 0; i < sats; i++) {
         this.satelites.push({
           anel: i % this.aneis.length,
@@ -308,11 +314,10 @@ export class CamadaDeSistema {
   /** RotaCerta: rotas teal + waypoints âmbar + rastro de navegação. */
   _desenharRotas(ctx) {
     const wp = this.waypoints;
-    const base = this.sistema === 'ecossistema' ? 0.55 : 1;   // "reunião", mais discreta
 
     // As rotas
     ctx.strokeStyle = this.cor.rota;
-    ctx.globalAlpha = 0.16 * base * this.forca;
+    ctx.globalAlpha = 0.16 * this.forca;
     ctx.lineWidth = 1.1;
     ctx.beginPath();
     ctx.moveTo(wp[0].x, wp[0].y);
@@ -322,7 +327,7 @@ export class CamadaDeSistema {
     // Os waypoints, em âmbar
     ctx.fillStyle = this.cor.waypoint;
     for (let i = 0; i < wp.length; i++) {
-      ctx.globalAlpha = 0.30 * base * this.forca;
+      ctx.globalAlpha = 0.30 * this.forca;
       ctx.beginPath();
       ctx.arc(wp[i].x, wp[i].y, 1.9, 0, Math.PI * 2);
       ctx.fill();
@@ -347,7 +352,7 @@ export class CamadaDeSistema {
       if (j >= total) continue;
       const x = lerp(wp[j].x, wp[j + 1].x, g);
       const y = lerp(wp[j].y, wp[j + 1].y, g);
-      ctx.globalAlpha = (0.34 - k * 0.023) * base * this.forca;
+      ctx.globalAlpha = (0.34 - k * 0.023) * this.forca;
       if (ctx.globalAlpha <= 0) break;
       ctx.beginPath();
       ctx.arc(x, y, 2.4 - k * 0.12, 0, Math.PI * 2);
@@ -356,7 +361,7 @@ export class CamadaDeSistema {
     // A cabeça do rastro, mais viva
     const x = lerp(wp[i].x, wp[i + 1].x, f);
     const y = lerp(wp[i].y, wp[i + 1].y, f);
-    ctx.globalAlpha = 0.5 * base * this.forca;
+    ctx.globalAlpha = 0.5 * this.forca;
     ctx.beginPath();
     ctx.arc(x, y, 2.8, 0, Math.PI * 2);
     ctx.fill();
@@ -364,14 +369,13 @@ export class CamadaDeSistema {
 
   /** Hub: núcleo de luz + anéis orbitais + satélites-bolha. */
   _desenharNucleo(ctx) {
-    const base = this.sistema === 'ecossistema' ? 0.55 : 1;
     const { x, y, raio } = this.nucleo;
 
     // O núcleo
     const g = ctx.createRadialGradient(x, y, 0, x, y, raio);
     g.addColorStop(0, this.cor.nucleo);
     g.addColorStop(1, 'transparent');
-    ctx.globalAlpha = 0.16 * base * this.forca;
+    ctx.globalAlpha = 0.16 * this.forca;
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(x, y, raio, 0, Math.PI * 2);
@@ -382,7 +386,7 @@ export class CamadaDeSistema {
     ctx.lineWidth = 1;
     for (const a of this.aneis) {
       const giro = a.giro + (this.movimentoReduzido ? 0 : this._t * a.velocidade * 0.12);
-      ctx.globalAlpha = 0.17 * base * this.forca;
+      ctx.globalAlpha = 0.17 * this.forca;
       ctx.beginPath();
       ctx.ellipse(x, y, a.rx, a.ry, giro, 0, Math.PI * 2);
       ctx.stroke();
@@ -399,7 +403,7 @@ export class CamadaDeSistema {
       const ey = Math.sin(ang) * a.ry;
       const px = x + ex * Math.cos(giro) - ey * Math.sin(giro);
       const py = y + ex * Math.sin(giro) + ey * Math.cos(giro);
-      ctx.globalAlpha = 0.42 * base * this.forca;
+      ctx.globalAlpha = 0.42 * this.forca;
       ctx.beginPath();
       ctx.arc(px, py, s.raio, 0, Math.PI * 2);
       ctx.fill();

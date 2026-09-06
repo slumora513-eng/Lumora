@@ -5,6 +5,15 @@ Description: >
   Os cabeçalhos de resposta são os mesmos do render.yaml — em especial o CSP,
   que transforma o "custo zero" da §65.5 em garantia imposta pelo navegador.
 
+  ESCOPO: publica ESTE repositório (a identidade visual) como site estático.
+  NÃO é o Blueprint Universal da §50 — aquele é funcionalidade de produto, que
+  provisiona a pilha de um CLIENTE (Postgres, filas, réplicas) e cuja saída para
+  AWS é Terraform, não CloudFormation. Ver infra/README.md.
+
+  Implante em sa-east-1 (São Paulo): é a região decidida para produção no
+  "Status de projeto" do Guia (residência de dados, LGPD). O certificado ACM é a
+  única exceção — CloudFront exige us-east-1 para ele.
+
 Parameters:
   NomeDoBucket:
     Type: String
@@ -25,10 +34,31 @@ Parameters:
       ARN de um certificado ACM em us-east-1. Obrigatório se Dominio for
       preenchido — CloudFront só aceita certificado dessa região.
 
+  WafWebAclArn:
+    Type: String
+    Default: ''
+    Description: >
+      ARN de um WebACL do AWS WAF v2 com escopo CLOUDFRONT (criado em us-east-1).
+      O Guia decide "CloudFront + AWS WAF (regras gerenciadas) + Shield Standard
+      no dia 1 da produção". O Shield Standard já vem ligado e sem custo em toda
+      distribuição CloudFront; o WAF é cobrado à parte, por isso entra como
+      parâmetro em vez de vir embutido. Vazio = sem WAF.
+
+  ClasseDePreco:
+    Type: String
+    Default: PriceClass_All
+    AllowedValues: [PriceClass_All, PriceClass_200, PriceClass_100]
+    Description: >
+      PriceClass_All é o padrão porque é a ÚNICA classe que inclui pontos de
+      presença na América do Sul — e a §19 define a América do Sul como
+      mercado-alvo, com lançamento pelo Brasil. PriceClass_100 (EUA/Europa)
+      serviria o visitante brasileiro de outro continente.
+
 Conditions:
   TemDominio: !And
     - !Not [!Equals [!Ref Dominio, '']]
     - !Not [!Equals [!Ref CertificadoArn, '']]
+  TemWaf: !Not [!Equals [!Ref WafWebAclArn, '']]
 
 Resources:
 
@@ -168,7 +198,8 @@ Resources:
         DefaultRootObject: index.html
         HttpVersion: http2and3
         IPV6Enabled: true
-        PriceClass: PriceClass_100
+        PriceClass: !Ref ClasseDePreco
+        WebACLId: !If [TemWaf, !Ref WafWebAclArn, !Ref 'AWS::NoValue']
         Aliases: !If [TemDominio, [!Ref Dominio], !Ref 'AWS::NoValue']
         ViewerCertificate: !If
           - TemDominio
