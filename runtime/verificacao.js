@@ -196,3 +196,70 @@ for (const bt of document.querySelectorAll('[data-paleta]')) {
     anunciar(`Paleta ${bt.dataset.paleta} aplicada.`);
   });
 }
+
+/* ---- 11 · Estados vazios e de erro (§72.1 item 1) ---- */
+const palcoEstado = document.getElementById('palco-estado');
+for (const bt of document.querySelectorAll('[data-estado]')) {
+  bt.addEventListener('click', () => {
+    lum.estado(palcoEstado, {
+      estado: bt.dataset.estado,
+      contexto: bt.dataset.contexto || 'geral',
+      acao: { rotulo: 'Tentar de novo', aoAcionar: () => anunciar('Ação do estado acionada.') },
+    });
+  });
+}
+
+/* ---- 12 · Centro de Notificações, snooze e Libras (§69.6 / §72.1 item 5) ---- */
+const centroEstado = document.getElementById('centro-estado');
+function mostrarCentro() {
+  const r = lum.notificacoes.resumoEmConstelacao();
+  centroEstado.textContent = `${r.texto} · histórico: ${lum.notificacoes.historico.length} · ` +
+    `adiadas: ${lum.notificacoes._adiadas.size} · fonte de Libras (fiscal): ` +
+    `${lum.notificacoes.libras.has('fiscal') ? 'registrada' : 'ausente'}`;
+}
+mostrarCentro();
+document.getElementById('abrir-centro').addEventListener('click', () => { lum.centro.abrir(); mostrarCentro(); });
+document.getElementById('encher').addEventListener('click', () => {
+  const cats = ['venda', 'entrega', 'pedido', 'sistema'];
+  for (let i = 0; i < 8; i++) {
+    lum.notificar({ texto: `Evento de demonstração ${i + 1}`, categoria: cats[i % cats.length] });
+  }
+  mostrarCentro();
+});
+document.getElementById('resumo-dia').addEventListener('click', () => {
+  const r = lum.resumoDoDia();
+  centroEstado.textContent = `${r.texto} · constelação: ${r.constelacao ? `${r.constelacao.pontos.length} estrelas` : 'acenda ao menos duas'}`;
+});
+document.getElementById('libras-registrar').addEventListener('click', () => {
+  // Fonte de DEMONSTRAÇÃO da bancada — não é conteúdo de Libras e não se
+  // apresenta como tal. O ponto do teste é o SLOT: que a janela nasça só na
+  // crítica e que a ausência fique auditável. Ver ESCALACOES.md §8.
+  lum.notificacoes.registrarLibras('fiscal', () => {
+    const p = document.createElement('p');
+    p.textContent = '[fonte de demonstração da bancada]';
+    return p;
+  });
+  mostrarCentro();
+});
+
+/* ---- 13 · Telemetria local (§72.1 item 4) ---- */
+const telSaida = document.getElementById('tel-saida');
+document.getElementById('tel-relatorio').addEventListener('click', () => {
+  telSaida.textContent = lum.telemetria.exportar();
+});
+document.getElementById('tel-baixo').addEventListener('click', () => {
+  lum.telemetria.registrarFps(18);          // abaixo do piso de qualquer nível
+  telSaida.textContent = lum.telemetria.exportar();
+});
+document.getElementById('tel-limpar').addEventListener('click', async () => {
+  const ok = await lum.telemetria.limpar();
+  telSaida.textContent = ok ? 'Histórico local apagado.' : 'Sem IndexedDB disponível.';
+});
+
+/* ---- 14 · Onboarding narrado pela Aurora (§72.1 item 6) ---- */
+document.getElementById('abrir-onb').addEventListener('click', () => {
+  lum.onboarding(document.getElementById('palco-onb'), {
+    voz: false,                              // a bancada não fala sozinha
+    aoConcluir: (aceite) => anunciar(`Termos aceitos em ${aceite.aceitoEm}, versão ${aceite.versao}.`),
+  });
+});

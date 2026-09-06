@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Onboarding narrado pela Aurora — §72.1 item 6
+   Superfície de vidro (§70.4) sobre o Céu Vivo. A "Aurora" é a onda de luz da
+   §1 — cortina, nunca bolha (§60.11: "Aurora = aurora boreal, nunca bolha").
+   Zero asset: a cortina é gradiente.
+   ========================================================================== */
+
+.lum-onboarding {
+  position: relative;
+  max-inline-size: 40rem;
+  margin-inline: auto;
+  padding: calc(var(--lum-espaco) * 4);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lum-espaco) * 2);
+  border-radius: var(--lum-raio-superficie);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro);
+  backdrop-filter: blur(var(--lum-vidro-blur));
+  color: var(--lum-texto-2);
+  font-family: var(--lum-fonte);
+}
+
+.lum-onb-quem {
+  display: flex;
+  align-items: center;
+  gap: var(--lum-espaco);
+  margin: 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lum-texto-3);
+}
+
+/* A onda da Aurora: faixa de aurora boreal, não bolha (§60.11). */
+.lum-onb-aurora {
+  inline-size: 44px;
+  block-size: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg,
+    var(--lum-aurora-violeta), var(--lum-aurora-teal), var(--lum-aurora-verde));
+  filter: blur(0.4px);
+  animation: lum-onb-onda 6s var(--lum-ease) infinite;
+}
+
+.lum-onb-titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: var(--lum-texto-1);
+}
+.lum-onb-titulo:focus-visible {
+  outline: var(--lum-foco-espessura) solid var(--lum-foco);
+  outline-offset: var(--lum-foco-deslocamento);
+}
+
+.lum-onb-fala {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--lum-texto-2);
+}
+
+.lum-onb-corpo:empty { display: none; }
+
+.lum-onb-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lum-espaco);
+  margin-block-start: var(--lum-espaco);
+}
+
+.lum-onb-passo {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--lum-texto-3);
+}
+
+.lum-onboarding .lum-botao {
+  min-block-size: var(--lum-alvo-min);
+  min-inline-size: var(--lum-alvo-min);
+  padding-inline: calc(var(--lum-espaco) * 2);
+}
+
+/* §16: o aceite desabilitado precisa PARECER indisponível sem depender só de
+   cor — por isso ele também perde o preenchimento e ganha borda tracejada. */
+.lum-onboarding .lum-botao[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.lum-onb-silenciar {
+  align-self: flex-start;
+  font-size: 0.875rem;
+}
+
+@keyframes lum-onb-onda {
+  0%, 100% { transform: translateX(0) scaleX(1); opacity: 0.9; }
+  50%      { transform: translateX(3px) scaleX(1.08); opacity: 1; }
+}
+
+/* §35 item 8 — movimento reduzido tira o gesto, mantém a cortina. */
+@media (prefers-reduced-motion: reduce) {
+  .lum-onb-aurora { animation: none; }
+}
+[data-lum-nivel="basico"] .lum-onb-aurora { animation: none; }
+
+/* Paleta preto/branco: a cortina vira barra sólida — forma, sem cor. */
+[data-lum-paleta="preto-branco"] .lum-onb-aurora {
+  background: var(--lum-texto-1);
+  filter: none;
+}

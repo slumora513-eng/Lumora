@@ -30,6 +30,41 @@ const CATEGORIAS_CRITICAS = new Set(['fiscal', 'seguranca', 'lgpd', 'pagamento']
 
 const MAX_VISIVEIS = 5;   // §69.5: máx. 4–5 visíveis; excesso vira contador
 
+/* --------------------------------------------------------- §69.6, adiada --
+   "Snooze cósmico — adiar 30 min / 1 h / amanhã."
+   "amanhã" é 8h do dia seguinte, e não "daqui a 24 horas": adiar para amanhã
+   às 3 da manhã não adia nada. (AGENTE — a §69.6 nomeia as três opções e não
+   diz que horas é "amanhã".)                                               */
+export const ADIAMENTOS = {
+  trinta: { rotulo: '30 min', ms: () => 30 * 60000 },
+  hora:   { rotulo: '1 h',    ms: () => 60 * 60000 },
+  amanha: {
+    rotulo: 'Amanhã',
+    ms: () => {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      d.setHours(8, 0, 0, 0);
+      return Math.max(60000, d.getTime() - Date.now());
+    },
+  },
+};
+
+/** §69.6: "Ações rápidas na notificação — venda → 'Ver pedido'; fiscal →
+ *  'Revisar rascunho'". Os dois rótulos são do Guia; os demais, AGENTE. */
+export const ROTULOS_DE_ACAO = {
+  venda:      'Ver pedido',        // GUIA §69.6
+  pedido:     'Ver pedido',        // GUIA §69.6
+  fiscal:     'Revisar rascunho',  // GUIA §69.6
+  entrega:    'Acompanhar entrega',
+  pagamento:  'Ver recebimento',
+  seguranca:  'Revisar acesso',
+  lgpd:       'Ver solicitação',
+  sistema:    'Abrir',
+};
+
+const HISTORICO_MAX = 200;
+const CHAVE_ADIADAS = 'lum:notificacoes-adiadas';
+
 export class NotificacoesVivas {
   /**
    * @param {object} [opcoes]
@@ -47,7 +82,16 @@ export class NotificacoesVivas {
     this.movimentoReduzido = typeof matchMedia === 'function' &&
       matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    /* §69.6 — itens de infraestrutura aprovados em design, cuja priorização a
+       §69.7 registrava como EM ABERTO e que o "pode fazer tudo" do Fundador
+       (05/09/2026) liberou. */
+    this.historico = [];                 // Centro de Notificações
+    this.acoesPorCategoria = new Map();  // ações rápidas registradas
+    this.libras = new Map();             // §72.1 item 5 — ver registrarLibras()
+    this._adiadas = new Map();           // id -> { timer, ate, dados }
+
     this._montarContainers();
+    this._restaurarAdiadas();
   }
 
   _montarContainers() {
@@ -104,7 +148,12 @@ export class NotificacoesVivas {
     // §69.3: categoria crítica manda na urgência, não o chamador.
     if (CATEGORIAS_CRITICAS.has(d.categoria)) d.urgencia = 'critica';
     d.urgencia = URGENCIA[d.urgencia] ? d.urgencia : 'normal';
-    d.id = `lum-n${++this._seq}`;
+    d.id = d.id || `lum-n${++this._seq}`;
+
+    // §69.6 — Centro de Notificações: o histórico nasce aqui, e nasce mesmo
+    // para a notificação que vai direto para a fila. Uma notificação que a
+    // pessoa nunca viu é justamente a que ela precisa achar depois.
+    this._registrar(d, 'nova');
 
     if (this.visiveis.length >= MAX_VISIVEIS) {
       this.fila.push(d);
@@ -140,7 +189,10 @@ export class NotificacoesVivas {
 
     // §69.3: só a classe normal some sozinha. Crítica NUNCA.
     if (regra.some && regra.timeout && !critica) {
-      n.timer = setTimeout(() => this._remover(n), regra.timeout);
+      n.timer = setTimeout(() => {
+        this._registrar(dados, 'expirada');   // sai da tela, fica no Centro
+        this._remover(n);
+      }, regra.timeout);
     }
     return n;
   }
@@ -166,6 +218,7 @@ export class NotificacoesVivas {
     el.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrir(); }
     });
+    this._enfeitar(el, dados);
     this.orbita.appendChild(el);
     return el;
   }
@@ -187,11 +240,159 @@ export class NotificacoesVivas {
     el.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrir(); }
     });
+    this._enfeitar(el, dados);
     this.faixa.appendChild(el);
     return el;
   }
 
+  /* ------------------------------------ §69.6 ações rápidas · §72.1(5) Libras */
+
+  /** Acrescenta à notificação o que as duas seções pedem, nas duas matérias. */
+  _enfeitar(el, dados) {
+    if (dados.urgencia === 'critica') {
+      const libras = this._janelaDeLibras(dados);
+      if (libras) el.appendChild(libras);
+      // Ausência auditável: quem conferir a tela vê que a janela de Libras
+      // não foi esquecida — ela está esperando a fonte (§72.1 item 5).
+      else el.dataset.lumLibras = 'ausente';
+    }
+    const acoes = this._acoes(dados);
+    if (acoes) el.appendChild(acoes);
+  }
+
+  /**
+   * Ações rápidas (§69.6). Aparecem quando há o que acionar:
+   *   - `dados.acoes`, dado por quem publica a notificação;
+   *   - ou a ação registrada para a categoria (`registrarAcao`);
+   *   - mais "Adiar" (§69.6, snooze cósmico) e "Resolver", que este runtime
+   *     resolve sozinho e por isso estão sempre disponíveis.
+   *
+   * O que NÃO está aqui: "Ver pedido" que de fato abre um pedido. O rótulo é
+   * do Guia, o pedido é do produto — este repositório não tem pedidos.
+   */
+  _acoes(dados) {
+    const critica = dados.urgencia === 'critica';
+    const lista = [];
+
+    for (const a of dados.acoes || []) {
+      if (a && typeof a.aoAcionar === 'function') lista.push(a);
+    }
+    const daCategoria = this.acoesPorCategoria.get(dados.categoria);
+    if (daCategoria) {
+      lista.push({
+        rotulo: daCategoria.rotulo || ROTULOS_DE_ACAO[dados.categoria] || 'Abrir',
+        aoAcionar: daCategoria.aoAcionar,
+      });
+    }
+
+    const caixa = document.createElement('span');
+    caixa.className = 'lum-notif-acoes';
+
+    for (const a of lista) {
+      caixa.appendChild(this._botaoDeAcao(a.rotulo, () => {
+        this._registrar(dados, 'resolvida');
+        a.aoAcionar(dados);
+        this.resolver(dados.id);
+      }));
+    }
+
+    // §69.3: a crítica "só sai por ação explícita" — então ela ganha Resolver
+    // e NÃO ganha Adiar. Adiar uma crítica é suprimir aviso de segurança, e
+    // isso a §69.3 chama de inegociável.
+    if (!critica) {
+      caixa.appendChild(this._menuDeAdiamento(dados));
+    }
+    caixa.appendChild(this._botaoDeAcao('Resolver', () => this.resolver(dados.id)));
+
+    return caixa.childElementCount ? caixa : null;
+  }
+
+  _botaoDeAcao(rotulo, aoClicar) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'lum-botao lum-notif-acao';
+    b.textContent = rotulo;
+    // O clique na ação não pode abrir a notificação inteira: são gestos
+    // diferentes no mesmo alvo.
+    b.addEventListener('click', (ev) => { ev.stopPropagation(); aoClicar(); });
+    b.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') ev.stopPropagation(); });
+    return b;
+  }
+
+  /** Snooze cósmico (§69.6): 30 min / 1 h / amanhã. */
+  _menuDeAdiamento(dados) {
+    const caixa = document.createElement('span');
+    caixa.className = 'lum-notif-adiar';
+    caixa.setAttribute('role', 'group');
+    caixa.setAttribute('aria-label', 'Adiar esta notificação');
+    const rotulo = document.createElement('span');
+    rotulo.className = 'lum-notif-adiar-rotulo';
+    rotulo.textContent = 'Adiar';
+    caixa.appendChild(rotulo);
+    for (const [chave, a] of Object.entries(ADIAMENTOS)) {
+      const b = this._botaoDeAcao(a.rotulo, () => this.adiar(dados.id, chave));
+      b.setAttribute('aria-label', `Adiar por ${a.rotulo.toLowerCase()}`);
+      caixa.appendChild(b);
+    }
+    return caixa;
+  }
+
+  /**
+   * Janela de Libras da notificação crítica (§72.1 item 5, APROVADO:
+   * "animação de mãos junto do alerta crítico (§69.3); extensão da
+   * acessibilidade extrema (§60.10)").
+   *
+   * O MECANISMO está aqui inteiro: a janela nasce só na classe crítica, é
+   * região rotulada, acompanha o alerta e some com ele.
+   *
+   * O CONTEÚDO — os sinais — NÃO está, e não podia estar. Libras é língua:
+   * sinal inventado por quem não a conhece não é acessibilidade, é ruído
+   * apresentado como acessibilidade, e o dano cai justamente sobre quem a
+   * função existe para atender. Além disso §48 proíbe a plataforma de gerar
+   * vídeo. Então este slot segue a mesma arquitetura da §49: a fonte é
+   * REGISTRADA de fora (`registrarLibras`), e enquanto não houver registro
+   * nada é desenhado — exatamente como `marca-com-alfa.js` faz quando o
+   * arquivo oficial não carrega.
+   *
+   * A ausência fica auditável em `data-lum-libras="ausente"`, e o texto do
+   * alerta continua sendo o canal garantido (§68.7).
+   */
+  _janelaDeLibras(dados) {
+    if (dados.urgencia !== 'critica') return null;
+    const fonte = this.libras.get(dados.libras || dados.categoria);
+    if (!fonte) { return null; }
+
+    const janela = document.createElement('div');
+    janela.className = 'lum-libras';
+    janela.setAttribute('role', 'group');
+    janela.setAttribute('aria-label', 'Aviso em Libras');
+    janela.dataset.lumLibras = 'presente';
+    const conteudo = typeof fonte === 'function' ? fonte(dados) : fonte;
+    if (conteudo instanceof Node) janela.appendChild(conteudo);
+    else janela.textContent = String(conteudo);
+    return janela;
+  }
+
+  /**
+   * Registra a fonte de Libras de uma categoria ou mensagem.
+   * @param {string} chave  categoria (`fiscal`) ou `dados.libras`
+   * @param {Node|Function|string} fonte  elemento pronto, fábrica ou texto
+   */
+  registrarLibras(chave, fonte) {
+    if (fonte == null) this.libras.delete(chave);
+    else this.libras.set(chave, fonte);
+    return this;
+  }
+
+  /** Registra a ação rápida padrão de uma categoria (§69.6). */
+  registrarAcao(categoria, acao) {
+    if (!acao || typeof acao.aoAcionar !== 'function') this.acoesPorCategoria.delete(categoria);
+    else this.acoesPorCategoria.set(categoria, acao);
+    return this;
+  }
+
   _abrir(dados, el) {
+    this._registrar(dados, 'aberta');
     // §69.1: "o clique abre a ação e o Fio de Ariadne registra onde o usuário
     // estava para voltar" — o evento carrega isso para quem escuta.
     el.dispatchEvent(new CustomEvent('lum:notificacao-aberta', {
@@ -288,11 +489,159 @@ export class NotificacoesVivas {
     return this;
   }
 
+  /* ------------------------------------------------------ §69.6 histórico */
+
+  /** Uma linha por evento. Estados: nova · aberta · resolvida · adiada · expirada. */
+  _registrar(dados, estado) {
+    const anterior = this.historico.find((h) => h.id === dados.id);
+    if (anterior) { anterior.estado = estado; anterior.mudadaEm = Date.now(); return anterior; }
+    const linha = {
+      id: dados.id,
+      texto: dados.texto,
+      categoria: dados.categoria,
+      urgencia: dados.urgencia,
+      em: Date.now(),
+      estado,
+    };
+    this.historico.push(linha);
+    if (this.historico.length > HISTORICO_MAX) this.historico.shift();
+    return linha;
+  }
+
+  /**
+   * Busca no histórico — é o que o Centro de Notificações consome (§69.6:
+   * "histórico pesquisável (…) filtro por tipo").
+   * @param {{texto?: string, categoria?: string, estado?: string}} [filtro]
+   */
+  buscar(filtro = {}) {
+    const t = String(filtro.texto || '').trim().toLowerCase();
+    return this.historico.filter((h) => {
+      if (filtro.categoria && h.categoria !== filtro.categoria) return false;
+      if (filtro.estado && h.estado !== filtro.estado) return false;
+      if (t && !`${h.texto} ${rotuloCategoria(h.categoria)}`.toLowerCase().includes(t)) return false;
+      return true;
+    }).slice().reverse();      // mais recente primeiro
+  }
+
+  /** Marca como resolvida e tira da tela (§69.6, "ação direta: Resolver"). */
+  resolver(id) {
+    const n = this.visiveis.find((x) => x.dados.id === id);
+    this._registrar({ id }, 'resolvida');
+    this.fila = this.fila.filter((d) => d.id !== id);
+    if (n) this._remover(n);
+    this._atualizarContador();
+    return this;
+  }
+
+  /**
+   * Snooze cósmico (§69.6). A notificação sai da tela e volta sozinha.
+   *
+   * O adiamento é gravado em localStorage e rearmado na próxima montagem —
+   * senão "adiar para amanhã" viraria "esquecer", que é o oposto do pedido.
+   *
+   * §69.3 é inegociável: CRÍTICA NÃO ADIA. Adiar uma crítica seria suprimir
+   * aviso de segurança, e a §69.3 diz que eles "mudam de roupa, nunca de
+   * comportamento".
+   *
+   * @param {string} id
+   * @param {'trinta'|'hora'|'amanha'} [quando='trinta']
+   * @returns {number|null} quando volta (epoch ms), ou null se não adiou
+   */
+  adiar(id, quando = 'trinta') {
+    const regra = ADIAMENTOS[quando] || ADIAMENTOS.trinta;
+    const n = this.visiveis.find((x) => x.dados.id === id);
+    const daFila = this.fila.find((d) => d.id === id);
+    const dados = n?.dados || daFila;
+    if (!dados) return null;
+    if (dados.urgencia === 'critica') return null;      // §69.3
+
+    const espera = regra.ms();
+    const ate = Date.now() + espera;
+    this.fila = this.fila.filter((d) => d.id !== id);
+    if (n) this._remover(n);
+    this._registrar(dados, 'adiada');
+    this._agendar({ ...dados, aoAbrir: undefined }, ate, espera);
+    this._salvarAdiadas();
+    this._atualizarContador();
+    return ate;
+  }
+
+  _agendar(dados, ate, espera) {
+    const timer = setTimeout(() => {
+      this._adiadas.delete(dados.id);
+      this._salvarAdiadas();
+      this._mostrar({ ...dados });
+      this._registrar(dados, 'nova');
+    }, Math.max(0, Math.min(espera, 2 ** 31 - 1)));
+    this._adiadas.set(dados.id, { timer, ate, dados });
+  }
+
+  _salvarAdiadas() {
+    try {
+      const lista = [...this._adiadas.values()].map(({ ate, dados }) => ({
+        ate, dados: { ...dados, aoAbrir: undefined, acoes: undefined },
+      }));
+      localStorage.setItem(CHAVE_ADIADAS, JSON.stringify(lista));
+    } catch { /* modo privado: o adiamento vale só nesta sessão */ }
+  }
+
+  /** Rearma o que foi adiado antes de a página fechar; o que já venceu volta. */
+  _restaurarAdiadas() {
+    let lista = [];
+    try { lista = JSON.parse(localStorage.getItem(CHAVE_ADIADAS) || '[]'); }
+    catch { return; }
+    if (!Array.isArray(lista)) return;
+    for (const item of lista) {
+      const d = item?.dados;
+      if (!d || !d.id || !d.texto) continue;
+      const espera = (item.ate || 0) - Date.now();
+      if (espera <= 0) { this.notificar({ ...d, id: undefined }); continue; }
+      this._registrar(d, 'adiada');
+      this._agendar(d, item.ate, espera);
+    }
+    this._salvarAdiadas();
+  }
+
+  /**
+   * Resumo em constelação (§69.6): "consolidação do dia (N eventos + link
+   * para o Replay do Dia §61)".
+   *
+   * Devolve o número, não desenha o céu: quem desenha a Constelação do Dia é
+   * o Céu Vivo (§71.1), e `Lumora.resumoDoDia()` amarra os dois. Aqui só se
+   * conta o que aconteceu, porque é aqui que está o histórico.
+   */
+  resumoEmConstelacao(desde = inicioDoDia()) {
+    const doDia = this.historico.filter((h) => h.em >= desde);
+    const porCategoria = {};
+    for (const h of doDia) porCategoria[h.categoria] = (porCategoria[h.categoria] || 0) + 1;
+    const pendentes = doDia.filter((h) => h.estado === 'nova' || h.estado === 'adiada').length;
+    return {
+      total: doDia.length,
+      pendentes,
+      porCategoria,
+      // (AGENTE — a §69.6 pede a consolidação e não escreve a frase.)
+      texto: doDia.length
+        ? `${doDia.length} evento${doDia.length > 1 ? 's' : ''} hoje` +
+          (pendentes ? `, ${pendentes} ainda em aberto.` : ', tudo resolvido.')
+        : 'Nenhum evento hoje ainda.',
+      replayDoDia: '§61',   // o Replay é do produto; aqui fica o vínculo
+    };
+  }
+
   destruir() {
     for (const n of this.visiveis) if (n.timer) clearTimeout(n.timer);
+    for (const { timer } of this._adiadas.values()) clearTimeout(timer);
+    this._adiadas.clear();
     this.orbita.remove();
     this.faixa.remove();
   }
+}
+
+/** Meia-noite local de hoje. */
+function inicioDoDia() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
 }
 
 /* ------------------------------------------------------------------ apoio */

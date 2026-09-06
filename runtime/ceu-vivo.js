@@ -491,6 +491,9 @@ export class CeuVivo {
     const fps = (this._amostrasFps.length - 1) / (janela / 1000);
     this._amostrasFps.length = 0;
     this.fps = Math.round(fps);
+    // A medida bruta vai para a Telemetria Local (§72.1 item 4), que é quem
+    // decide subir de nível — o Céu Vivo só sabe descer, e uma vez só.
+    this.aoMedirFps?.(fps);
 
     if (this._rebaixado) return;
     let novo = null;

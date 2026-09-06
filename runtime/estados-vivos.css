@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Estados vazios e de erro com identidade — §72.1 item 1
+   "zero assets", diz a própria linha da tabela. Então a cena de cada estado é
+   feita de gradiente radial e forma, não de imagem: nada aqui pede rede,
+   decodificação ou GPU.
+
+   A forma é canal de informação junto com o texto (§35 item 3): cada estado
+   tem silhueta diferente, e não só cor diferente. Na paleta preto/branco as
+   cores somem e a silhueta continua distinguindo.
+   ========================================================================== */
+
+.lum-estado-vivo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--lum-espaco) * 1.5);
+  min-block-size: 220px;
+  padding: calc(var(--lum-espaco) * 4) calc(var(--lum-espaco) * 2);
+  text-align: center;
+  color: var(--lum-texto-2);
+  font-family: var(--lum-fonte);
+}
+
+/* A cena: um corpo de luz, com a silhueta mudando por estado. */
+.lum-estado-cena {
+  inline-size: 92px;
+  block-size: 92px;
+  border-radius: var(--lum-raio-bolha);
+  background:
+    radial-gradient(circle at 38% 34%, var(--lum-vidro-brilho), transparent 55%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--lum-azul) 45%, transparent), transparent 70%);
+  border: 1px solid var(--lum-vidro-borda);
+  position: relative;
+  flex: none;
+}
+
+.lum-estado-frase {
+  margin: 0;
+  max-inline-size: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--lum-texto-1);
+}
+
+.lum-estado-detalhe {
+  margin: 0;
+  max-inline-size: 52ch;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--lum-texto-3);
+}
+
+.lum-estado-acao {
+  min-block-size: var(--lum-alvo-min);
+  min-inline-size: var(--lum-alvo-min);
+  padding-inline: calc(var(--lum-espaco) * 2);
+}
+
+/* ---------------------------------------------------------- por estado --
+   vazio        círculo cheio, respirando devagar — há lugar, falta conteúdo
+   carregando   igual ao vazio, mas girando
+   semResultado círculo com um vinco: procurou-se e não se achou
+   erro         losango — a mesma terceira forma das notificações "alta"
+   semConexao   círculo cortado ao meio: o sinal partido
+   rotaPerdida  quadrado girado com o miolo vazado: a tela que não existe   */
+
+[data-lum-estado="vazio"] .lum-estado-cena,
+[data-lum-estado="carregando"] .lum-estado-cena {
+  animation: lum-estado-respira var(--lum-respiracao-ciclo) var(--lum-ease) infinite;
+}
+
+[data-lum-estado="carregando"] .lum-estado-cena::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 2px solid transparent;
+  border-block-start-color: var(--lum-violeta);
+  animation: lum-estado-gira 1.6s linear infinite;
+}
+
+[data-lum-estado="semResultado"] .lum-estado-cena {
+  clip-path: polygon(0 0, 100% 0, 100% 38%, 62% 62%, 100% 62%, 100% 100%, 0 100%);
+}
+
+[data-lum-estado="erro"] .lum-estado-cena {
+  border-radius: var(--lum-raio-campo);
+  rotate: 45deg;
+  border-color: var(--lum-erro);
+  background:
+    radial-gradient(circle at 38% 34%, var(--lum-vidro-brilho), transparent 55%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--lum-erro) 40%, transparent), transparent 72%);
+}
+
+[data-lum-estado="semConexao"] .lum-estado-cena {
+  border-color: var(--lum-atencao);
+  clip-path: polygon(0 0, 100% 0, 100% 42%, 0 42%, 0 58%, 100% 58%, 100% 100%, 0 100%);
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--lum-atencao) 38%, transparent), transparent 72%);
+}
+
+[data-lum-estado="rotaPerdida"] .lum-estado-cena {
+  border-radius: var(--lum-raio-superficie);
+  rotate: 45deg;
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--lum-vidro-borda);
+}
+
+/* ------------------------------------------------------- acessibilidade --
+   §35 item 8: movimento reduzido tira o gesto e mantém a informação. A cena
+   para de respirar e de girar; a frase, a forma e a ação continuam.        */
+@media (prefers-reduced-motion: reduce) {
+  .lum-estado-cena,
+  .lum-estado-cena::after { animation: none !important; }
+}
+
+/* §36 nível básico: mesma regra por outro motivo — aparelho fraco. */
+[data-lum-nivel="basico"] .lum-estado-cena,
+[data-lum-nivel="basico"] .lum-estado-cena::after { animation: none; }
+
+/* Paleta preto/branco (§35 item 7): sem cor nenhuma, só forma e texto. */
+[data-lum-paleta="preto-branco"] .lum-estado-cena {
+  background: none;
+  border-color: var(--lum-texto-1);
+}
+
+@keyframes lum-estado-respira {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%      { transform: scale(var(--lum-respiracao-escala)); opacity: 1; }
+}
+
+@keyframes lum-estado-gira {
+  to { transform: rotate(360deg); }
+}
+
+/* Impressão (§70.5/§8): a tela vazia impressa vira só a frase. */
+@media print {
+  .lum-estado-cena { display: none; }
+  .lum-estado-vivo { min-block-size: 0; padding: 0; color: #000; }
+  .lum-estado-frase { color: #000; }
+}

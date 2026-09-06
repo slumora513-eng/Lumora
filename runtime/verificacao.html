@@ -13,6 +13,8 @@
 <link rel="stylesheet" href="interface-viva.css">
 <link rel="stylesheet" href="animacoes.css">
 <link rel="stylesheet" href="atlas-estelar.css">
+<link rel="stylesheet" href="estados-vivos.css">
+<link rel="stylesheet" href="onboarding-aurora.css">
 <style>
   /* Estilos SÓ desta página de verificação. Não fazem parte do runtime. */
   * { box-sizing: border-box; }
@@ -265,6 +267,42 @@
       <span class="aviso">Clique na estrela</span></div>
   </div>
   <canvas id="sismo" class="lum-sismografo"></canvas>
+
+  <h2>11 · Estados vazios e de erro <span class="aviso">§72.1 item 1</span></h2>
+  <div class="linha">
+    <button class="lum-botao" data-estado="vazio">Vazio</button>
+    <button class="lum-botao" data-estado="semResultado">Sem resultado</button>
+    <button class="lum-botao" data-estado="erro">Erro</button>
+    <button class="lum-botao" data-estado="semConexao">Sem conexão</button>
+    <button class="lum-botao" data-estado="rotaPerdida">Rota perdida</button>
+    <button class="lum-botao" data-estado="erro" data-contexto="fiscal">Erro fiscal (§70.3 — sem humor)</button>
+  </div>
+  <div id="palco-estado" class="lum-card" style="margin-top:12px"></div>
+
+  <h2>12 · Centro de Notificações e snooze <span class="aviso">§69.6</span></h2>
+  <p class="aviso">O contador "+3" da órbita também abre o Centro. Crítica não adia (§69.3).</p>
+  <div class="linha">
+    <button class="lum-botao" id="abrir-centro">Abrir o Centro</button>
+    <button class="lum-botao" id="encher">Publicar 8 notificações</button>
+    <button class="lum-botao" id="resumo-dia">Resumo em constelação</button>
+    <button class="lum-botao" id="libras-registrar">Registrar fonte de Libras (fiscal)</button>
+  </div>
+  <p class="medidor" id="centro-estado"></p>
+
+  <h2>13 · Telemetria local <span class="aviso">§72.1 item 4 · §36</span></h2>
+  <p class="aviso">Nada sai do aparelho. O relatório abaixo é lido do próprio runtime.</p>
+  <div class="linha">
+    <button class="lum-botao" id="tel-relatorio">Ler o relatório</button>
+    <button class="lum-botao" id="tel-baixo">Simular aparelho sofrendo</button>
+    <button class="lum-botao" id="tel-limpar">Apagar o histórico local</button>
+  </div>
+  <pre class="medidor" id="tel-saida" style="white-space:pre-wrap"></pre>
+
+  <h2>14 · Onboarding narrado pela Aurora <span class="aviso">§72.1 item 6 · §16</span></h2>
+  <p class="aviso">O aceite dos termos só libera após 10 segundos (§16). A narração é a voz
+     nativa do sistema, e o texto está sempre na tela (§68.7).</p>
+  <div class="linha"><button class="lum-botao" id="abrir-onb">Começar o onboarding</button></div>
+  <div id="palco-onb" style="margin-top:12px"></div>
 </main>
 
 <script type="module" src="verificacao.js"></script>

@@ -309,3 +309,157 @@
   .lum-faixa-aurora > *:nth-child(n + 3) { display: none; }
   .lum-orbita { max-inline-size: calc(100vw - 24px); }
 }
+
+/* ==========================================================================
+   §69.6 — ações rápidas, snooze cósmico e Centro de Notificações
+   §72.1 item 5 — janela de Libras da notificação crítica
+   Acrescentado em 06/09/2026, com o "pode fazer tudo" do Fundador.
+   ========================================================================== */
+
+/* ---------------------------------------------- ações dentro da notificação */
+
+.lum-notif-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: 8px;
+  grid-column: 1 / -1;
+}
+
+.lum-notif-acao {
+  /* §35: alvo mínimo de 44px é do gesto principal; aqui, dentro de uma
+     notificação de 320px, o alvo confortável vem da área clicável ampliada
+     com padding vertical, sem empurrar a bolha para fora da órbita. */
+  min-block-size: 32px;
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+  border-radius: var(--lum-raio-campo);
+}
+
+.lum-notif-adiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lum-notif-adiar-rotulo {
+  font-size: 0.75rem;
+  color: var(--lum-texto-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ------------------------------------------------------ janela de Libras --
+   §72.1 item 5: acompanha o alerta crítico. Fica ao lado do texto, nunca no
+   lugar dele — o texto é o canal garantido (§68.7).                        */
+
+.lum-libras {
+  display: block;
+  inline-size: 132px;
+  aspect-ratio: 4 / 3;
+  margin-block-start: 8px;
+  border-radius: var(--lum-raio-campo);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro-solido);
+  overflow: hidden;
+}
+
+.lum-libras > * { inline-size: 100%; block-size: 100%; object-fit: contain; }
+
+/* ---------------------------------------------- Centro de Notificações -- */
+
+.lum-centro {
+  position: fixed;
+  inset-block: 5vh;
+  inset-inline-end: 2vw;
+  inline-size: min(30rem, 94vw);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lum-espaco);
+  padding: calc(var(--lum-espaco) * 2);
+  border-radius: var(--lum-raio-superficie);
+  border: 1px solid var(--lum-vidro-borda);
+  background: var(--lum-vidro);
+  backdrop-filter: blur(var(--lum-vidro-blur));
+  color: var(--lum-texto-2);
+  font-family: var(--lum-fonte);
+  overflow: hidden;
+}
+
+.lum-centro[hidden] { display: none; }
+
+.lum-centro-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lum-espaco);
+}
+
+.lum-centro-titulo { margin: 0; font-size: 1.125rem; color: var(--lum-texto-1); }
+
+.lum-centro-filtros { display: flex; gap: var(--lum-espaco); }
+
+.lum-centro-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  font-size: 0.75rem;
+  color: var(--lum-texto-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.lum-centro-resumo { margin: 0; font-size: 0.875rem; color: var(--lum-texto-3); }
+
+.lum-centro-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lum-espaco);
+}
+
+.lum-centro-linha {
+  padding: var(--lum-espaco);
+  border-radius: var(--lum-raio-campo);
+  border: 1px solid var(--lum-vidro-borda);
+  /* A barra lateral repete o estado que já está escrito no cabeçalho — é
+     reforço, nunca o único canal (§35 item 3). */
+  border-inline-start-width: 4px;
+}
+
+.lum-centro-linha[data-estado="nova"]      { border-inline-start-color: var(--lum-atencao); }
+.lum-centro-linha[data-estado="adiada"]    { border-inline-start-color: var(--lum-aurora-teal); }
+.lum-centro-linha[data-estado="resolvida"] { border-inline-start-color: var(--lum-ok); }
+.lum-centro-linha[data-estado="expirada"]  { border-inline-start-color: var(--lum-texto-3); }
+
+.lum-centro-cab {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  color: var(--lum-texto-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.lum-centro-texto { margin: 0 0 8px; color: var(--lum-texto-1); font-size: 0.9375rem; }
+
+.lum-centro-acoes { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.lum-centro-acao {
+  min-block-size: 32px;
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+  border-radius: var(--lum-raio-campo);
+}
+
+.lum-centro-vazio { border: none; padding: 0; }
+.lum-centro-vazio .lum-estado-vivo { min-block-size: 140px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lum-centro { transition: none; }
+}

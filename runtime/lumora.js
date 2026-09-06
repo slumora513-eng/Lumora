@@ -34,6 +34,10 @@ import {
   NebulosaDeAcoes, RastroDeAurora, SismografoVivo,
   PoeiraDeInteracao, FioDeAriadne, Estrelinha, ComandosDeVoz,
 } from './interface-viva.js';
+import { CentroDeNotificacoes } from './centro-de-notificacoes.js';
+import { TelemetriaLocal, NIVEIS } from './telemetria-local.js';
+import { estadoVivo, aplicarEstados, rotaPerdida, ESTADOS } from './estados-vivos.js';
+import { OnboardingAurora, ROTEIRO_PADRAO, ESPERA_DOS_TERMOS_MS } from './onboarding-aurora.js';
 
 const PALETAS_VALIDAS = new Set([
   'padrao', 'preto-branco', 'daltonismo',
@@ -96,6 +100,19 @@ export class Lumora {
     this.fio = new FioDeAriadne({ raiz: this.raiz });        // §68.3
     this.estrelinha = new Estrelinha();                      // §68.4
     this.nebulosa = new NebulosaDeAcoes({ acoes: opcoes.acoes || [] }); // §67.1
+
+    // §69.6 — o Centro de Notificações, que é o destino do contador "+3" que
+    // a §69.5 já despachava e ninguém escutava. Entra na Nebulosa (Ctrl+K),
+    // que é onde a §69.6 manda ele morar.
+    this.centro = new CentroDeNotificacoes(this.notificacoes, { raiz: this.raiz });
+    this.nebulosa.definirAcoes([...(opcoes.acoes || []), this.centro.comoAcaoDaNebulosa()]);
+
+    // §72.1 item 4 — telemetria local. O nível detectado na entrada vira o
+    // TETO: o aparelho pode recuperar fôlego, não pode virar outro aparelho.
+    this.telemetria = new TelemetriaLocal({
+      nivel: this.nivel, tetoDoAparelho: this.nivel, alvo: document.documentElement,
+    }).iniciar();
+    this._ligarTelemetria();
 
     this.sismografo = opcoes.canvasSismografo                // §67.4
       ? new SismografoVivo(opcoes.canvasSismografo)
@@ -183,6 +200,42 @@ export class Lumora {
     return this.ceu ? this.ceu.constelacaoDoDia() : null;
   }
 
+  /**
+   * Resumo em constelação (§69.6): consolidação do dia. Conta os eventos no
+   * histórico das notificações E desenha a Constelação do Dia (§71.1) — é o
+   * mesmo dia visto pelos dois lados, e por isso é uma chamada só.
+   */
+  resumoDoDia() {
+    const resumo = this.notificacoes.resumoEmConstelacao();
+    resumo.constelacao = this.constelacaoDoDia();
+    anunciar(resumo.texto);
+    return resumo;
+  }
+
+  /** Estado vazio ou de erro com identidade (§72.1 item 1). */
+  estado(alvo, opcoes = {}) {
+    return estadoVivo(alvo, { sotaque: this.sotaque, ...opcoes });
+  }
+
+  /**
+   * Onboarding narrado pela Aurora (§72.1 item 6).
+   * A narração usa a voz nativa; o anúncio de acessibilidade usa o mesmo
+   * canal aria-live de todo o resto (§68.7: voz nunca é canal único).
+   */
+  onboarding(raiz = this.raiz, opcoes = {}) {
+    this.onb?.destruir();
+    this.onb = new OnboardingAurora(raiz, {
+      idioma: this.sotaque.idioma,
+      sotaque: this.sotaque,
+      anunciar: (texto, urgencia) => anunciar(texto, urgencia),
+      ...opcoes,
+    });
+    return this.onb;
+  }
+
+  /** Relatório da telemetria local (§72.1 item 4). Nada disto saiu daqui. */
+  relatorioDeDesempenho() { return this.telemetria.relatorio(); }
+
   /** Modo Foco / Respiração do Céu (§13 + §67.3).
    *  Além de desacelerar as estrelas, marca o documento para que as
    *  notificações saibam que estão em não-perturbe (§69.5). */
@@ -219,6 +272,11 @@ export class Lumora {
   }
 
   destruir() {
+    this.onb?.destruir();
+    this.centro.destruir();
+    this.telemetria.destruir();
+    document.documentElement.removeEventListener('lum:nivel-aviso', this._onAviso);
+    document.documentElement.removeEventListener('lum:nivel', this._onNivel);
     this.atlas?.destruir();
     this.camada?.destruir();
     this.raiz.removeEventListener('pointerdown', this._onRespingo);
@@ -248,6 +306,38 @@ export class Lumora {
     if (conexao || nucleos <= 2 || memoria <= 2) return 'basico';
     if (nucleos <= 4 || memoria <= 4) return 'economico';
     return 'pleno';
+  }
+
+  /**
+   * Amarra a Telemetria Local (§72.1 item 4) à Otimização Adaptativa (§36).
+   *
+   * Três fios:
+   *   1. o Céu Vivo entrega cada medida de fps à telemetria;
+   *   2. a telemetria decide o nível — e é a única que sabe SUBIR;
+   *   3. o "aviso discreto" que a §36 exige vira texto anunciado, porque
+   *      efeito visual sozinho não é aviso (§35 item 3).
+   */
+  _ligarTelemetria() {
+    if (this.ceu) this.ceu.aoMedirFps = (fps) => this.telemetria.registrarFps(fps);
+    else this.telemetria.observarQuadros();
+
+    this._onNivel = (ev) => this._aplicarNivel(ev.detail?.nivel);
+    this._onAviso = (ev) => { if (ev.detail?.texto) anunciar(ev.detail.texto); };
+    document.documentElement.addEventListener('lum:nivel', this._onNivel);
+    document.documentElement.addEventListener('lum:nivel-aviso', this._onAviso);
+  }
+
+  /** Espalha o nível §36 por todos os módulos que desenham. */
+  _aplicarNivel(nivel) {
+    if (!NIVEIS.includes(nivel) || nivel === this.nivel) return this;
+    this.nivel = nivel;
+    document.documentElement.dataset.lumNivel = nivel;
+    this.ceu?.definirNivel(nivel);
+    this.camada?.definirNivel(nivel);
+    this.viagem.nivel = nivel;
+    this.animacoes.nivel = nivel;
+    this.poeira.nivel = nivel;
+    return this;
   }
 
   /** Respingo de vidro líquido no clique (§70.4, passo 1 da Fase 3A).
@@ -333,4 +423,7 @@ export {
   FioDeAriadne, Estrelinha, ComandosDeVoz,
   aplicarMarcas, marcaComAlfa,
   CamadaDeSistema, SISTEMAS, SEM_CAMADA,
+  CentroDeNotificacoes, TelemetriaLocal, NIVEIS,
+  estadoVivo, aplicarEstados, rotaPerdida, ESTADOS,
+  OnboardingAurora, ROTEIRO_PADRAO, ESPERA_DOS_TERMOS_MS,
 };
