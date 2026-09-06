@@ -16,7 +16,7 @@ Estética procedural da Lumora em código. **Zero asset, zero rede, zero depend�
 | 2 | 🌌 **Céu Vivo** (ambiente) | `ceu-vivo.js` | ✅ completo (Canvas 2D) |
 | 3 | 💬 **Sotaque Cósmico** (textos) | `sotaque-cosmico.js` | ✅ completo |
 | 4 | 🚀 **Viagem Cósmica** (transições) | `viagem-cosmica.js` | ✅ completo |
-| 5 | 📜 **Documentos com Alma** (PDF) | `documentos-com-alma.{css,js}` | ⚠️ área da L reservada (falta arquivo com alfa) |
+| 5 | 📜 **Documentos com Alma** (PDF) | `documentos-com-alma.{css,js}` | ✅ completo — a L entra por `marca-com-alfa.js` |
 | 6 | 🌈 **Acessibilidade Bonita** | `acessibilidade-bonita.css` | ✅ **6 de 6 paletas** |
 
 ## Extensão de 05/09/2026 — "pode fazer tudo"
@@ -29,6 +29,26 @@ O Fundador estendeu o "pode ir" às animações. Saíram do bloqueio:
 | **Notificações Vivas** — bolha (Elio), faixa-onda (Aurora), Bólido, hierarquia de urgência, identidade sonora WebAudio | `notificacoes-vivas.{js,css}` | §69 · §67.5 · §72.1(3) |
 | **Navegação em Bolhas e em Ondas** | `navegacao.{js,css}` | §65.3 · §66 |
 | **Interface Viva** — Nebulosa de Ações, Rastro de Aurora, Sismógrafo Vivo, Poeira de Interação, Fio de Ariadne, Estrelinha, Comandos de Voz, Estrela do Usuário, Clima do Dia | `interface-viva.{js,css}` | §67 · §68 |
+
+## A rodada de 06/09/2026 — o que estava aprovado e sem código
+
+A §72.1 aprovou seis funções em 02/09/2026 (*"eu apoio essas seis candidatas, pode colocar
+todas"*) e **cinco ficaram marcadas "código na rodada a agendar"**. A §69.7 registrava a
+priorização da §69.6 como **"PRIORIZAÇÃO EM ABERTO"**. O *"pode fazer tudo"* do Fundador
+liberou as duas coisas; o que faltava era executar.
+
+| Módulo | Arquivos | Guia |
+|---|---|---|
+| **Estados vazios e de erro com identidade** — seis estados, forma própria por estado, contexto crítico caindo para o catálogo neutro | `estados-vivos.{js,css}` | §72.1 item 1 · §70.3 |
+| **Telemetria local de desempenho** — fps, long tasks, armazenamento, histerese, teto do aparelho e o **aviso em texto** que a §36 exigia | `telemetria-local.js` | §72.1 item 4 · §36 |
+| **Libras** — datilologia com velocidade ajustável e a janela da notificação crítica | `libras.js` | §72.1 item 5 · §60.3 |
+| **Onboarding narrado pela Aurora** — voz nativa, texto em paralelo e a **regra dos 10s** | `onboarding-aurora.{js,css}` | §72.1 item 6 · §16 · §68.6(1) |
+| **Centro de Notificações** — histórico pesquisável, filtro por tipo, Resolver/Abrir/Adiar | `centro-de-notificacoes.js` | §69.6 |
+| **Snooze cósmico, ações rápidas e resumo em constelação** | dentro de `notificacoes-vivas.js` | §69.6 |
+| **Vista de Pátio** — gira, afasta, anuncia e abre a dashboard dentro de uma bolha | `vista-de-patio.js` + CSS em `interface-viva.css` | §65.4 · criatividade 3 da §61 |
+
+Do item 3 (identidade sonora WebAudio) o código já existia; o item 2 era de spec, não de
+runtime. **Os seis estão de pé.**
 
 Base compartilhada: `tokens.css`. Bootstrap: `lumora.js`.
 
@@ -57,6 +77,8 @@ sem motivo extra* (§65.1). Nenhuma cena é provisória.
 <link rel="stylesheet" href="runtime/acessibilidade-bonita.css">
 <link rel="stylesheet" href="runtime/animacoes.css">   <!-- texto das aberturas -->
 <link rel="stylesheet" href="runtime/atlas-estelar.css">
+<link rel="stylesheet" href="runtime/estados-vivos.css">
+<link rel="stylesheet" href="runtime/onboarding-aurora.css">
 
 <body class="lum-raiz">
   <canvas id="ceu" aria-hidden="true"></canvas>
@@ -75,6 +97,13 @@ sem motivo extra* (§65.1). Nenhuma cena é provisória.
   lum.definirPaleta('daltonismo');                    // §35 item 7
   lum.abrirAtlas(elemento, { dados: catalogo });      // §16 Atlas Estelar
   anunciar('Pedido autorizado.', 'assertive');        // §69.5
+
+  lum.estado(caixa, { estado: 'vazio' });             // §72.1 item 1
+  lum.centro.abrir();                                 // §69.6
+  lum.notificacoes.adiar(id, 'amanha');               // §69.6 snooze cósmico
+  lum.resumoDoDia();                                  // §69.6 + §71.1
+  lum.relatorioDeDesempenho();                        // §72.1 item 4 — local
+  lum.onboarding(palco);                              // §72.1 item 6
 </script>
 ```
 
@@ -99,7 +128,12 @@ Estas não são convenções que alguém possa esquecer — estão no caminho de
 | **Cor nunca carrega informação sozinha** (§35 item 3) | `.lum-estado` e `.lum-doc-status` injetam ícone por `::before` em toda paleta, inclusive preto/branco |
 | **Campo é geométrico, não bolha** (§65.3) | `tokens.css` aplica `--lum-raio-campo` a inputs, selects, textareas e tabelas |
 | **Nada pisca acima de 3 Hz** (§35 item 8) | Ciclo de respiração fixado em 3 s (0,33 Hz) |
-| **Telemetria local, sem analytics externo** (§72.1 item 4) | `_medirFps()` mede no aparelho e rebaixa o nível §36; nada sai |
+| **Telemetria local, sem analytics externo** (§72.1 item 4) | `telemetria-local.js` mede fps, long tasks e armazenamento no aparelho, guarda em IndexedDB local e decide o nível §36. **Não existe `fetch`, `XMLHttpRequest`, `sendBeacon` nem `WebSocket` no arquivo** — e a suíte verifica isso lendo o próprio código |
+| **O aviso do rebaixamento é texto, não só efeito** (§36 + §35 item 3) | `lum:nivel-aviso` carrega a frase, e `Lumora` a anuncia por `aria-live` |
+| **Humor nunca no estado de erro crítico** (§70.3) | `estadoVivo()` passa o contexto ao Sotaque, que troca de catálogo sozinho |
+| **Crítica não adia, por caminho nenhum** (§69.3) | `adiar()` recusa, o botão não é criado na notificação e o Centro não o oferece |
+| **Voz nunca é o único canal** (§68.7) | o onboarding lê **o mesmo nó de texto** que está na tela; sem `speechSynthesis`, nada se perde |
+| **A espera de 10s dos termos é real** (§16) | o aceite nasce desabilitado, `aceitar()` recusa antes da hora, e voltar um passo não reinicia nem encurta a contagem |
 | **Custo zero** (§65.5, §71) | Verificado: **0 pedidos externos** de rede |
 
 ---
@@ -110,12 +144,13 @@ Estas não são convenções que alguém possa esquecer — estão no caminho de
 python3 -m http.server 8765          # na raiz do repositório
 # abre http://localhost:8765/runtime/verificacao.html
 
-node ferramentas/testes/rodar.mjs    # as 135 checagens, de uma vez
+node ferramentas/testes/rodar.mjs    # as 271 checagens, de uma vez
 ```
 
 `verificacao.html` é bancada de teste local — **não é produto nem asset de marca**.
 
-Conferido em Chromium, **135 checagens automatizadas**, todas passando:
+**271 checagens automatizadas**, todas passando — 207 em Chromium sobre `verificacao.html` e
+64 em Node puro, porque o Blueprint da §50 é formato de arquivo e não precisa de navegador:
 
 | Suíte | Checagens |
 |---|---|
@@ -127,7 +162,9 @@ Conferido em Chromium, **135 checagens automatizadas**, todas passando:
 | Camada de texto das aberturas | 21 |
 | Atlas Estelar | 22 |
 | **Marca com alfa** | **14** |
-| **Camada de sistema (§65.1)** | **17** |
+| **Camada de sistema (§65.1)** | **18** |
+| **Estados vivos, Centro, telemetria, Libras, onboarding e Vista de Pátio** | **71** |
+| **Blueprint Universal (§50) — formato e validador** | **64** |
 
 **0 pedidos de rede externos** (custo zero, §65.5). As mesmas suítes rodam contra um site
 publicado (`LUM_BASE=https://…`), o que testa o deploy junto com o código — ver
@@ -145,18 +182,25 @@ python3 ferramentas/verificar_daltonismo.py --tudo   # as seis paletas sob dicro
 ## O que este runtime NÃO faz
 
 - **Não desenha a L canônica.** Ela está confirmada
-  ([`../docs/11-l-canonica.md`](../docs/11-l-canonica.md)), mas os 9 arquivos
-  que a portam são JPEG sem alfa. `documentos-com-alma.css` **reserva** a área
-  e a deixa vazia. Desenhar um substituto violaria a regra 14.
+  ([`../docs/11-l-canonica.md`](../docs/11-l-canonica.md)) e entra na tela por
+  **medição**, não por desenho: `marca-com-alfa.js` recupera o alfa que o JPEG
+  achatou. Desenhar um substituto violaria a regra 14 — e continua proibido.
 - **Não gera arquivo de mídia** — imagem, vídeo ou áudio. §48 continua valendo;
   o que existe é código procedural.
 - **Não substitui o profissional contratado.** §64.2 (cronograma, fornecedor,
   execução) segue congelada. As cenas procedurais preenchem o slot até os
   vídeos finais chegarem, e viram fallback depois.
-- **Não compõe a L canônica sobre papel claro.** Sobre o Céu Vivo a marca já
-  funciona com `.lum-marca-ceu` (`mix-blend-mode: screen`, sem tocar num pixel);
-  sobre papel branco nenhum modo de mistura recupera a transparência. O
-  papel-mãe mantém a área reservada — [`../ESCALACOES.md`](../ESCALACOES.md) §3.
+- **Não compõe o wordmark "LUMORA" sobre papel claro.** Ele é branco, e branco
+  sobre papel branco some — resultado fisicamente correto, não falha da
+  extração. Para isso falta uma versão em tinta escura do produtor. A **L**,
+  que é o que §70.5/§71.5 pedem, é cromática e sobrevive ao papel: desde
+  05/09/2026 o cabeçalho do papel-mãe **deixou de ser área reservada e vazia**
+  ([`../ESCALACOES.md`](../ESCALACOES.md) §3).
+- **Não desenha configuração de mão em Libras.** Libras é língua, e §35/§60.3
+  exigem validação com a comunidade surda. `libras.js` entrega o motor —
+  sequência, velocidade ajustável, legenda em paralelo — e as 27 configurações
+  entram por `registrarAlfabeto()`. Sem elas, nada é desenhado
+  ([`../ESCALACOES.md`](../ESCALACOES.md) §8).
 
 ---
 
@@ -356,9 +400,17 @@ canvas próprio com alfa.
 |---|---|
 | **RotaCerta** | Rotas teal + waypoints âmbar em constelação + rastro de navegação |
 | **Hub** | Núcleo de luz + anéis orbitais + satélites-bolha |
-| **Ecossistema** | Os dois reunidos, mais discretos |
 | **Business** | **vazia** — céu estrelado puro (decisão do Fundador) |
 | **Comunidade** | **vazia** — o Atlas Estelar já é a camada |
+| **Ecossistema** | **vazia** — a §65.1 não define assinatura para ele (ver abaixo) |
+
+> **Corrigido em 06/09/2026, na releitura integral do Guia.** A versão anterior desenhava para
+> o Ecossistema a malha do RotaCerta **mais o núcleo do Hub**, em intensidade reduzida. Isso
+> contraria duas seções ao mesmo tempo: §17/§34 (o Hub é interno da equipe e **nunca** compõe
+> produto do catálogo) e §27 (o Ecossistema é **RotaCerta + Business**, não RotaCerta + Hub).
+> A §65.1 lista assinatura para três produtos — Business, RotaCerta e Hub — e não define
+> nenhuma para o Ecossistema. Camada vazia com motivo registrado é o que sobra; inventar uma
+> assinatura seria inventar identidade.
 
 ```js
 const camada = new CamadaDeSistema(canvas, { sistema: 'rotacerta', nivel });
@@ -446,3 +498,36 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
 - **(DEFAULT DO AGENTE — §72.1 item 3 aprovou "notas procedurais WebAudio
   (fiscal/pedido/sistema)" sem fixar as notas.)** As frequências de
   `IdentidadeSonora` foram escolhidas por este agente.
+
+- **(DEFAULT DO AGENTE — §72.1 item 1 aprovou a FUNÇÃO "estados vazios e de erro
+  com identidade", não as frases nem as formas.)** As silhuetas de cada estado
+  em `estados-vivos.css` (círculo, círculo vincado, losango, círculo partido,
+  quadrado vazado) são deste agente. As duas frases citadas na própria §72.1 —
+  *"nada aqui ainda…"* e *"rota perdida"* — vêm do Guia.
+
+- **(DEFAULT DO AGENTE — §36 pede "aviso discreto" e "pode subir", sem escrever
+  o texto nem a regra de subida.)** A histerese de `telemetria-local.js` (piso
+  30/45 fps, margem de 10 fps, janela de 30 s e 8 amostras limpas para subir),
+  o teto no nível detectado na entrada e as duas frases do aviso são deste
+  agente. Descer é barato e subir é caro **de propósito**: um aparelho que
+  oscila em volta do limiar não pode ficar trocando de nível, porque a troca
+  custa mais que o ganho.
+
+- **(DEFAULT DO AGENTE — §69.6 nomeia "30 min / 1 h / amanhã" e não diz que
+  horas é "amanhã".)** "Amanhã" é **8h do dia seguinte**, não "daqui a 24
+  horas": adiar para amanhã às 3 da manhã não adia nada. O adiamento é gravado
+  em `localStorage` e rearmado na montagem seguinte, senão "adiar para amanhã"
+  viraria "esquecer".
+
+- **(DEFAULT DO AGENTE — §60.3 pede "velocidade de troca de letras ajustável" e
+  não fixa a escala.)** 600 ms por letra como referência, faixa de 0,5× a 3×, e
+  respiro de 1,5× na letra repetida — sem ele "ANNA" lê como "ANA". **As 27
+  configurações de mão não são default de agente nenhum:** são conteúdo de
+  língua, exigem validação com a comunidade surda (§35/§60.3) e estão escaladas
+  em [`../ESCALACOES.md`](../ESCALACOES.md) §8.
+
+- **(DEFAULT DO AGENTE — §72.1 item 6 aprova a narração e não escreve o
+  roteiro.)** As falas do onboarding são deste agente, no tom que a §1 descreve
+  para a Aurora. **Os títulos dos passos não são default:** "Criando o seu novo
+  mundo" é o título da §2 e "Otimizando o sistema para você" o da §36, ambos
+  verbatim. A espera de 10 s também não é default — é a §16.

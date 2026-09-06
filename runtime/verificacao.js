@@ -263,3 +263,25 @@ document.getElementById('abrir-onb').addEventListener('click', () => {
     aoConcluir: (aceite) => anunciar(`Termos aceitos em ${aceite.aceitoEm}, versão ${aceite.versao}.`),
   });
 });
+
+/* ---- 15 · Vista de Pátio (§65.4) ---- */
+document.getElementById('abrir-patio').addEventListener('click', () => {
+  const painel = document.createElement('div');
+  painel.className = 'grade';
+  // Painel de DEMONSTRAÇÃO: "como o negócio está, o que poderia mudar" é
+  // conteúdo de produto (§61), não de identidade. A bolha recebe o que quem
+  // integra entregar; aqui entra um esqueleto só para a bolha ter conteúdo.
+  for (const [titulo, corpo] of [
+    ['Hoje', 'A dashboard panorâmica é do produto.'],
+    ['Rotas', 'Esta bancada só mostra a bolha que a recebe.'],
+    ['Fiscal', 'Nenhum dado real é simulado aqui.'],
+  ]) {
+    const c = document.createElement('div');
+    c.className = 'lum-card';
+    c.innerHTML = '<strong></strong><br><span class="aviso"></span>';
+    c.querySelector('strong').textContent = titulo;
+    c.querySelector('.aviso').textContent = corpo;
+    painel.appendChild(c);
+  }
+  lum.patio.abrir(painel);
+});

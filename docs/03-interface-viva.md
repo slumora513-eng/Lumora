@@ -67,6 +67,21 @@ Criatividade 3 da §61. Ao clicar em "Vista de Pátio":
 3. Abre a dashboard panorâmica **dentro de uma bolha**;
 4. Retorno ao girar de volta.
 
+**Em código desde 06/09/2026:** [`runtime/vista-de-patio.js`](../runtime/vista-de-patio.js).
+Os quatro tempos estão lá, e três regras que o módulo impõe em vez de confiar em quem usa:
+
+- **A entrada dramática não é o único caminho.** Com `prefers-reduced-motion` — ou no nível
+  básico da §36 — a rotação simplesmente não acontece, e a Vista abre igual, com o título e o
+  painel no lugar. §35 item 8: reduz gesto, nunca informação.
+- **O foco entra e volta.** A Vista é modal; quem abre por teclado entra nela e volta para o
+  botão que abriu. Mesma regra do Atlas Estelar e do Centro de Notificações.
+- **O título é texto, não pixel.** *"Veja o seu negócio inteiro"* é `<h2>` de verdade, e a
+  bolha é `role="dialog"` rotulada por ele.
+
+**O que o módulo não faz:** a dashboard. *"Como o negócio está, o que poderia mudar"* é
+conteúdo de produto (§61), e este repositório não tem negócio nenhum — a bolha recebe o painel
+que quem integra entrega.
+
 ---
 
 ## Bolhas × Ondas — qual vale quando (§66.3)
@@ -96,6 +111,10 @@ O usuário escolhe o tema; a navegação acompanha o tema. A estética Aurora (r
   permanece para acessibilidade.
 - **Estados vazios e de erro com identidade** (§72.1, item 1 — APROVADO) — "nada aqui ainda…",
   "rota perdida" no vocabulário cósmico, zero assets.
+  **Em código desde 06/09/2026:** [`runtime/estados-vivos.{js,css}`](../runtime/estados-vivos.js).
+  Seis estados, cada um com **silhueta própria** e não só cor (§35 item 3); erro e falta de
+  conexão entram como `role="alert"`; e o contexto atravessa até o Sotaque Cósmico, que troca
+  para o catálogo neutro sozinho — um erro fiscal **não** diz "uma nebulosa engoliu isso" (§70.3).
 
 ### Ideias futuras não aprovadas (§68.6)
 
@@ -105,6 +124,13 @@ espaciais (arrastar bolha para estourar; pinça para zoom no Atlas Estelar).
 
 Duas já saíram desta lista: **Ventania** (promovida em §69.4) e **Narração-guia de onboarding
 pela Aurora** (aprovada em §72.1, item 6 — voz + texto paralelo, regra dos 10 s da §16).
+A segunda está em código desde 06/09/2026:
+[`runtime/onboarding-aurora.{js,css}`](../runtime/onboarding-aurora.js). A voz é a nativa do
+sistema (Web Speech, offline, custo zero — a mesma escolha da §68.5), e ela lê **o mesmo nó de
+texto que está na tela**: sem `speechSynthesis`, com a narração silenciada ou com a voz falhando
+no meio, nada de informação se perde. A regra dos 10 s é imposta de verdade — o aceite nasce
+desabilitado, a contagem é anunciável por leitor de tela, e voltar um passo não a reinicia nem
+a encurta.
 
 ---
 

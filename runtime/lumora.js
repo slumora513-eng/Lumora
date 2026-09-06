@@ -35,6 +35,7 @@ import {
   PoeiraDeInteracao, FioDeAriadne, Estrelinha, ComandosDeVoz,
 } from './interface-viva.js';
 import { CentroDeNotificacoes } from './centro-de-notificacoes.js';
+import { VistaDePatio, TITULO as TITULO_PATIO } from './vista-de-patio.js';
 import { TelemetriaLocal, NIVEIS } from './telemetria-local.js';
 import { estadoVivo, aplicarEstados, rotaPerdida, ESTADOS } from './estados-vivos.js';
 import { OnboardingAurora, ROTEIRO_PADRAO, ESPERA_DOS_TERMOS_MS } from './onboarding-aurora.js';
@@ -106,6 +107,12 @@ export class Lumora {
     // que é onde a §69.6 manda ele morar.
     this.centro = new CentroDeNotificacoes(this.notificacoes, { raiz: this.raiz });
     this.nebulosa.definirAcoes([...(opcoes.acoes || []), this.centro.comoAcaoDaNebulosa()]);
+
+    // §65.4 — Vista de Pátio, criatividade 3 da §61. Gira, afasta, anuncia e
+    // abre a dashboard dentro de uma bolha. O painel é de quem integra.
+    this.patio = new VistaDePatio({
+      cena: opcoes.cenaDoPatio || this.raiz, raiz: this.raiz, nivel: this.nivel,
+    });
 
     // §72.1 item 4 — telemetria local. O nível detectado na entrada vira o
     // TETO: o aparelho pode recuperar fôlego, não pode virar outro aparelho.
@@ -273,6 +280,7 @@ export class Lumora {
 
   destruir() {
     this.onb?.destruir();
+    this.patio.destruir();
     this.centro.destruir();
     this.telemetria.destruir();
     document.documentElement.removeEventListener('lum:nivel-aviso', this._onAviso);
@@ -423,7 +431,7 @@ export {
   FioDeAriadne, Estrelinha, ComandosDeVoz,
   aplicarMarcas, marcaComAlfa,
   CamadaDeSistema, SISTEMAS, SEM_CAMADA,
-  CentroDeNotificacoes, TelemetriaLocal, NIVEIS,
+  CentroDeNotificacoes, TelemetriaLocal, NIVEIS, VistaDePatio, TITULO_PATIO,
   estadoVivo, aplicarEstados, rotaPerdida, ESTADOS,
   OnboardingAurora, ROTEIRO_PADRAO, ESPERA_DOS_TERMOS_MS,
 };

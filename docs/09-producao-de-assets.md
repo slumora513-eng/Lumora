@@ -179,7 +179,7 @@ A separação é estrutural, não organizacional:
 | Categoria | Onde vive | Natureza |
 |---|---|---|
 | **Assets oficiais** — logos, símbolos, wordmarks, imagens canônicas, arquivos do operador | `assets/oficiais/` | Arquivo. Preservado, verificado, nunca regenerado. |
-| **Estética procedural** — céu, partículas, estrelas, aurora, ondas, bolhas, rastros, microinterações, notificações, transições | Código/runtime (**bloqueado até o "pode ir"**, §71) | Comportamento. **Nunca uma coleção de imagens estáticas.** |
+| **Estética procedural** — céu, partículas, estrelas, aurora, ondas, bolhas, rastros, microinterações, notificações, transições | [`runtime/`](../runtime/) — **desbloqueado pelo "pode ir" do Fundador em 05/09/2026** (§71) | Comportamento. **Nunca uma coleção de imagens estáticas.** |
 
 §65.1 é explícito: a renderização final da assinatura de cada sistema **"será procedural
 (canvas/WebGL) — nunca imagem estática"**.
@@ -188,3 +188,21 @@ A separação é estrutural, não organizacional:
 
 Por isso este repositório **não contém uma única imagem de céu, partícula, bolha, onda ou
 rastro**. Gerá-las contrariaria §48 e §71 ao mesmo tempo.
+
+---
+
+## O que ainda depende de gente, e não de código (06/09/2026)
+
+Três dependências humanas, todas registradas, **nenhuma bloqueando o que está de pé**:
+
+| O que falta | De quem | Por quê |
+|---|---|---|
+| Os vídeos finais das 6 aberturas e 5 carregamentos | Profissional contratado (§48) | §64.2 congelada. As cenas procedurais preenchem o slot e viram fallback (§49.3) |
+| Wordmark "LUMORA" em **tinta escura** | Produtor | O oficial é branco, e branco sobre papel branco some. A **L** é cromática e já compõe |
+| As **27 configurações de mão** do alfabeto manual de Libras | Validação com a comunidade surda (§35/§60.3) | Libras é língua. `runtime/libras.js` tem o motor inteiro; sem o alfabeto, nada é desenhado |
+
+Os três seguem a **mesma arquitetura de slot** que a §49.3 desenhou: o conteúdo entra por
+registro, de fora, e **nenhuma linha de código muda** no dia em que chegar. É por isso que a
+ausência é registrada em vez de contornada — contornar aqui significaria inventar, e inventar
+mão de Libras errada, wordmark redesenhado ou vídeo gerado por IA é exatamente o que §35, a
+regra 14 e a §48 proíbem, cada uma pelo seu motivo.

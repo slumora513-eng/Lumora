@@ -463,3 +463,40 @@
 @media (prefers-reduced-motion: reduce) {
   .lum-centro { transition: none; }
 }
+
+/* --------------------------------------------------- datilologia (§60.3) --
+   A "mãozinha" do Elio soletrando. A configuração de mão vem de fora
+   (registrarAlfabeto); aqui só existe o lugar dela e a legenda de texto que
+   nunca a deixa sozinha (§68.7).                                           */
+
+.lum-datilologia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.lum-datilologia-mao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  inline-size: 100%;
+  min-block-size: 0;
+}
+.lum-datilologia-mao > * { max-inline-size: 100%; max-block-size: 100%; }
+
+.lum-datilologia-legenda {
+  font-family: var(--lum-fonte-mono);
+  font-size: 1.125rem;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--lum-texto-1);
+}
+
+/* Sem alfabeto registrado a mão não existe — e a legenda ocupa o espaço
+   inteiro em vez de deixar um buraco. */
+[data-lum-libras="ausente"] .lum-datilologia-mao { display: none; }

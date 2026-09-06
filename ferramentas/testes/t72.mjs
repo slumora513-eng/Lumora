@@ -221,6 +221,83 @@ t(c1.vazioUsaEstado && c1.vazioEstadoTipo === 'semResultado',
 t(c1.devolveuFoco === true, 'quem abre o Centro com foco recebe o foco de volta ao fechar');
 t(c1.acaoNaNebulosa === 'Centro de Notificações', '§69.6: o Centro se oferece à Nebulosa (Ctrl+K)');
 
+/* ================================== §60.3 — datilologia do alfabeto manual */
+
+const lib = await p.evaluate(async () => {
+  const m = await import('/runtime/libras.js');
+  const mn = await import('/runtime/notificacoes-vivas.js');
+  m.limparAlfabeto();
+  const caixa = document.createElement('div');
+  document.body.appendChild(caixa);
+  const fora = { tamanhoDoAlfabeto: m.ALFABETO_LIBRAS.length };
+
+  // normalização: acento cai, Ç fica, o que não se soletra é relatado
+  const n = m.paraDatilologia('Ação 3B  çç');
+  fora.letras = n.letras.join('');
+  fora.descartado = n.descartado.join('');
+
+  // sem alfabeto registrado NADA é desenhado, e o texto continua
+  const d = new m.Datilologia(caixa, { velocidade: 3 });
+  const r = d.soletrar('NFe');
+  fora.semAlfabeto = caixa.dataset.lumLibras;
+  fora.disponivelAntes = d.disponivel;
+  fora.maoVaziaAntes = caixa.querySelector('.lum-datilologia-mao').childElementCount;
+  fora.legendaAntes = caixa.querySelector('.lum-datilologia-legenda').textContent;
+  fora.contou = r.letras;
+  d.parar();
+
+  // registrada, a mão aparece
+  const feito = m.registrarAlfabeto(Object.fromEntries(m.ALFABETO_LIBRAS.map((L) => [L, () => {
+    const s = document.createElement('i'); s.dataset.letra = L; return s;
+  }])));
+  fora.cobertura = feito;
+  const vistas = [];
+  const d2 = new m.Datilologia(caixa, { velocidade: 3, aoTrocarLetra: (l) => vistas.push(l) });
+  d2.soletrar('NF-e');
+  fora.comAlfabeto = caixa.dataset.lumLibras;
+  fora.maoCheia = caixa.querySelector('.lum-datilologia-mao').childElementCount;
+  d2.parar();
+  d2.avancar(); d2.avancar();
+  fora.vistas = vistas.join('');
+
+  // velocidade ajustável, com limites
+  d2.definirVelocidade(99); fora.velMax = d2.velocidade;
+  d2.definirVelocidade(0);  fora.velMin = d2.velocidade;
+
+  // a fonte pronta para a notificação crítica
+  const raiz = document.createElement('div');
+  document.body.appendChild(raiz);
+  const nv = new mn.NotificacoesVivas({ raiz });
+  nv.registrarLibras('fiscal', m.fonteDeDatilologia());
+  nv.notificar({ texto: 'NFe', categoria: 'fiscal' });
+  fora.janelaComAlfabeto = !!raiz.querySelector('.lum-libras .lum-datilologia');
+
+  m.limparAlfabeto();
+  const nv2 = new mn.NotificacoesVivas({ raiz });
+  nv2.registrarLibras('fiscal', m.fonteDeDatilologia());
+  nv2.notificar({ texto: 'NFe', categoria: 'fiscal' });
+  const criticas = raiz.querySelectorAll('.lum-bolha-notif.lum-u-critica');
+  fora.janelaSemAlfabeto = criticas[criticas.length - 1].dataset.lumLibras;
+
+  d2.destruir(); nv.destruir(); nv2.destruir(); caixa.remove(); raiz.remove();
+  return fora;
+});
+
+t(lib.tamanhoDoAlfabeto === 27, '§60.3: o alfabeto manual tem as 27 configurações');
+t(lib.letras === 'AÇAO B ÇÇ' && lib.descartado === '3',
+  `§60.3: acento cai, Ç fica, e o que não se soletra é relatado ("${lib.letras}" / descartado "${lib.descartado}")`);
+t(lib.semAlfabeto === 'ausente' && lib.disponivelAntes === false && lib.maoVaziaAntes === 0,
+  '§35/§60.3: sem alfabeto validado, NENHUMA mão é desenhada — inventar sinal seria pior que não ter');
+t(lib.legendaAntes.length === 1 && lib.contou === 3,
+  'mesmo sem a mão, a sequência de letras existe e o canal de texto continua (§68.7)');
+t(lib.cobertura === 27 && lib.comAlfabeto === 'presente' && lib.maoCheia === 1,
+  '§60.3: registrado o alfabeto, a mão passa a ser desenhada');
+t(lib.vistas === 'NFE', `§60.3: hífen não se soletra; sobra N, F, E ("${lib.vistas}")`);
+t(lib.velMax === 3 && lib.velMin === 0.5,
+  '§60.3: "velocidade de troca de letras ajustável pelo usuário", dentro de limites');
+t(lib.janelaComAlfabeto === true && lib.janelaSemAlfabeto === 'ausente',
+  '§72.1(5): a janela da crítica soletra quando há alfabeto, e não nasce quando não há');
+
 /* ============================================= §72.1 item 4 — telemetria == */
 
 const tel = await p.evaluate(async () => {
@@ -349,6 +426,51 @@ t(onb2.liberado === true && !/\(\d+s\)/.test(onb2.rotulo),
 t(onb2.temData && onb2.aceite.versao === 'v3' && onb2.aceite.esperaCumpridaMs === 10000,
   '§16: o aceite registra data, hora e versão dos termos');
 
+/* ========================================== §65.4 — Vista de Pátio ======== */
+
+const pat = await p.evaluate(async () => {
+  const m = await import('/runtime/vista-de-patio.js');
+  const cena = document.createElement('div');
+  document.body.appendChild(cena);
+  const gatilho = document.createElement('button');
+  cena.appendChild(gatilho);
+  gatilho.focus();
+
+  const v = new m.VistaDePatio({ cena, raiz: cena, nivel: 'pleno' });
+  const fora = { titulo: m.TITULO, escondida: v.el.hidden, papel: v.el.getAttribute('role') };
+
+  const painel = document.createElement('table');
+  painel.id = 'dashboard-do-teste';
+  await v.abrir(painel);
+  fora.aberta = !v.el.hidden;
+  fora.marcaNaCena = cena.dataset.lumPatio;
+  fora.tituloNaTela = v.el.querySelector('.lum-patio-titulo').textContent;
+  fora.rotuladaPeloTitulo = v.el.getAttribute('aria-labelledby') === v.el.querySelector('.lum-patio-titulo').id;
+  fora.painelDentro = !!v.el.querySelector('#dashboard-do-teste');
+  fora.focoNoTitulo = document.activeElement === v.el.querySelector('.lum-patio-titulo');
+  fora.girou = /matrix3d|rotate/.test(getComputedStyle(cena).transform) || cena.getAnimations().length > 0;
+
+  await v.fechar();
+  fora.fechada = v.el.hidden;
+  fora.marcaSaiu = cena.dataset.lumPatio ?? null;
+  fora.devolveuFoco = document.activeElement === gatilho;
+
+  v.destruir(); cena.remove();
+  return fora;
+});
+
+t(pat.titulo === 'Veja o seu negócio inteiro',
+  '§65.4: o título é o da seção, verbatim — não microtexto de agente');
+t(pat.escondida === true && pat.papel === 'dialog', '§65.4: a Vista nasce fechada, e é um dialog');
+t(pat.aberta && pat.marcaNaCena === 'aberta' && pat.tituloNaTela === 'Veja o seu negócio inteiro',
+  '§65.4: abre, marca a cena e revela o título');
+t(pat.rotuladaPeloTitulo, '§35: a bolha é rotulada pelo próprio título, não por texto invisível');
+t(pat.painelDentro, '§65.4: a dashboard panorâmica abre DENTRO da bolha');
+t(pat.focoNoTitulo, '§35 itens 4 e 6: quem abre por teclado entra na Vista');
+t(pat.girou, '§65.4: a interface gira e se afasta — rotação 3D com zoom de distância');
+t(pat.fechada && pat.marcaSaiu === null && pat.devolveuFoco,
+  '§65.4: "retorno ao girar de volta" — e o foco volta para quem abriu');
+
 /* ------------------------------------------------------ movimento reduzido */
 
 const p2 = await abrir({ reducedMotion: 'reduce' });
@@ -367,13 +489,31 @@ const red = await p2.evaluate(async () => {
   const o = new mo.OnboardingAurora(caixa, { voz: false });
   fora.onda = getComputedStyle(o.el.querySelector('.lum-onb-aurora')).animationName;
   fora.textoDoOnboarding = o.el.querySelector('.lum-onb-fala').textContent.length;
-  o.destruir(); caixa.remove();
+  o.destruir();
+
+  // §65.4 com movimento reduzido: não gira, mas abre
+  const mp = await import('/runtime/vista-de-patio.js');
+  const cenaPatio = document.createElement('div');
+  document.body.appendChild(cenaPatio);
+  const v = new mp.VistaDePatio({ cena: cenaPatio, raiz: cenaPatio });
+  fora.patioComGesto = v.comGesto;
+  await v.abrir(document.createElement('p'));
+  fora.patioAbriu = !v.el.hidden;
+  fora.patioTitulo = v.el.querySelector('.lum-patio-titulo').textContent;
+  fora.patioSemTransform = getComputedStyle(cenaPatio).transform;
+  await v.fechar(); v.destruir(); cenaPatio.remove();
+
+  caixa.remove();
   return fora;
 });
 t(red.animacao === 'none' && red.frase > 10,
   '§35 item 8: com movimento reduzido a cena para de animar e a frase continua');
 t(red.onda === 'none' && red.textoDoOnboarding > 40,
   '§35 item 8: a cortina da Aurora para; a narração escrita permanece');
+t(red.patioComGesto === false && red.patioAbriu === true
+  && red.patioTitulo === 'Veja o seu negócio inteiro'
+  && (red.patioSemTransform === 'none' || red.patioSemTransform === ''),
+  '§65.4 + §35 item 8: a entrada dramática some, a Vista de Pátio abre igual');
 await p2.close();
 
 t(externos.length === 0, `nenhum pedido externo (§65.5): ${externos.length}`);

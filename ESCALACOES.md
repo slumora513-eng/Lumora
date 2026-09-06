@@ -8,6 +8,11 @@ Fundador (§1, §5) e quatro sob autorização dele — primeiro *"pode resolver
 deu tranquilamente"*, depois *"pode decidir. Eu deixo você tomar controle de tudo"* (§2, §3,
 §4, §7) — e depois *"tenta resolver a §6 também"* (§6). **As sete estão fechadas.**
 
+> **Uma oitava foi aberta em 06/09/2026**, na rodada que implementou a §72.1 e a §69.6: as
+> **27 configurações do alfabeto manual de Libras** (§8, abaixo). O motor está pronto; o
+> conteúdo é língua e a §35/§60.3 exigem validação com a comunidade surda. Escalar aqui é
+> cumprir a regra 24, não devolver trabalho.
+
 A §3 fechou quando o alfa passou a ser **recuperado** do próprio arquivo oficial em vez de
 esperado de um arquivo novo. A §7 fechou quando o teste em simulador de daltonismo virou
 código verificável — e, ao virar código, encontrou e corrigiu um defeito de acessibilidade que
@@ -256,7 +261,7 @@ camada.
 A escalação dizia deles: *"são a única demonstração executável da Interface Viva"*. **Deixaram
 de ser.** `runtime/verificacao.html` é uma demonstração executável de todo o sistema — Céu Vivo,
 Interface Viva, navegação em bolhas e em ondas, notificações, Atlas, animações, seis paletas,
-papel-mãe — com **135 checagens automatizadas** rodando por cima
+papel-mãe — com **271 checagens automatizadas** rodando por cima
 (`node ferramentas/testes/rodar.mjs`).
 
 Os protótipos continuam sendo **registro histórico** de quatro decisões (§67.10, §68.8), e como
@@ -357,6 +362,64 @@ dicromacia e a impressão sem cor. O comentário do arquivo, que prometia "cor E
 
 > **(DEFAULT DO AGENTE — os valores das paletas e o microtexto `" · prioridade"` são deste
 > agente, sob autorização do Fundador. Pendentes de conferência dele.)**
+
+---
+
+## §8 — As 27 configurações do alfabeto manual de Libras — 🟡 ABERTA (06/09/2026)
+
+**Escalação nova**, aberta pela rodada que implementou a §72.1 e a §69.6. É a única coisa
+que essa rodada encontrou e **não pode resolver sozinha** — e ela não é dúvida de gosto:
+é conteúdo de língua.
+
+### O que foi entregue
+
+O **motor** inteiro, em [`runtime/libras.js`](runtime/libras.js):
+
+- a sequência de letras, com acento normalizado (Á → A), **Ç preservado**, espaço virando
+  pausa e o que não se soletra **relatado em vez de sumir em silêncio**;
+- o respiro da letra repetida — sem ele "ANNA" lê como "ANA", porque a mão não troca de
+  configuração e a troca desaparece;
+- a **velocidade ajustável pelo usuário**, que é literalmente o que a §60.3 pede, com a
+  preferência guardada;
+- a legenda de texto correndo em paralelo, porque nenhum canal fica sozinho (§68.7);
+- a janela da notificação crítica (§72.1 item 5), que nasce **só** na classe crítica.
+
+### O que falta, e por que não foi inventado
+
+As **27 configurações de mão**. Elas não estão aqui, e não podiam estar:
+
+> **§60.3, última linha:** *"Permanece o requisito da §35: Libras é língua com gramática
+> própria; **validação com a comunidade surda**."*
+
+Uma configuração de mão errada não é "acessibilidade parcial". É **ruído apresentado como
+acessibilidade**, e o dano cai exatamente sobre quem a função existe para atender — que é
+pior do que a ausência honesta. Some-se a isso a §48, que proíbe a plataforma de gerar
+imagem ou vídeo.
+
+Então o alfabeto entra pelo mesmo tipo de slot da §49: `registrarAlfabeto()`. **Sem fonte
+registrada, nada é desenhado** — a notificação crítica marca `data-lum-libras="ausente"`,
+o texto do alerta continua sendo o canal garantido, e a ausência fica auditável na tela.
+É a mesma disciplina de `marca-com-alfa.js` quando o arquivo oficial não carrega.
+
+### A decisão que é do Fundador
+
+Não é *se* — a §35 já lista Libras na linha de base e a §60.3 já aprovou a mãozinha. É:
+
+1. **Quem valida com a comunidade surda?** §35/§60.3 exigem a validação e não nomeiam o
+   validador. Sem esse nome, nenhuma configuração de mão pode entrar.
+2. **De onde vêm as 27 configurações?** Produção do profissional contratado (§48), como os
+   vídeos, ou material licenciado com validação já feita?
+3. **Datilologia é o escopo final?** §60.3 aprovou soletrar letras. Soletrar **não é**
+   traduzir: para tradução em Libras de verdade não basta alfabeto, e isso é outra ordem de
+   grandeza de projeto. Se a intenção era tradução, é decisão nova.
+
+**Nada disso bloqueia o que está em pé.** O motor está pronto e testado; no dia em que as
+27 configurações chegarem, elas entram por uma chamada de função e **nenhuma linha de código
+muda** — que é exatamente o que a §49.3 desenhou para os vídeos.
+
+> **(DEFAULT DO AGENTE — a §60.3 não fixa o tempo por letra nem a escala de velocidade.)**
+> 600 ms por letra como referência, faixa de 0,5× a 3×, e o respiro de 1,5× na letra
+> repetida. Todos medidos para leitura confortável, todos substituíveis.
 
 ---
 

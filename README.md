@@ -27,13 +27,14 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`docs/09-producao-de-assets.md`](docs/09-producao-de-assets.md) | O que a plataforma **não** produz; slots §49 |
 | [`docs/10-paleta.md`](docs/10-paleta.md) | Paleta **medida** nos assets oficiais + contraste WCAG |
 | [`docs/11-l-canonica.md`](docs/11-l-canonica.md) | **A L canônica** — confirmada pelo Fundador em 05/09/2026 |
-| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, camada de cada sistema, animações dos slots, Atlas Estelar, Notificações Vivas, navegação, Interface Viva, marca com alfa |
+| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, camada de cada sistema, animações dos slots, Atlas Estelar, Notificações Vivas, Centro de Notificações, navegação, Interface Viva, estados vivos, telemetria local, Libras, onboarding, marca com alfa |
 | [`runtime/README.md`](runtime/README.md) | Uso, verificação e limites do runtime |
 | [`assets/oficiais/`](assets/oficiais/) | 13 arquivos oficiais preservados byte-a-byte |
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
 | [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py) | As seis paletas sob protanopia, deuteranopia e tritanopia — simulação em código, com autoteste |
-| [`ferramentas/testes/`](ferramentas/testes/) | As **135 checagens** do runtime em Chromium — `node ferramentas/testes/rodar.mjs` |
+| [`ferramentas/testes/`](ferramentas/testes/) | As **271 checagens** — 207 em Chromium e 64 em Node — `node ferramentas/testes/rodar.mjs` |
+| [`blueprint/README.md`](blueprint/README.md) | **§50 — Blueprint Universal, passo 1:** formato `blueprint.lumora/v1`, parser e validador, com exemplos de teste |
 | [`infra/README.md`](infra/README.md) | **Publicação** deste repositório — Render (staging) e AWS (produção), com o CSP que impõe o custo zero. Não é a §50 |
 | [`ESCALACOES.md`](ESCALACOES.md) | **Dúvidas críticas de identidade abertas ao Fundador** |
 
@@ -148,6 +149,14 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 - **Nenhuma tagline alternativa.** A frase oficial é a da Aurora. "Te ajudo a enxergar melhor"
   **não consta em nenhuma das 59 páginas do Guia** (verificado por busca) e não é declarada
   aqui como oficial.
+- **Nenhuma configuração de mão em Libras.** O motor da datilologia está pronto
+  ([`runtime/libras.js`](runtime/libras.js)), mas as 27 configurações do alfabeto manual são
+  **conteúdo de língua** e a §35/§60.3 exigem validação com a comunidade surda. Uma mão errada
+  não é acessibilidade parcial: é ruído apresentado como acessibilidade, e o dano cai sobre
+  quem a função existe para atender. Escalado em [`ESCALACOES.md`](ESCALACOES.md) §8.
+- **Nenhum compilador do Blueprint (§50).** Existe o formato, o parser e o validador — o passo
+  1 da §50.5, o único construível antes da aplicação Lumora existir. `plan`, `build`, `apply`
+  e `destroy` são **reconhecidos e recusados com o motivo**, não simulados.
 
 ---
 
@@ -188,6 +197,15 @@ do Fundador (regra 22). **Nenhum arquivo foi inventado em nenhuma delas.**
 
 Itens congelados (§64 — caridade e animações 3D) **não** aparecem como pendência, conforme
 §64.3 determina.
+
+### E uma oitava, aberta em 06/09/2026
+
+**§8 — as 27 configurações do alfabeto manual de Libras.** A rodada que implementou a §72.1 e
+a §69.6 entregou o *motor* da datilologia (sequência, velocidade ajustável pelo usuário como a
+§60.3 pede, legenda em paralelo, janela da notificação crítica) e parou onde o próprio Guia
+manda parar: *"Libras é língua com gramática própria; validação com a comunidade surda"*
+(§60.3). O que falta é conteúdo de língua e uma decisão de quem valida — não código.
+Ver [`ESCALACOES.md`](ESCALACOES.md) §8.
 
 ---
 

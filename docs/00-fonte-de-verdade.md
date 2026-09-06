@@ -74,6 +74,12 @@ resultados marcados como **DEFAULT DO AGENTE**, nunca como decisão de marca do 
 | *"sobre aquelas duas decisões que ficou de fora, você pode decidir. Eu deixo você tomar controle de tudo (...) pode continuar o código todinho"* | Autoriza fechar as **duas últimas escalações**: §3 (falta de alfa no papel) e §7 (o teste em simulador de daltonismo). | [`../ESCALACOES.md`](../ESCALACOES.md) |
 | *"tenta resolver a §6 também"* + *"faz a blueprint para o render e o aws"* | Manda auditar a **§6** (assets não entregues) e produzir a **publicação do repositório** em Render e AWS — que **não** é o Blueprint Universal da §50 (ver abaixo). | [`../ESCALACOES.md`](../ESCALACOES.md) · [`../infra/README.md`](../infra/README.md) |
 
+### Decisão do Fundador em 06/09/2026
+
+| Decisão | Efeito | Registro |
+|---|---|---|
+| *"pode fazer tudo o que falta, pode fazer tudinho completamente (…) se quiser dar uma refinada em algumas coisas, pode ficar à vontade"* | Manda executar **tudo o que o Guia aprovou e o repositório ainda não tinha**: o passo 1 da §50, as funções da §72.1 sem código, a infraestrutura da §69.6 — e autoriza refino do que já existia. | [`../blueprint/README.md`](../blueprint/README.md) · [`../runtime/README.md`](../runtime/README.md) |
+
 ---
 
 ## Código: a Fase 3A saiu do bloqueio
@@ -133,7 +139,7 @@ desenha a camada complementar de cada sistema sobre o Céu Vivo. A §65.1 já di
 amostras eram *"direção, não asset final"* — e a direção estava escrita em `04`. Faltava a
 implementação, que existia só como abertura e agora existe como ambiente.
 
-Os **protótipos v1–v4** foram superados por `runtime/verificacao.html`, com 135 checagens
+Os **protótipos v1–v4** foram superados por `runtime/verificacao.html`, com 271 checagens
 automatizadas por cima. Eles seguem valendo como registro histórico das decisões §67.10/§68.8.
 
 O que sobra é uma pergunta de produto, não de arquivo: **"fia alto" e "magos" existem como
@@ -177,24 +183,58 @@ Desempenho-alvo: **60 fps em aparelhos médios**. Níveis de redução da Otimiz
 
 ---
 
-## §50 — Blueprint Universal: NÃO INICIADA
+## §50 — Blueprint Universal: passo 1 construído, passos 2–6 impossíveis por ora
 
 A §50 define um produto: o formato declarativo `blueprint.lumora/v1` e um compilador
 (`lumora-blueprint build`) que provisiona a pilha inteira de um **cliente** — Postgres, Redis,
 réplicas, workers, migrations — com saída **Terraform** para AWS e `render.yaml` nativo para
 Render (§50.2), mais idempotência, dry-run obrigatório e rollback (§50.3).
 
-**Nada disso existe neste repositório.** O que existe em [`../infra/`](../infra/) publica *este
-repositório* (a identidade visual) como site estático — outro assunto, outro tamanho. A §50
-provisiona a aplicação Lumora, que ainda não foi construída.
+Do roteiro da §50.5, só o **passo 1** é construível antes da aplicação Lumora existir —
+*"especificação e parser do formato v1 + validador de schema (com exemplos de teste)"* — e ele
+**está construído**, em [`../blueprint/`](../blueprint/): parser de um subconjunto deliberado de
+YAML, validador com 11 regras que reprovam (cada uma citando a seção que a sustenta), três
+exemplos válidos, onze inválidos e 64 checagens.
 
-Do roteiro da §50.5, só o **passo 1** é construível antes da aplicação existir: especificação do
-formato v1, parser e validador de schema com exemplos de teste. Os passos 2–6 (compiladores
-Render e AWS, saída Docker, botão no Hub, DigitalOcean/GCP) dependem de haver uma pilha para
-provisionar.
+**Os passos 2–6 continuam impossíveis**, e não por falta de vontade: compiladores Render e AWS,
+saída Docker, botão no Hub e DigitalOcean/GCP provisionam a **aplicação Lumora**, que ainda não
+foi construída. Não há serviço para emitir em Terraform, não há migrations para viajar dentro
+do Blueprint e não há estado remoto contra o qual detectar *drift*. Por isso o CLI **reconhece**
+`plan`, `build`, `apply` e `destroy` e **recusa cada um com o motivo**, saindo com código 3 —
+comando que não existe é diferente de comando que existe e mente.
 
-> Registrado em 06/09/2026, na releitura integral do Guia. Antes disso a §50 não aparecia neste
-> repositório nem como pendência.
+O que existe em [`../infra/`](../infra/) publica *este repositório* (a identidade visual) como
+site estático — outro assunto, outro tamanho, e **não** é a §50.
+
+> Registrado em 06/09/2026, na releitura integral do Guia; passo 1 construído no mesmo dia.
+> Antes disso a §50 não aparecia neste repositório nem como pendência.
+
+---
+
+## §72.1 e §69.6 — as aprovações que estavam sem código
+
+A §72.1 aprovou **seis funções** em 02/09/2026 (*"eu apoio essas seis candidatas, pode colocar
+todas"*), e a tabela marcava **cinco delas** como *"código na rodada a agendar"*. A §69.7
+fechava a §69.6 com *"[PRIORIZAÇÃO EM ABERTO]"*. O *"pode fazer tudo"* do Fundador liberou as
+duas coisas em 05/09/2026; a execução saiu em 06/09/2026.
+
+| §72.1 | Estado |
+|---|---|
+| 1 — estados vazios e de erro com identidade | ✅ `runtime/estados-vivos.{js,css}` |
+| 2 — tabela conector ↔ variável ↔ módulo | ✅ já era spec (§58.9), não runtime |
+| 3 — identidade sonora por categoria (WebAudio) | ✅ já existia em `notificacoes-vivas.js` |
+| 4 — telemetria local de desempenho | ✅ `runtime/telemetria-local.js` |
+| 5 — Libras nas notificações críticas | 🟡 **motor pronto**, conteúdo escalado (§8) |
+| 6 — onboarding narrado pela Aurora | ✅ `runtime/onboarding-aurora.{js,css}` |
+
+Da §69.6 saíram o **Centro de Notificações** (histórico pesquisável, filtro por tipo, Resolver
+e Abrir), as **ações rápidas**, o **snooze cósmico** (30 min / 1 h / amanhã, gravado) e o
+**resumo em constelação**. O contador `"+3"` da §69.5 já despachava o evento `lum:abrir-centro`
+desde 05/09/2026 — **e ninguém o escutava**. Agora escuta.
+
+Três itens da §69.6 continuam sendo do produto, não da identidade: *"Elio/Aurora, me explica"*
+depende do assistente, o vínculo com o Calendário de Obrigações depende da §59.9, e o link do
+Replay do Dia depende da §61. O runtime deixa o gancho e não simula o outro lado.
 
 ---
 

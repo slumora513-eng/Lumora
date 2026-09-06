@@ -47,6 +47,29 @@ do alerta crítico (§69.3).
 > surda. Datilologia (soletrar letras) **não substitui** Libras; é o gesto aprovado para o
 > assistente, não a tradução completa.
 
+### Estado em 06/09/2026: o motor existe, o alfabeto não
+
+[`runtime/libras.js`](../runtime/libras.js) entrega tudo o que **não** é conteúdo de língua:
+
+| Entregue | Onde vem do Guia |
+|---|---|
+| Sequência de letras, com acento normalizado e **Ç preservado** | §60.3 |
+| **Velocidade de troca ajustável pelo usuário**, com a preferência guardada | §60.3, verbatim |
+| Respiro na letra repetida — sem ele "ANNA" lê como "ANA" | consequência da §60.3 |
+| O que não se soletra é **relatado**, não some em silêncio | §35 (informação não desaparece) |
+| Legenda de texto correndo em paralelo à mão | §68.7 (nenhum canal fica sozinho) |
+| Janela na notificação crítica, e **só** nela | §72.1 item 5 + §69.3 |
+
+**As 27 configurações de mão não estão aqui.** Elas entram por `registrarAlfabeto()`, e sem
+elas nada é desenhado — a notificação crítica marca `data-lum-libras="ausente"` e o texto do
+alerta continua sendo o canal garantido. Não é omissão: uma configuração de mão errada é
+**ruído apresentado como acessibilidade**, e o dano cai exatamente sobre quem a função existe
+para atender. Somado a isso, §48 proíbe a plataforma de gerar imagem ou vídeo.
+
+Escalado em [`../ESCALACOES.md`](../ESCALACOES.md) §8 — com as três perguntas que só o
+Fundador responde: quem valida com a comunidade surda, de onde vêm as configurações, e se
+datilologia é o escopo final ou se a intenção era tradução (que é outra ordem de projeto).
+
 ---
 
 ## `prefers-reduced-motion` — mapa de reduções

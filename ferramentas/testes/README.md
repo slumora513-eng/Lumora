@@ -1,8 +1,9 @@
 # Suítes de verificação do runtime
 
-135 checagens em Chromium sobre `runtime/verificacao.html`. Elas existiam antes
-como arquivos soltos fora do repositório, o que tornava a frase "135 checagens,
-todas passando" impossível de conferir por quem lê. Agora rodam com um comando.
+271 checagens: **207 em Chromium** sobre `runtime/verificacao.html` e **64 em Node
+puro**, porque o Blueprint da §50 é formato de arquivo e não precisa de navegador.
+Elas existiam antes como arquivos soltos fora do repositório, o que tornava a frase
+"todas passando" impossível de conferir por quem lê. Agora rodam com um comando.
 
 ## Rodar
 
@@ -18,7 +19,7 @@ código — cabeçalho errado, MIME quebrado ou arquivo faltando aparecem como f
 LUM_BASE=https://seu-endereco node ferramentas/testes/rodar.mjs
 ```
 
-Saída esperada: `135 verificações, 0 falhas`.
+Saída esperada: `271 verificações, 0 falhas`.
 
 Precisa de Playwright (`npm i -D playwright-core`) e de um Chromium. O
 `navegador.mjs` procura os dois sozinho — inclusive em instalação global e em
@@ -42,7 +43,15 @@ Precisa de Playwright (`npm i -D playwright-core`) e de um Chromium. O
 | `tleg.mjs`     | Camada de texto das aberturas (§45 — som nunca é canal único) | 21 |
 | `tatlas.mjs`   | Atlas Estelar (§16), modo 3D e modo lista | 22 |
 | `tmarca.mjs`   | Marca com alfa (§3) — a matemática, o recorte e o caminho de falha | 14 |
-| `tcamada.mjs`  | Camada de sistema (§65.1) — assinatura de cada sistema, paletas, §36 | 17 |
+| `tcamada.mjs`  | Camada de sistema (§65.1) — assinatura de cada sistema, paletas, §36 | 18 |
+| `t72.mjs`      | Estados vivos, Centro de Notificações, snooze, telemetria local, Libras, onboarding e Vista de Pátio (§72.1 · §69.6 · §60.3 · §65.4) | 71 |
+| `tblueprint.mjs` | Blueprint Universal (§50) — parser, validador e os onze inválidos. **Sem navegador** | 64 |
+
+`tblueprint.mjs` roda sozinha, sem servidor e sem Chromium:
+
+```bash
+node ferramentas/testes/tblueprint.mjs
+```
 
 Fora do navegador, dois verificadores em Python:
 

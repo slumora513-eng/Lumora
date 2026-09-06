@@ -10,9 +10,12 @@
 > que ainda não foi construída.
 >
 > O que está aqui publica **este repositório** — a identidade visual — como site
-> estático. É outro assunto, com outro tamanho. A §50 segue **não iniciada**; o
-> passo 1 dela (especificação do formato + parser + validador, §50.5) é o único
-> construível antes da aplicação existir.
+> estático. É outro assunto, com outro tamanho.
+>
+> O **passo 1 da §50** — especificação do formato, parser e validador (§50.5) — é o
+> único construível antes da aplicação existir, e está em
+> [`../blueprint/`](../blueprint/). Os passos 2–6 continuam impossíveis, e o CLI
+> recusa `plan`/`build`/`apply`/`destroy` com o motivo em vez de simulá-los.
 
 Dois caminhos, e o Guia já decidiu para que serve cada um. O "Status de projeto"
 registra: **Render = ambiente de testes (staging), AWS = produção** — no Render
@@ -61,7 +64,8 @@ recusa qualquer pedido para fora, tenha o código pedido de propósito ou por ac
 | **com** o CSP | bloqueado por `connect-src` | bloqueado por `img-src` | bloqueado por `script-src-elem` |
 | **sem** o CSP | nenhuma violação registrada | nenhuma | nenhuma |
 
-E as **135 checagens do runtime passam inteiras** sob exatamente estes cabeçalhos.
+E as **207 checagens de navegador passam inteiras** sob exatamente estes cabeçalhos. (As
+outras 64 do total de 271 são do validador do Blueprint, §50, que não roda no navegador.)
 
 ### Três detalhes que parecem exagero e não são
 
@@ -72,6 +76,12 @@ E as **135 checagens do runtime passam inteiras** sob exatamente estes cabeçalh
 - **`microphone=(self)`, nunca `microphone=()`.** Os Comandos de Voz da §68 usam
   `SpeechRecognition`. Bloquear o microfone no `Permissions-Policy` desligaria uma feature
   de acessibilidade sem que ninguém percebesse.
+
+- **A narração da Aurora e a telemetria local não pedem nada ao CSP.** `speechSynthesis`
+  (§72.1 item 6) é síntese local do sistema operacional, e o IndexedDB da telemetria
+  (§72.1 item 4) é armazenamento do próprio aparelho — nenhum dos dois passa por
+  `connect-src`. É exatamente por isso que as duas funções são "custo zero, LGPD" como a
+  §72.1 promete: não há para onde os dados irem.
 
 - **`script-src 'self'` sem `'unsafe-inline'` só funciona** porque o script da bancada mora
   em `runtime/verificacao.js`, e não embutido no HTML. Se alguém devolver o script para

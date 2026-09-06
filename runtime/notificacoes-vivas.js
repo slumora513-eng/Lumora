@@ -360,14 +360,19 @@ export class NotificacoesVivas {
   _janelaDeLibras(dados) {
     if (dados.urgencia !== 'critica') return null;
     const fonte = this.libras.get(dados.libras || dados.categoria);
-    if (!fonte) { return null; }
+    if (!fonte) return null;
+
+    // A fonte pode decidir na hora que não tem o que mostrar — é o caso de
+    // `fonteDeDatilologia()` sem alfabeto registrado. Aí a janela não nasce,
+    // em vez de nascer vazia dizendo "null".
+    const conteudo = typeof fonte === 'function' ? fonte(dados) : fonte;
+    if (conteudo == null || conteudo === '') return null;
 
     const janela = document.createElement('div');
     janela.className = 'lum-libras';
     janela.setAttribute('role', 'group');
     janela.setAttribute('aria-label', 'Aviso em Libras');
     janela.dataset.lumLibras = 'presente';
-    const conteudo = typeof fonte === 'function' ? fonte(dados) : fonte;
     if (conteudo instanceof Node) janela.appendChild(conteudo);
     else janela.textContent = String(conteudo);
     return janela;
