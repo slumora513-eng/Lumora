@@ -1,0 +1,67 @@
+# ==========================================================================
+# Lumora — Blueprint do Render (site estático)
+#
+# Este repositório JÁ É o site: não há build, porque não há dependência.
+# A §65.5 exige "custo zero — nenhuma rede, nenhuma dependência", e o runtime
+# é ES modules + CSS servidos como estão.
+#
+# Os cabeçalhos abaixo não são enfeite: o Content-Security-Policy transforma o
+# custo zero de convenção em GARANTIA imposta pelo navegador. Verificado —
+# com ele, pedidos externos disparam violação de connect-src / img-src /
+# script-src-elem; sem ele, passam. E as 135 checagens do runtime rodam
+# inteiras sob exatamente estes cabeçalhos (ver infra/README.md).
+#
+#   render blueprint launch   (ou conectar o repositório em dashboard.render.com)
+# ==========================================================================
+
+services:
+  - type: web
+    name: lumora-identidade
+    runtime: static
+    # Sem build: o conteúdo servido é o repositório.
+    buildCommand: ""
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: true
+
+    headers:
+      # ---- A garantia do custo zero (§65.5) -----------------------------
+      # img-src precisa de `data:`: marca-com-alfa.js entrega a L canônica
+      # como data URL gerada em memória (ESCALACOES.md §3). Sem isso a marca
+      # simplesmente não aparece, e em silêncio.
+      # style-src precisa de 'unsafe-inline' pelos atributos style="" da
+      # bancada de verificação. script-src NÃO precisa: o script da bancada
+      # foi para runtime/verificacao.js justamente para isso.
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+
+      # microphone=(self) e não (): os Comandos de Voz da §68 usam
+      # SpeechRecognition. Bloquear o microfone aqui desligaria uma feature
+      # de acessibilidade.
+      - path: /*
+        name: Permissions-Policy
+        value: "geolocation=(), camera=(), payment=(), usb=(), microphone=(self)"
+
+      # ---- Cache -------------------------------------------------------
+      # Os 13 oficiais são imutáveis por regra (preservados byte a byte, com
+      # sha256 conferido). Podem cachear por um ano sem risco.
+      - path: /assets/oficiais/*
+        name: Cache-Control
+        value: "public, max-age=31536000, immutable"
+
+      # O runtime muda: revalida sempre, serve do cache enquanto não mudou.
+      - path: /runtime/*
+        name: Cache-Control
+        value: "public, max-age=0, must-revalidate"
+
+      - path: /*.html
+        name: Cache-Control
+        value: "public, max-age=0, must-revalidate"

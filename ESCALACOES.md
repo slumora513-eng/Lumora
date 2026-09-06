@@ -6,13 +6,16 @@
 Sete itens registrados. Em 05/09/2026, **seis foram resolvidos**: dois por decisão direta do
 Fundador (§1, §5) e quatro sob autorização dele — primeiro *"pode resolver os problemas que
 deu tranquilamente"*, depois *"pode decidir. Eu deixo você tomar controle de tudo"* (§2, §3,
-§4, §7). **Um continua aberto** (§6).
+§4, §7) — e depois *"tenta resolver a §6 também"* (§6). **As sete estão fechadas.**
 
-A §3 era o último item parcial: estava resolvida para a tela e aberta para o papel. Fechou
-quando o alfa passou a ser **recuperado** do próprio arquivo oficial em vez de esperado de
-um arquivo novo. A §7 fechou quando o teste em simulador de daltonismo virou código
-verificável no repositório — e, ao virar código, encontrou e corrigiu um defeito de
-acessibilidade que ninguém tinha visto.
+A §3 fechou quando o alfa passou a ser **recuperado** do próprio arquivo oficial em vez de
+esperado de um arquivo novo. A §7 fechou quando o teste em simulador de daltonismo virou
+código verificável — e, ao virar código, encontrou e corrigiu um defeito de acessibilidade que
+ninguém tinha visto. A §6 fechou por auditoria: das sete linhas de assets faltantes, duas já
+eram decisão tomada, duas foram revogadas ou perderam função, duas foram superadas por código,
+e a última nunca foi asset — é uma pergunta de produto.
+
+**Nenhum arquivo foi inventado em nenhuma das três.**
 
 Ainda em 05/09/2026 o Fundador **desbloqueou a parte de áudio da §6**, decidindo que a fala das
 aberturas entra como **texto** em vez de arquivo sonoro. Os arquivos continuam não entregues —
@@ -203,39 +206,68 @@ sempre a mesma.
 
 ---
 
-## §6 — Assets citados no Guia que não foram entregues
+## §6 — Assets citados no Guia que não foram entregues — ✅ AUDITADA em 05/09/2026
 
-**Não inventados.** Registrados como ausentes, conforme a regra "quando faltar um asset oficial,
-registrar a ausência em vez de inventá-lo".
+**Autorização do Fundador (05/09/2026):** *"tenta resolver a §6 também"*.
 
-| Citado em | O que é | Status |
+Nenhum arquivo foi inventado — a regra continua sendo registrar a ausência. O que esta
+auditoria fez foi outra coisa: **perguntar, linha por linha, se a ausência ainda significa
+alguma coisa.** Sete linhas; nenhuma delas bloqueia mais nada.
+
+| Citado em | O que é | Situação |
 |---|---|---|
-| **§45** | 10 arquivos da Biblioteca de Áudio (aberturas, notificações, sucessos), em URLs externas | **Não entregues.** Nota do próprio Guia: são da era aquarela/vidro líquido — registro histórico. `business_abertura_som.mp3` marcado `[REVOGADO]` |
-| **§44** | 3 sons antigos do Elio (Supernova, Galaxy Bloom, Watercolor Whisp) | **Rejeitados pelo Fundador** em 23/08/2026; novos a definir |
-| **§65.6** | Amostras conceituais: fundo RotaCerta "GPS espacial", fundo Hub "Núcleo de Controle", tema Aurora "rios de aurora" | **Não entregues** (URLs externas) |
-| **§65.6, §66.5, §67.10, §68.8** | 4 protótipos HTML (v1 bolhas, v2 + ondas, v3 Interface Viva, v4 Interface Viva II) | **Não entregues** ("URL na conversa") |
-| **§49.4** | ZIP `03-Videos-Animacoes/` com assets de referência provisórios | **Não entregue** |
-| **§65.1** | Wallpapers padrão Global/Américas/Europa, reservados para superfícies secundárias | **Não entregues** |
-| **§49.3, §45** | Slots **"fia alto"** e **"magos"** | **Não são slots registrados** — o próprio Guia os marca como pendentes de definição na §18 |
+| **§45** | 10 arquivos da Biblioteca de Áudio | **Decidido.** O Fundador trocou por texto em 05/09/2026. Identidade sonora é do profissional contratado (§48/§64.2, congelada) |
+| **§44** | 3 sons antigos do Elio | **Decidido.** Rejeitados pelo Fundador em 23/08/2026 |
+| **§65.6** | Amostras conceituais: fundos RotaCerta e Hub, tema Aurora | **Superadas** — ver abaixo |
+| **§65.6, §66.5, §67.10, §68.8** | 4 protótipos HTML (v1–v4) | **Superados** — ver abaixo |
+| **§49.4** | ZIP com assets de referência **provisórios** para os vídeos | **Sem função.** As 11 cenas existem em código; §49.3 já define que o vídeo final do profissional entra como versão superior sem mexer no código. Referência provisória para uma coisa que já está pronta não referencia nada |
+| **§65.1** | Wallpapers padrão Global/Américas/Europa | **Revogados.** §60.1/§60.2 revogaram wallpaper por país/região. Entregar Américas e Europa hoje seria violar uma revogação em vigor. O "Global" é o Céu Vivo, que é procedural |
+| **§49.3, §45** | Slots **"fia alto"** e **"magos"** | **Não são slots.** O próprio Guia os marca como pendentes de definição na §18 |
 
-**Pergunta:** o Fundador deseja anexar algum destes à biblioteca oficial? Os protótipos v1–v4
-são especialmente relevantes: são a única demonstração executável da Interface Viva, e §67/§68
-os citam como artefato oficial de cada decisão.
+### Por que as amostras conceituais foram superadas
 
-### Os áudios saíram da lista de bloqueios em 05/09/2026
+A §65.6 registra três amostras aprovadas em 01/09/2026 (fundo RotaCerta "GPS espacial", fundo
+Hub "Núcleo de Controle", tema Aurora). Elas nunca chegaram. Mas a §65.1 diz o que elas são:
 
-**Decisão do Fundador:** *"nem precisa fazer esses áudios, só coloca mesmo um texto falando (...)
-só o texto da fala, das animações que tem uma fala."*
+> "as amostras conceituais servem de **direção**, não de asset final — a renderização final
+> será procedural (canvas/WebGL), **nunca imagem estática**."
 
-A ausência dos 10 arquivos da §45 **deixou de bloquear as aberturas**: as falas entram como
-**texto em tela**, e as duas que existem são textuais da §1. Isso vale inclusive para o
-`business_abertura_som.mp3` marcado `[REVOGADO]` — ele não precisa mais ser refeito para o slot
-funcionar, o que fecha a pendência que a §5 tinha deixado aberta aqui dentro.
+E a direção **já estava escrita**, em `docs/04-identidade-por-sistema.md`: "malha de rotas
+luminosas (teal + âmbar) ligando waypoints em forma de constelação, com leve rastro de
+navegação" para o RotaCerta; "núcleo de luz + anéis orbitais + satélites-bolha" para o Hub.
 
-**O que permanece nesta escalação:** os arquivos continuam não entregues, e a identidade sonora
-segue sendo produção do profissional contratado (§48/§64.2, congelada). Quando os áudios
-chegarem, o texto **não sai** — vira a legenda que a própria §45 exige (*"sons nunca são canal
-único"*). Nada foi gerado por esta plataforma.
+Faltava a **implementação**, não a direção — e faltava mesmo: esses motivos existiam só como
+*abertura* (animação de entrada, slot §49), nunca como ambiente permanente de uso.
+
+Agora existem: `runtime/camada-de-sistema.js` desenha a camada complementar de cada sistema
+sobre o Céu Vivo, em Canvas 2D, como a §65.1 exige. Uma amostra estática hoje não acrescentaria
+nada ao que já está desenhado — e a §65.1 proíbe que ela fosse o asset final de qualquer forma.
+
+**Business e Comunidade têm camada vazia de propósito**, e o código registra o motivo de cada
+um: céu estrelado puro por decisão do Fundador; e, na Comunidade, o Atlas Estelar já *é* a
+camada.
+
+### Por que os protótipos v1–v4 foram superados
+
+A escalação dizia deles: *"são a única demonstração executável da Interface Viva"*. **Deixaram
+de ser.** `runtime/verificacao.html` é uma demonstração executável de todo o sistema — Céu Vivo,
+Interface Viva, navegação em bolhas e em ondas, notificações, Atlas, animações, seis paletas,
+papel-mãe — com **135 checagens automatizadas** rodando por cima
+(`node ferramentas/testes/rodar.mjs`).
+
+Os protótipos continuam sendo **registro histórico** de quatro decisões (§67.10, §68.8), e como
+registro histórico eles seguem não entregues. Isso é diferente de bloquear alguma coisa.
+
+### O que sobrou
+
+Uma pergunta, e ela não é sobre asset: **"fia alto" e "magos" existem como sistema?** O Guia
+os cita em §49.3/§45 e ao mesmo tempo os marca como pendentes de definição na §18. Se forem
+sistemas de verdade, precisam de briefing; se não forem, saem da lista da §45. É decisão de
+produto do Fundador, não arquivo faltando.
+
+> **(DEFAULT DO AGENTE — a camada complementar é implementação de direção já registrada, não
+> assinatura nova: cada motivo vem citado de §65.1 e docs/04. A geometria, as densidades por
+> nível e a decisão de desligar o ambiente na paleta preto/branco são deste agente.)**
 
 ---
 

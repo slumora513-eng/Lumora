@@ -163,9 +163,35 @@ O Guia registra URLs de amostras conceituais aprovadas em 01/09/2026 (fundos Rot
 tema Aurora) e de quatro protótipos HTML (`v1` navegação em bolhas, `v2` + ondas,
 `v3` Interface Viva, `v4` Interface Viva II).
 
-**Estes arquivos não foram entregues a este repositório.** Registrados como ausentes conforme a
-regra "quando faltar um asset oficial, registrar a ausência em vez de inventá-lo" —
-ver [`ESCALACOES.md`](../ESCALACOES.md) §6. Nenhum foi recriado.
+**Estes arquivos não foram entregues a este repositório.** Nenhum foi recriado — a regra
+continua sendo registrar a ausência em vez de inventar.
 
-Lembrete de §65.1: as amostras conceituais servem de **direção**, não de asset final —
-"a renderização final será procedural (canvas/WebGL), **nunca imagem estática**".
+O que mudou em 05/09/2026 é que a ausência **deixou de significar alguma coisa**, e por um
+motivo que está na própria §65.1: as amostras conceituais servem de **direção**, não de asset
+final — *"a renderização final será procedural (canvas/WebGL, **nunca imagem estática**)"*.
+
+E a direção já estava escrita — é a tabela "Resumo da camada complementar" logo acima. Faltava
+a **implementação**, e faltava mesmo: esses motivos existiam só como *abertura* (animação de
+entrada, slot §49), nunca como ambiente permanente de uso.
+
+**Agora existem.** [`runtime/camada-de-sistema.js`](../runtime/camada-de-sistema.js) desenha a
+camada complementar de cada sistema sobre o Céu Vivo, em Canvas 2D:
+
+| Sistema | O que a camada desenha |
+|---|---|
+| **RotaCerta** | Rotas teal ligando waypoints âmbar em constelação, com o rastro de navegação percorrendo a rota |
+| **Lumora Hub** | Núcleo de luz violeta, anéis orbitais e satélites-bolha correndo sobre eles |
+| **Ecossistema** | Os dois motivos reunidos, em intensidade menor — "reunião dos elementos, sem somar logos" |
+| **Business** | **Nada** — céu estrelado puro, decisão do Fundador |
+| **Comunidade** | **Nada** — o Atlas Estelar (§16) já *é* a camada |
+
+Os dois vazios são decisão registrada, não implementação faltando: o código expõe o motivo de
+cada um em `SEM_CAMADA`, e a bancada de verificação mostra esse motivo na tela.
+
+A camada tira as cores dos tokens CSS, então **as seis paletas de alto contraste valem nela
+também**; desliga na paleta preto/branco (que existe para clareza máxima) e reforça na paleta
+clara em vez de sumir. Ver [`../ESCALACOES.md`](../ESCALACOES.md) §6.
+
+Os quatro protótipos HTML continuam não entregues, e continuam sendo registro histórico das
+decisões de §67.10/§68.8. O que eles eram na prática — *"a única demonstração executável da
+Interface Viva"* — hoje é `runtime/verificacao.html`, com 135 checagens automatizadas por cima.

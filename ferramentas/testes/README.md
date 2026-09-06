@@ -1,7 +1,7 @@
 # Suítes de verificação do runtime
 
-118 checagens em Chromium sobre `runtime/verificacao.html`. Elas existiam antes
-como arquivos soltos fora do repositório, o que tornava a frase "118 checagens,
+135 checagens em Chromium sobre `runtime/verificacao.html`. Elas existiam antes
+como arquivos soltos fora do repositório, o que tornava a frase "135 checagens,
 todas passando" impossível de conferir por quem lê. Agora rodam com um comando.
 
 ## Rodar
@@ -11,7 +11,14 @@ python3 -m http.server 8765           # na RAIZ do repositório, num terminal
 node ferramentas/testes/rodar.mjs     # noutro
 ```
 
-Saída esperada: `118 verificações, 0 falhas`.
+As suítes também rodam contra um site **publicado**, o que testa o deploy e não só o
+código — cabeçalho errado, MIME quebrado ou arquivo faltando aparecem como falha:
+
+```bash
+LUM_BASE=https://seu-endereco node ferramentas/testes/rodar.mjs
+```
+
+Saída esperada: `135 verificações, 0 falhas`.
 
 Precisa de Playwright (`npm i -D playwright-core`) e de um Chromium. O
 `navegador.mjs` procura os dois sozinho — inclusive em instalação global e em
@@ -35,6 +42,7 @@ Precisa de Playwright (`npm i -D playwright-core`) e de um Chromium. O
 | `tleg.mjs`     | Camada de texto das aberturas (§45 — som nunca é canal único) | 21 |
 | `tatlas.mjs`   | Atlas Estelar (§16), modo 3D e modo lista | 22 |
 | `tmarca.mjs`   | Marca com alfa (§3) — a matemática, o recorte e o caminho de falha | 14 |
+| `tcamada.mjs`  | Camada de sistema (§65.1) — assinatura de cada sistema, paletas, §36 | 17 |
 
 Fora do navegador, dois verificadores em Python:
 

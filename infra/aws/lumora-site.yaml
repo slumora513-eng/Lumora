@@ -1,0 +1,228 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Lumora — identidade visual como site estático. S3 privado + CloudFront com
+  Origin Access Control. O bucket nunca fica público: só o CloudFront lê.
+  Os cabeçalhos de resposta são os mesmos do render.yaml — em especial o CSP,
+  que transforma o "custo zero" da §65.5 em garantia imposta pelo navegador.
+
+Parameters:
+  NomeDoBucket:
+    Type: String
+    Description: Nome global do bucket S3 (precisa ser único na AWS inteira).
+    AllowedPattern: '^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$'
+
+  Dominio:
+    Type: String
+    Default: ''
+    Description: >
+      Domínio próprio (ex.: identidade.lumora.com). Deixe vazio para usar só o
+      domínio do CloudFront.
+
+  CertificadoArn:
+    Type: String
+    Default: ''
+    Description: >
+      ARN de um certificado ACM em us-east-1. Obrigatório se Dominio for
+      preenchido — CloudFront só aceita certificado dessa região.
+
+Conditions:
+  TemDominio: !And
+    - !Not [!Equals [!Ref Dominio, '']]
+    - !Not [!Equals [!Ref CertificadoArn, '']]
+
+Resources:
+
+  # ---------------------------------------------------------------- origem
+  Bucket:
+    Type: AWS::S3::Bucket
+    # Os 13 oficiais são preservados byte a byte e conferidos por sha256.
+    # Retain evita que um `delete-stack` distraído leve a biblioteca junto.
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref NomeDoBucket
+      # Nada de ACL nem de acesso público: quem lê é o CloudFront, via OAC.
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      # Versionamento é a rede de segurança dos oficiais: um upload errado
+      # não apaga o arquivo canônico, cria uma versão nova.
+      VersioningConfiguration:
+        Status: Enabled
+
+  PoliticaDoBucket:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: SomenteEsteCloudFront
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${Bucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${Distribuicao}'
+
+  ControleDeAcesso:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${AWS::StackName}-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # ------------------------------------------------------------ cabeçalhos
+  Cabecalhos:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: !Sub '${AWS::StackName}-cabecalhos'
+        Comment: Custo zero (§65.5) imposto pelo navegador, mais o básico de segurança.
+        SecurityHeadersConfig:
+          ContentSecurityPolicy:
+            Override: true
+            # img-src precisa de `data:`: marca-com-alfa.js entrega a L
+            # canônica como data URL gerada em memória (ESCALACOES.md §3).
+            # style-src precisa de 'unsafe-inline' pelos atributos style="".
+            # script-src não precisa: o script da bancada mora em arquivo.
+            ContentSecurityPolicy: >-
+              default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
+              img-src 'self' data:; font-src 'self'; connect-src 'self';
+              base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'
+          ContentTypeOptions:
+            Override: true
+          ReferrerPolicy:
+            Override: true
+            ReferrerPolicy: no-referrer
+          FrameOptions:
+            Override: true
+            FrameOption: DENY
+          StrictTransportSecurity:
+            Override: true
+            AccessControlMaxAgeSec: 63072000
+            IncludeSubdomains: true
+        CustomHeadersConfig:
+          Items:
+            # microphone=(self), não (): os Comandos de Voz da §68 usam
+            # SpeechRecognition. Bloquear aqui desligaria acessibilidade.
+            - Header: Permissions-Policy
+              Value: 'geolocation=(), camera=(), payment=(), usb=(), microphone=(self)'
+              Override: true
+
+  # ----------------------------------------------------------------- cache
+  CachePadrao:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${AWS::StackName}-padrao'
+        Comment: HTML e runtime — revalida sempre, serve do cache enquanto não mudou.
+        DefaultTTL: 0
+        MinTTL: 0
+        MaxTTL: 300
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          CookiesConfig: { CookieBehavior: none }
+          HeadersConfig: { HeaderBehavior: none }
+          QueryStringsConfig: { QueryStringBehavior: none }
+
+  CacheDosOficiais:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${AWS::StackName}-oficiais'
+        Comment: >
+          Os 13 arquivos oficiais são imutáveis por regra do repositório
+          (preservados byte a byte, sha256 conferido). Um ano de cache.
+        DefaultTTL: 31536000
+        MinTTL: 31536000
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          CookiesConfig: { CookieBehavior: none }
+          HeadersConfig: { HeaderBehavior: none }
+          QueryStringsConfig: { QueryStringBehavior: none }
+
+  # --------------------------------------------------------------- entrega
+  Distribuicao:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub '${AWS::StackName} — Lumora, identidade visual'
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Aliases: !If [TemDominio, [!Ref Dominio], !Ref 'AWS::NoValue']
+        ViewerCertificate: !If
+          - TemDominio
+          - AcmCertificateArn: !Ref CertificadoArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
+
+        Origins:
+          - Id: s3
+            DomainName: !GetAtt Bucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt ControleDeAcesso.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+
+        DefaultCacheBehavior:
+          TargetOriginId: s3
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          CachePolicyId: !Ref CachePadrao
+          ResponseHeadersPolicyId: !Ref Cabecalhos
+
+        CacheBehaviors:
+          - PathPattern: /assets/oficiais/*
+            TargetOriginId: s3
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD]
+            CachedMethods: [GET, HEAD]
+            # Não comprimir: são JPEG, já comprimidos. Gzip por cima só gasta CPU.
+            Compress: false
+            CachePolicyId: !Ref CacheDosOficiais
+            ResponseHeadersPolicyId: !Ref Cabecalhos
+
+        CustomErrorResponses:
+          # Com OAC, chave inexistente volta 403. Sem isto, "arquivo que não
+          # existe" parece "você não tem permissão".
+          - ErrorCode: 403
+            ResponseCode: 404
+            ResponsePagePath: /404.html
+            ErrorCachingMinTTL: 60
+          - ErrorCode: 404
+            ResponseCode: 404
+            ResponsePagePath: /404.html
+            ErrorCachingMinTTL: 60
+
+Outputs:
+  Endereco:
+    Description: Endereço do site
+    Value: !If [TemDominio, !Sub 'https://${Dominio}', !Sub 'https://${Distribuicao.DomainName}']
+  Bucket:
+    Description: Bucket de origem (privado)
+    Value: !Ref Bucket
+  DistribuicaoId:
+    Description: Id da distribuição — usado para invalidar cache no deploy
+    Value: !Ref Distribuicao

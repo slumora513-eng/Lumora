@@ -25,6 +25,7 @@ import { SotaqueCosmico } from './sotaque-cosmico.js';
 import { ViagemCosmica } from './viagem-cosmica.js';
 import { aplicarConstelacoes } from './documentos-com-alma.js';
 import { aplicarMarcas, marcaComAlfa } from './marca-com-alfa.js';
+import { CamadaDeSistema, SISTEMAS, SEM_CAMADA } from './camada-de-sistema.js';
 import { Animacoes } from './animacoes.js';
 import { NotificacoesVivas, Bolido, IdentidadeSonora } from './notificacoes-vivas.js';
 import { Navegacao } from './navegacao.js';
@@ -54,6 +55,8 @@ export class Lumora {
    * @param {HTMLCanvasElement} [opcoes.canvasSismografo]  §67.4
    * @param {Array} [opcoes.abas]    navegação §65.3/§66
    * @param {Array} [opcoes.acoes]   Nebulosa de Ações §67.1
+   * @param {HTMLCanvasElement} [opcoes.canvasCamada]  camada do sistema §65.1
+   * @param {string} [opcoes.sistema='business']  qual assinatura desenhar
    */
   constructor(opcoes = {}) {
     this.raiz = opcoes.raiz || document.body;
@@ -72,6 +75,14 @@ export class Lumora {
 
     this.ceu = opcoes.canvasCeu
       ? new CeuVivo(opcoes.canvasCeu, { nivel: this.nivel })
+      : null;
+
+    // A camada complementar do sistema (§65.1), POR CIMA do Céu Vivo e num
+    // canvas próprio: o céu continua igual para todos os sistemas.
+    this.camada = opcoes.canvasCamada
+      ? new CamadaDeSistema(opcoes.canvasCamada, {
+          sistema: opcoes.sistema, nivel: this.nivel,
+        })
       : null;
 
     // Interface Viva (§67/§68)
@@ -110,6 +121,7 @@ export class Lumora {
     aplicarMarcas(this.raiz).catch(() => { /* área segue reservada */ });
     this.estrelinha.aplicar(this.raiz);
     if (this.ceu) this.ceu.iniciar();
+    if (this.camada) this.camada.iniciar();
     if (this.sismografo) this.sismografo.iniciar();
   }
 
@@ -159,6 +171,13 @@ export class Lumora {
     return this;
   }
 
+  /** Troca a assinatura de sistema desenhada sobre o Céu Vivo (§65.1).
+   *  'business' e 'comunidade' têm camada vazia POR DECISÃO — ver SEM_CAMADA. */
+  definirSistema(nome) {
+    this.camada?.definirSistema(nome);
+    return this;
+  }
+
   /** Desenha a Constelação do Dia (§71.1). */
   constelacaoDoDia() {
     return this.ceu ? this.ceu.constelacaoDoDia() : null;
@@ -185,6 +204,9 @@ export class Lumora {
     }
     document.documentElement.dataset.lumPaleta = nome;
     try { localStorage.setItem('lum:paleta', nome); } catch { /* modo privado */ }
+    // A camada do sistema tira as cores dos tokens: trocada a paleta, ela
+    // precisa reler. É assim que as seis paletas alcançam o ambiente também.
+    this.camada?.atualizarPaleta();
     return this;
   }
 
@@ -198,6 +220,7 @@ export class Lumora {
 
   destruir() {
     this.atlas?.destruir();
+    this.camada?.destruir();
     this.raiz.removeEventListener('pointerdown', this._onRespingo);
     if (this._mqMovimento) {
       this._mqMovimento.removeEventListener('change', this._onPreferencia);
@@ -309,4 +332,5 @@ export {
   NebulosaDeAcoes, RastroDeAurora, SismografoVivo, PoeiraDeInteracao,
   FioDeAriadne, Estrelinha, ComandosDeVoz,
   aplicarMarcas, marcaComAlfa,
+  CamadaDeSistema, SISTEMAS, SEM_CAMADA,
 };

@@ -18,6 +18,7 @@ const SUITES = [
   ['tleg',     'Camada de texto das aberturas'],
   ['tatlas',   'Atlas Estelar'],
   ['tmarca',   'Marca com alfa'],
+  ['tcamada',  'Camada de sistema (§65.1)'],
 ];
 
 try {

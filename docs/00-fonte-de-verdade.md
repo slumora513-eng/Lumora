@@ -72,6 +72,7 @@ resultados marcados como **DEFAULT DO AGENTE**, nunca como decisão de marca do 
 | *"nem precisa fazer esses áudios, só coloca o texto da fala"* | Descarta a produção de áudio e põe a **fala em texto** nas aberturas que têm fala. Mantém §48 intacta e §64.2 congelada. | [`09-producao-de-assets.md`](09-producao-de-assets.md) |
 | *"a animação do RotaCerta poderia ser melhor (...) ficou meio confuso"* | Reprova a primeira versão da cena e manda refazer. | [`../runtime/animacoes-3d.js`](../runtime/animacoes-3d.js) |
 | *"sobre aquelas duas decisões que ficou de fora, você pode decidir. Eu deixo você tomar controle de tudo (...) pode continuar o código todinho"* | Autoriza fechar as **duas últimas escalações**: §3 (falta de alfa no papel) e §7 (o teste em simulador de daltonismo). | [`../ESCALACOES.md`](../ESCALACOES.md) |
+| *"tenta resolver a §6 também"* + *"faz a blueprint para o render e o aws"* | Manda auditar a **§6** (assets não entregues) e produzir os **blueprints de publicação**. | [`../ESCALACOES.md`](../ESCALACOES.md) · [`../infra/README.md`](../infra/README.md) |
 
 ---
 
@@ -115,6 +116,26 @@ Com isso saíram do bloqueio, além dos seis passos da §71:
   urgência "alta" das Notificações Vivas dependia só da cor. Corrigido com forma e texto.
 
 Nenhuma das duas alterou um byte dos arquivos oficiais.
+
+### E a §6, a última
+
+*"tenta resolver a §6 também."*
+
+Auditada linha a linha. Nenhum arquivo foi inventado — o que mudou é que **nenhuma das sete
+ausências significa mais alguma coisa**: duas já eram decisão tomada (os áudios, os sons
+antigos do Elio), duas foram revogadas ou perderam função (os wallpapers por região, o ZIP de
+referência provisória), duas foram superadas por código, e a última nunca foi asset.
+
+As **amostras conceituais** da §65.6 foram superadas por `runtime/camada-de-sistema.js`, que
+desenha a camada complementar de cada sistema sobre o Céu Vivo. A §65.1 já dizia que essas
+amostras eram *"direção, não asset final"* — e a direção estava escrita em `04`. Faltava a
+implementação, que existia só como abertura e agora existe como ambiente.
+
+Os **protótipos v1–v4** foram superados por `runtime/verificacao.html`, com 135 checagens
+automatizadas por cima. Eles seguem valendo como registro histórico das decisões §67.10/§68.8.
+
+O que sobra é uma pergunta de produto, não de arquivo: **"fia alto" e "magos" existem como
+sistema?** O próprio Guia os cita e ao mesmo tempo os marca como pendentes de definição.
 
 ### A distinção que continua valendo: código procedural × arquivo de mídia
 

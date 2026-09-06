@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumora — Sistema de Identidade Visual</title>
+<link rel="stylesheet" href="runtime/tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--lum-deep-space); color: var(--lum-texto-1);
+    font-family: var(--lum-fonte, system-ui, sans-serif); line-height: 1.55;
+  }
+  main { max-inline-size: 760px; margin-inline: auto; padding: 64px 24px 96px; }
+  h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: .01em; }
+  .sub { color: var(--lum-texto-3); margin: 0 0 32px; font-size: 14px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+       color: var(--lum-texto-3); margin: 36px 0 12px; font-weight: 600; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  a { color: var(--lum-texto-1); text-decoration: none; }
+  li a { display: block; padding: 12px 14px; border-radius: 10px;
+         border: 1px solid var(--lum-vidro-borda); background: var(--lum-vidro-solido); }
+  li a:hover, li a:focus-visible { border-color: var(--lum-azul); }
+  li span { display: block; color: var(--lum-texto-3); font-size: 13px; margin-block-start: 2px; }
+  .nota { color: var(--lum-texto-3); font-size: 13px; margin-block-start: 28px; }
+  code { font-family: var(--lum-fonte-mono); font-size: 12px; color: var(--lum-texto-2); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Lumora — Sistema de Identidade Visual</h1>
+  <p class="sub">
+    Repositório canônico, derivado do Guia de Referência Completo (v3, 02/09/2026).
+    Esta página é um índice do repositório servido — não é produto.
+  </p>
+
+  <h2>Estética em código</h2>
+  <ul>
+    <li><a href="runtime/verificacao.html">Bancada de verificação
+      <span>Céu Vivo, Interface Viva, navegação, notificações, Atlas Estelar,
+      animações dos slots, as seis paletas e o papel-mãe, rodando de verdade</span></a></li>
+    <li><a href="runtime/README.md">runtime/README.md
+      <span>Uso, verificação e limites do runtime</span></a></li>
+  </ul>
+
+  <h2>Especificação</h2>
+  <ul>
+    <li><a href="README.md">README <span>Hierarquia de autoridade, defaults do agente, estado dos assets</span></a></li>
+    <li><a href="docs/00-fonte-de-verdade.md">Fonte de verdade <span>Revogações em vigor e decisões congeladas</span></a></li>
+    <li><a href="docs/11-l-canonica.md">A L canônica <span>Anatomia, arquivos portadores, regras de uso</span></a></li>
+    <li><a href="docs/06-acessibilidade.md">Acessibilidade <span>Contraste medido e verificação sob daltonismo</span></a></li>
+    <li><a href="ESCALACOES.md">Escalações <span>As sete dúvidas críticas e como cada uma fechou</span></a></li>
+  </ul>
+
+  <h2>Biblioteca oficial</h2>
+  <ul>
+    <li><a href="assets/oficiais/MANIFESTO.md">MANIFESTO
+      <span>Os 13 arquivos oficiais, com sha256, formato real e fundo conferidos</span></a></li>
+  </ul>
+
+  <p class="nota">
+    Nenhum pedido de rede externo em nenhuma página (§65.5). O
+    <code>Content-Security-Policy</code> do servidor impõe isso — ver <code>infra/README.md</code>.
+  </p>
+</main>
+</body>
+</html>

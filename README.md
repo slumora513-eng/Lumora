@@ -27,13 +27,14 @@ Especificação de Referência v3, gerado em 02/09/2026** (72 seções, 59 pági
 | [`docs/09-producao-de-assets.md`](docs/09-producao-de-assets.md) | O que a plataforma **não** produz; slots §49 |
 | [`docs/10-paleta.md`](docs/10-paleta.md) | Paleta **medida** nos assets oficiais + contraste WCAG |
 | [`docs/11-l-canonica.md`](docs/11-l-canonica.md) | **A L canônica** — confirmada pelo Fundador em 05/09/2026 |
-| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, animações dos slots, Atlas Estelar, Notificações Vivas, navegação, Interface Viva, marca com alfa |
+| [`runtime/`](runtime/) | **Estética procedural em código** — Céu Vivo, camada de cada sistema, animações dos slots, Atlas Estelar, Notificações Vivas, navegação, Interface Viva, marca com alfa |
 | [`runtime/README.md`](runtime/README.md) | Uso, verificação e limites do runtime |
 | [`assets/oficiais/`](assets/oficiais/) | 13 arquivos oficiais preservados byte-a-byte |
 | [`assets/oficiais/MANIFESTO.md`](assets/oficiais/MANIFESTO.md) | Inventário verificado (sha256, formato real, fundo) |
 | [`ferramentas/verificar_assets.py`](ferramentas/verificar_assets.py) | Verificação somente-leitura: integridade, formato, fundo, paleta, contraste |
 | [`ferramentas/verificar_daltonismo.py`](ferramentas/verificar_daltonismo.py) | As seis paletas sob protanopia, deuteranopia e tritanopia — simulação em código, com autoteste |
-| [`ferramentas/testes/`](ferramentas/testes/) | As **118 checagens** do runtime em Chromium — `node ferramentas/testes/rodar.mjs` |
+| [`ferramentas/testes/`](ferramentas/testes/) | As **135 checagens** do runtime em Chromium — `node ferramentas/testes/rodar.mjs` |
+| [`infra/README.md`](infra/README.md) | **Publicação** — blueprints para Render e AWS, com o CSP que impõe o custo zero |
 | [`ESCALACOES.md`](ESCALACOES.md) | **Dúvidas críticas de identidade abertas ao Fundador** |
 
 ---
@@ -108,6 +109,12 @@ Registrados conforme a regra 22 do prompt operacional. Nenhum destes é decisão
   antes de reportar. Os limiares de aprovação também são deste agente — e o de tritanopia
   (8,0) sai de uma busca exaustiva que mostrou que **8,6 é o teto do Okabe-Ito** ali.
 
+- **(DEFAULT DO AGENTE — §65.1 e `docs/04` dizem O QUE a camada de cada sistema mostra, não
+  como desenhá-la.)** `runtime/camada-de-sistema.js` implementa a camada complementar a partir
+  da direção já registrada — os motivos são citados do Guia, a geometria é deste agente. É o
+  que tornou dispensáveis as amostras conceituais da §65.6, que a própria §65.1 define como
+  "direção, não asset final".
+
 - Os defaults internos ao runtime (horários das fases do céu, microtextos não registrados no
   Guia, pilha tipográfica de sistema, valores da paleta daltonismo, piso de ruído da extração
   de alfa, o microtexto `" · prioridade"`) estão listados em
@@ -144,39 +151,40 @@ Estas ausências são cumprimento do Guia, não lacunas de trabalho:
 
 ---
 
-## Escalações abertas
+## Escalações — as sete fechadas
 
-**Seis das sete resolvidas** em 05/09/2026 — duas por decisão direta do Fundador (**§1** a L
-canônica é a dominante, **§5** o briefing do Business é o céu estrelado puro) e quatro sob
-autorização dele, primeiro *"pode resolver os problemas que deu tranquilamente"* e depois
-*"pode decidir. Eu deixo você tomar controle de tudo"*:
+Resolvidas em 05/09/2026. Duas por decisão direta do Fundador (**§1** a L canônica é a
+dominante, **§5** o briefing do Business é o céu estrelado puro) e cinco sob autorização
+dele — *"pode resolver os problemas que deu tranquilamente"*, depois *"pode decidir. Eu
+deixo você tomar controle de tudo"*, depois *"tenta resolver a §6 também"*:
 
 - **§2** o "A" do wordmark é o sem travessão (4 de 5 lockups oficiais);
 - **§3** o alfa é **recuperado** do próprio arquivo oficial, e a marca compõe sobre Céu Vivo,
   aurora acesa **e papel branco** — sem alterar um byte;
 - **§4** o teal da §65.1 é da malha de rotas e não do símbolo;
-- **§7** as seis paletas de alto contraste, com contraste calculado **e verificadas sob os três
-  tipos de dicromacia** por simulação em código.
+- **§6** auditada linha a linha: das sete ausências, duas já eram decisão tomada, duas foram
+  revogadas ou perderam função, duas foram **superadas por código**, e a última nunca foi
+  asset — é uma pergunta de produto;
+- **§7** as seis paletas com contraste calculado **e verificadas sob os três tipos de
+  dicromacia** por simulação em código.
 
 Tudo que veio da autorização está marcado como **DEFAULT DO AGENTE**, nunca como decisão
-do Fundador (regra 22).
+do Fundador (regra 22). **Nenhum arquivo foi inventado em nenhuma delas.**
 
-**Continua aberto — um item** ([`ESCALACOES.md`](ESCALACOES.md)):
+**O que continua dependendo de outra pessoa** — registrado, sem bloquear nada:
 
-1. **Assets citados no Guia que não foram entregues** (protótipos v1–v4, amostras conceituais,
-   wallpapers) — registrados como ausentes, não recriados. Os **áudios da §45** continuam não
-   entregues, mas deixaram de bloquear: o Fundador decidiu em 05/09/2026 que a fala entra como
-   texto. *(§6)*
-
-**Duas coisas que só o produtor pode entregar**, registradas e sem bloquear nada hoje:
-
-- nenhuma **família tipográfica** é nomeada em 59 páginas, e nenhum arquivo de fonte foi
+- **"fia alto" e "magos" existem como sistema?** O Guia os cita em §49.3/§45 e ao mesmo tempo
+  os marca como pendentes de definição na §18. Decisão de produto do Fundador *(dentro da §6)*.
+- Nenhuma **família tipográfica** é nomeada em 59 páginas, e nenhum arquivo de fonte foi
   entregue — por isso `--lum-fonte` usa pilha de sistema, justamente para **não** simular o
-  wordmark (dentro da §2);
-- o wordmark "LUMORA" é branco, e sobre papel branco ele some — resultado fisicamente correto,
+  wordmark *(dentro da §2)*.
+- O wordmark "LUMORA" é branco, e sobre papel branco ele some — resultado fisicamente correto,
   não falha da extração. Wordmark impresso sobre fundo claro exigiria uma **versão em tinta
-  escura** (dentro da §3). §70.5/§71.5 pedem *a L canônica*, que é cromática e sobrevive ao
-  papel — então isso não trava os Documentos com Alma.
+  escura** do produtor. §70.5/§71.5 pedem *a L canônica*, que é cromática e sobrevive ao papel
+  *(dentro da §3)*.
+- Os **protótipos v1–v4** e os **áudios da §45** seguem não entregues, como registro histórico.
+  Deixaram de ser demonstração ou bloqueio: a bancada executável é `runtime/verificacao.html`,
+  e a fala das aberturas virou texto por decisão do Fundador.
 
 Itens congelados (§64 — caridade e animações 3D) **não** aparecem como pendência, conforme
 §64.3 determina.

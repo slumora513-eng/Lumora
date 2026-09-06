@@ -110,12 +110,12 @@ Estas não são convenções que alguém possa esquecer — estão no caminho de
 python3 -m http.server 8765          # na raiz do repositório
 # abre http://localhost:8765/runtime/verificacao.html
 
-node ferramentas/testes/rodar.mjs    # as 118 checagens, de uma vez
+node ferramentas/testes/rodar.mjs    # as 135 checagens, de uma vez
 ```
 
 `verificacao.html` é bancada de teste local — **não é produto nem asset de marca**.
 
-Conferido em Chromium, **118 checagens automatizadas**, todas passando:
+Conferido em Chromium, **135 checagens automatizadas**, todas passando:
 
 | Suíte | Checagens |
 |---|---|
@@ -127,8 +127,11 @@ Conferido em Chromium, **118 checagens automatizadas**, todas passando:
 | Camada de texto das aberturas | 21 |
 | Atlas Estelar | 22 |
 | **Marca com alfa** | **14** |
+| **Camada de sistema (§65.1)** | **17** |
 
-**0 pedidos de rede externos** (custo zero, §65.5).
+**0 pedidos de rede externos** (custo zero, §65.5). As mesmas suítes rodam contra um site
+publicado (`LUM_BASE=https://…`), o que testa o deploy junto com o código — ver
+[`../infra/README.md`](../infra/README.md).
 
 Fora do navegador, dois verificadores em Python:
 
@@ -343,6 +346,42 @@ wordmark sobre fundo claro é preciso uma versão em tinta escura.
 
 ---
 
+## Camada de sistema (§65.1)
+
+O Céu Vivo é o fundo de **todos** os sistemas e muda só por horário. Por cima dele, cada
+sistema tem a sua **camada complementar** — é o que `camada-de-sistema.js` desenha, num
+canvas próprio com alfa.
+
+| Sistema | Camada |
+|---|---|
+| **RotaCerta** | Rotas teal + waypoints âmbar em constelação + rastro de navegação |
+| **Hub** | Núcleo de luz + anéis orbitais + satélites-bolha |
+| **Ecossistema** | Os dois reunidos, mais discretos |
+| **Business** | **vazia** — céu estrelado puro (decisão do Fundador) |
+| **Comunidade** | **vazia** — o Atlas Estelar já é a camada |
+
+```js
+const camada = new CamadaDeSistema(canvas, { sistema: 'rotacerta', nivel });
+camada.iniciar();
+camada.definirSistema('hub');
+```
+
+Ou pelo bootstrap: `new Lumora({ canvasCamada, sistema })` e `lum.definirSistema('hub')`.
+
+Os dois vazios são **decisão registrada**, não implementação faltando — `SEM_CAMADA` guarda o
+motivo de cada um e `motivoDoVazio()` devolve ele. Um vazio que sabe explicar por que está
+vazio é diferente de um vazio por esquecimento.
+
+**As cores saem dos tokens CSS**, então as seis paletas alcançam o ambiente: na paleta
+preto/branco a camada se desliga (essa paleta existe para clareza máxima) e na paleta clara
+ela reforça em vez de sumir — o caso que `acessibilidade-bonita.css` registrava e deixava
+"para quem integra".
+
+Geometria **determinística** (mesma regra do Atlas e da constelação dos documentos): o mesmo
+sistema cai sempre no mesmo lugar, senão a memória espacial de quem usa não vale nada.
+
+---
+
 ## Defaults do agente neste runtime
 
 Conforme a regra 22. Nenhum é decisão do Fundador.
@@ -389,6 +428,13 @@ Conforme a regra 22. Nenhum é decisão do Fundador.
   quadrado de "crítica") e o microtexto **`" · prioridade"`**, espelhando o
   `" · exige ação"` que "crítica" já tinha. A necessidade foi medida:
   `--lum-atencao` e `--lum-critico` ficam a ΔE00 = 8,6 sob tritanopia.
+
+- **(DEFAULT DO AGENTE — §65.1 e docs/04 dizem O QUE cada camada de sistema mostra,
+  não como.)** A geometria da camada (quantos waypoints, o traçado por vizinho mais
+  próximo, a posição do núcleo fora do centro para não brigar com o conteúdo), as
+  densidades por nível §36 e a decisão de **desligar o ambiente na paleta preto/branco**
+  são deste agente. Os motivos em si — rotas teal + waypoints âmbar, núcleo + anéis +
+  satélites — vêm citados do Guia.
 
 - **(DEFAULT DO AGENTE — o piso de ruído para extrair o alfa não vem do Guia; vem
   de medir os arquivos.)** 12/255, com joelho suave até 20/255, em
